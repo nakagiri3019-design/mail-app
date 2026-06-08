@@ -60,6 +60,14 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 .detail-title-star { background: none; border: none; cursor: pointer; padding: 2px; flex-shrink: 0; display: flex; }
 .detail-meta-row { display: flex; align-items: flex-start; gap: 14px; padding: 6px 20px 16px; }
 .detail-to-line { font-size: 12px; color: #5f6368; margin-top: 2px; }
+.to-line-toggle { cursor: pointer; display: inline-flex; align-items: center; gap: 4px; user-select: none; }
+.to-arrow { font-size: 9px; }
+.sender-detail-panel { display: none; margin-top: 10px; background: #FAE8CC; border-radius: 14px; padding: 14px 16px; font-size: 12.5px; color: #444; }
+.sender-detail-panel.open { display: block; }
+.sender-detail-panel .panel-row { display: flex; gap: 8px; padding: 3px 0; line-height: 1.6; }
+.sender-detail-panel .panel-label { color: #5f6368; flex-shrink: 0; min-width: 48px; }
+.security-notice { display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.08); line-height: 1.6; }
+.security-link { color: #FF7A00; font-weight: 600; cursor: pointer; }
 .detail-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 17px; flex-shrink: 0; }
 .detail-sender-info { flex: 1; min-width: 0; }
 .detail-sender-name { font-size: 14.5px; font-weight: 600; color: #202124; }
@@ -163,6 +171,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 
 <script>
 const AVATAR_COLORS = ['#1a73e8','#D93025','#188038','#8430CE','#E37400','#0B8043','#C2185B','#00897B','#5C6BC0'];
+const MY_EMAIL = 'volca7000@gmail.com';
 
 function colorFor(name) {
   let h = 0;
@@ -248,28 +257,28 @@ const MAILS = [
     date: '5月19日', unread: false, starred: false,
     thread: [
       {
-        from: '金', fromEmail: 'taku@soraboljewelry.com', to: '野口', toEmail: 'volca7000@gmail.com', date: '5月8日',
+        from: '金', fromEmail: 'taku@soraboljewelry.com', to: '野口', toEmail: 'volca7000@gmail.com', date: '5月8日', datetime: '2026年5月8日(金) 10:24',
         body: '株式会社M.T DICE 野口様\n\nお世話になっております。ソラボルジュエリーの金です。先日はありがとうございました。\n\n追加で、K18ブレスレット用の製作用パーツが不足してきましたので、下記内容でお見積りをお願いできますでしょうか。\n\n・K18クリップ\n・K18プレート\n・K18丸カン\n・K18ブレスレット用クラスプ\n\n数量は前回と同程度で考えておりますが、在庫状況に応じて調整いただいて構いません。\n\nまた、連休前にお願いしておりましたPt900リングおよびSV925ネックレスクロストップの納品予定日についても、あわせて確認させてください。可能であれば、今回追加でお願いするK18製作用パーツと一緒に納品いただけますと助かります。\n\nお手数ですが、金額と納品予定日をご確認のうえ、ご連絡いただけますでしょうか。よろしくお願いいたします。\n\nソラボルジュエリー株式会社\n金\n〒110-0016 東京都台東区台東4-8-9\nTEL：03-3839-8400\nMAIL：taku@soraboljewelry.com',
       },
       {
-        from: '野口', fromEmail: 'volca7000@gmail.com', to: '金', toEmail: 'taku@soraboljewelry.com', date: '5月8日',
+        from: '野口', fromEmail: 'volca7000@gmail.com', to: '金', toEmail: 'taku@soraboljewelry.com', date: '5月8日', datetime: '2026年5月8日(金) 14:08',
         body: 'ソラボルジュエリー株式会社 金様\n\nお世話になっております。株式会社M.T DICEの野口です。ご連絡ありがとうございます。\n\nK18ブレスレット用の製作用パーツにつきまして、下記内容でご用意可能です。\n\n・K18クリップ\n・K18プレート\n・K18丸カン\n・K18ブレスレット用クラスプ\n\n上記一式で、620,000円にてお見積りいたします。\n\nまた、連休前にご依頼いただいておりましたPt900リングおよびSV925ネックレスクロストップにつきましても、あわせて納品可能です。今回追加分のK18製作用パーツと、連休前にご依頼いただいておりましたPt900リングおよびSV925ネックレスクロストップを、2026年5月15日にまとめて納品できるよう手配いたします。\n\n納品準備が整いましたら、改めてご連絡いたします。よろしくお願いいたします。\n\n株式会社M.T DICE\n代表取締役 野口 修造\n〒135-0016 東京都台東区台東4-49-15 上野永谷タウンプラザ211\nTEL：050-1181-9376\nMAIL：volca7000@gmail.com',
       },
       {
-        from: '金', fromEmail: 'taku@soraboljewelry.com', to: '野口', toEmail: 'volca7000@gmail.com', date: '5月8日',
+        from: '金', fromEmail: 'taku@soraboljewelry.com', to: '野口', toEmail: 'volca7000@gmail.com', date: '5月8日', datetime: '2026年5月8日(金) 16:42',
         body: '株式会社M.T DICE 野口様\n\nお世話になっております。ソラボルジュエリーの金です。お見積りありがとうございます。\n\nご提示いただいた内容で、正式に発注いたします。発注書を添付いたしますので、ご確認ください。\n\n納品日は、5月15日でお願いいたします。今回追加分のK18製作用パーツと、連休前にお願いしていたPt900リングおよびSV925ネックレスクロストップを、まとめて納品いただけますと助かります。\n\nそれでは、上記内容で進めていただけますようお願いいたします。よろしくお願いいたします。\n\nソラボルジュエリー株式会社\n金\n〒110-0016 東京都台東区台東4-8-9\nTEL：03-3839-8400\nMAIL：taku@soraboljewelry.com',
       },
       {
-        from: '野口', fromEmail: 'volca7000@gmail.com', to: '金', toEmail: 'taku@soraboljewelry.com', date: '5月15日',
+        from: '野口', fromEmail: 'volca7000@gmail.com', to: '金', toEmail: 'taku@soraboljewelry.com', date: '5月15日', datetime: '2026年5月15日(金) 17:30',
         body: 'ソラボルジュエリー株式会社 金様\n\nお世話になっております。株式会社M.T DICEの野口です。\n\nご発注いただいておりました下記商品につきまして、本日納品が完了いたしました。\n\n・K18ブレスレット用製作用パーツ一式\n・Pt900リング\n・ペンダント製品\n・SV925ネックレスクロストップ製品\n\nよろしくお願いいたします。\n\n株式会社M.T DICE\n代表取締役 野口 修造\n〒135-0016 東京都台東区台東4-49-15 上野永谷タウンプラザ211\nTEL：050-1181-9376\nMAIL：volca7000@gmail.com',
       },
       {
-        from: '野口', fromEmail: 'volca7000@gmail.com', to: '金', toEmail: 'taku@soraboljewelry.com', date: '5月19日',
+        from: '野口', fromEmail: 'volca7000@gmail.com', to: '金', toEmail: 'taku@soraboljewelry.com', date: '5月19日', datetime: '2026年5月19日(火) 11:05',
         body: 'ソラボルジュエリー株式会社 金様\n\nお世話になっております。株式会社M.T DICEの野口です。\n\n2026年5月15日に納品いたしました下記商品につきまして、請求書を添付にてお送りいたします。\n\n・K18ブレスレット用製作用パーツ一式\n・Pt900リング\n・ペンダント製品\n・SV925ネックレスクロストップ製品\n\n請求金額：1,903,000円（税込）\n支払期日：2026年6月30日\n\nご確認のほど、よろしくお願いいたします。\n\n株式会社M.T DICE\n代表取締役 野口 修造\n〒135-0016 東京都台東区台東4-49-15 上野永谷タウンプラザ211\nTEL：050-1181-9376\nMAIL：volca7000@gmail.com',
         attachment: { name: '請求書 2026...ボル.pdf', amount: '1,903,000', size: '142 KB' },
       },
       {
-        from: '金', fromEmail: 'taku@soraboljewelry.com', to: '野口', toEmail: 'volca7000@gmail.com', date: '5月19日',
+        from: '金', fromEmail: 'taku@soraboljewelry.com', to: '野口', toEmail: 'volca7000@gmail.com', date: '5月19日', datetime: '2026年5月19日(火) 13:47',
         body: '株式会社M.T DICE 野口様\n\nお世話になっております。ソラボルジュエリーの金です。\n\n請求書を確認いたしました。請求内容に相違ございません。\n\n今後ともよろしくお願いいたします。\n\nソラボルジュエリー株式会社\n金\n〒110-0016 東京都台東区台東4-8-9\nTEL：03-3839-8400\nMAIL：taku@soraboljewelry.com',
       },
     ],
@@ -284,6 +293,35 @@ function starSVG(filled) {
   return filled
     ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="#F4B400" stroke="#F4B400" stroke-width="1.5"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`
     : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`;
+}
+
+function renderToBlock(uid, from, fromEmail, toEmail, datetime) {
+  return `
+    <div class="detail-to-line to-line-toggle" data-to-toggle="${uid}">
+      <span>To: 自分</span><span class="to-arrow">▼</span>
+    </div>
+    <div class="sender-detail-panel" data-to-panel="${uid}">
+      <div class="panel-row"><span class="panel-label">From:</span><span>${from}・${fromEmail}</span></div>
+      <div class="panel-row"><span class="panel-label">宛先:</span><span>${toEmail}</span></div>
+      <div class="panel-row"><span class="panel-label">日付:</span><span>${datetime}</span></div>
+      <div class="security-notice">
+        <span>🔒</span>
+        <span>標準的な暗号化（TLS）が適用されています。<br><span class="security-link">セキュリティの詳細を表示</span></span>
+      </div>
+    </div>
+  `;
+}
+
+function bindToPanelToggles(area) {
+  area.querySelectorAll('[data-to-toggle]').forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+      const id = toggle.getAttribute('data-to-toggle');
+      const panel = area.querySelector(`[data-to-panel="${id}"]`);
+      const arrow = toggle.querySelector('.to-arrow');
+      const isOpen = panel.classList.toggle('open');
+      arrow.textContent = isOpen ? '▲' : '▼';
+    });
+  });
 }
 
 function renderAttachment(att) {
@@ -349,14 +387,14 @@ function openDetail(id) {
     </div>
   `;
 
-  const threadHTML = mail.thread ? mail.thread.map((msg) => `
+  const threadHTML = mail.thread ? mail.thread.map((msg, i) => `
     <div class="thread-message">
       <div class="detail-meta-row">
         <div class="detail-avatar" style="background:${colorFor(msg.from)};">${initial(msg.from)}</div>
         <div class="detail-sender-info">
           <div class="detail-sender-name">${msg.from} <span class="thread-to">→ ${msg.to}</span></div>
           <div class="detail-sender-email">${msg.fromEmail}</div>
-          <div class="detail-to-line">To: 自分 ▼</div>
+          ${renderToBlock(`${mail.id}-${i}`, msg.from, msg.fromEmail, msg.toEmail, msg.datetime)}
         </div>
         <span class="detail-date">${msg.date}</span>
       </div>
@@ -374,12 +412,13 @@ function openDetail(id) {
       <div class="detail-sender-info">
         <div class="detail-sender-name">${mail.name}</div>
         <div class="detail-sender-email">${mail.email}</div>
-        <div class="detail-to-line">To: 自分 ▼</div>
+        ${renderToBlock(mail.id, mail.name, mail.email, MY_EMAIL, mail.date)}
       </div>
       <span class="detail-date">${mail.date}</span>
     </div>
     <div class="detail-body-text">${mail.body}</div>
   `;
+  bindToPanelToggles(area);
   const titleStarBtn = area.querySelector('.detail-title-star');
   if (titleStarBtn) {
     titleStarBtn.addEventListener('click', () => {
