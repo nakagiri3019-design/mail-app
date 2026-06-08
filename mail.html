@@ -54,8 +54,8 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 #detail-view { display: none; flex-direction: column; height: 100%; background: #FFF8F0; }
 .detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #FFEBD0; }
 .detail-header .spacer { flex: 1; }
-.detail-subject-row { display: flex; align-items: center; gap: 10px; padding: 18px 20px 6px; }
-.detail-subject-text { font-size: 21px; font-weight: 500; color: #202124; flex: 1; min-width: 0; }
+.detail-subject-row { display: flex; align-items: center; flex-wrap: nowrap; gap: 10px; padding: 18px 20px 6px 28px; }
+.detail-subject-text { font-size: 21px; font-weight: 500; color: #202124; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .inbox-badge { background: #FF7A00; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
 .detail-title-star { background: none; border: none; cursor: pointer; padding: 2px; flex-shrink: 0; display: flex; }
 .detail-meta-row { display: flex; align-items: flex-start; gap: 14px; padding: 6px 20px 16px; }
@@ -64,7 +64,8 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 .to-arrow { font-size: 9px; }
 .sender-detail-panel { display: none; margin-top: 10px; background: #FAE8CC; border-radius: 14px; padding: 14px 16px; font-size: 12.5px; color: #444; }
 .sender-detail-panel.open { display: block; }
-.sender-detail-panel .panel-row { display: flex; gap: 8px; padding: 3px 0; line-height: 1.6; }
+.sender-detail-panel .panel-row { display: flex; gap: 8px; padding: 3px 0; line-height: 1.6; overflow-x: auto; }
+.sender-detail-panel .panel-row > span:last-child { white-space: nowrap; }
 .sender-detail-panel .panel-label { color: #5f6368; flex-shrink: 0; min-width: 48px; }
 .security-notice { display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.08); line-height: 1.6; }
 .security-link { color: #FF7A00; font-weight: 600; cursor: pointer; }
@@ -88,8 +89,8 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 .attachment-name { font-size: 13.5px; color: #202124; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .attachment-meta { font-size: 12px; color: #5f6368; margin-top: 3px; }
 .detail-actions { position: absolute; left: 20px; right: 20px; bottom: 18px; display: flex; align-items: center; gap: 10px; }
-.detail-action-btn { flex: 1; background: #fff; border: 1px solid #dadce0; border-radius: 28px; padding: 15px 0; font-size: 15px; font-weight: 600; color: #444; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
-.detail-emoji-btn { width: 54px; height: 54px; flex-shrink: 0; background: #fff; border: 1px solid #dadce0; border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.detail-action-btn { flex: 1; background: #fff; border: 1.5px solid #c9b89a; border-radius: 28px; padding: 15px 0; font-size: 15px; font-weight: 600; color: #444; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+.detail-emoji-btn { width: 54px; height: 54px; flex-shrink: 0; background: #fff; border: 1.5px solid #c9b89a; border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 </style>
 </head>
 <body>
