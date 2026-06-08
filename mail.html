@@ -55,16 +55,17 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 .detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #FFEBD0; }
 .detail-header .spacer { flex: 1; }
 .detail-subject-block { padding: 18px 20px 6px 28px; }
-.detail-subject-text { font-size: 23px; font-weight: 500; color: #202124; line-height: 1.4; }
-.detail-badge-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
-.inbox-badge { background: #FF7A00; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
-.detail-title-star { background: none; border: none; cursor: pointer; padding: 2px; flex-shrink: 0; display: flex; margin-left: auto; }
+.detail-subject-text { font-size: 23px; font-weight: 500; color: #202124; line-height: 1.6; }
+.inbox-badge { display: inline-block; vertical-align: middle; background: #FF7A00; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 10px; white-space: nowrap; margin-left: 10px; }
+.detail-title-star { background: none; border: none; cursor: pointer; padding: 2px; display: inline-flex; vertical-align: middle; margin-left: 10px; }
 .detail-meta-row { display: flex; align-items: flex-start; gap: 14px; padding: 6px 20px 16px; }
-.to-panel-wrap { margin-left: 12px; margin-right: 12px; }
 .detail-to-line { font-size: 12px; color: #5f6368; margin-top: 6px; }
+.sender-card-icons { display: flex; gap: 2px; margin-left: auto; flex-shrink: 0; }
+.mini-icon-btn { background: none; border: none; cursor: pointer; font-size: 16px; line-height: 1; padding: 6px; border-radius: 8px; color: #5f6368; }
+.mini-icon-btn:active { background: rgba(0,0,0,0.06); }
 .to-line-toggle { cursor: pointer; display: inline-flex; align-items: center; gap: 4px; user-select: none; }
 .to-arrow { font-size: 9px; }
-.sender-detail-panel { display: none; margin-top: 10px; background: #FAE8CC; border-radius: 14px; padding: 14px 20px; font-size: 12.5px; color: #444; }
+.sender-detail-panel { display: none; margin: 10px -20px 0; background: #FAE8CC; border-radius: 0; padding: 14px 20px; font-size: 12.5px; color: #444; }
 .sender-detail-panel.open { display: block; }
 .sender-detail-panel .panel-row { display: flex; gap: 8px; padding: 3px 0; line-height: 1.6; overflow-x: auto; }
 .sender-detail-panel .panel-row > span:last-child { white-space: nowrap; }
@@ -75,7 +76,6 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 .detail-sender-info { flex: 1; min-width: 0; }
 .detail-sender-name { font-size: 14.5px; font-weight: 600; color: #202124; }
 .detail-sender-email { font-size: 12.5px; color: #5f6368; margin-top: 1px; }
-.detail-date { font-size: 12px; color: #5f6368; white-space: nowrap; }
 .detail-star { background: none; border: none; cursor: pointer; padding: 2px; flex-shrink: 0; }
 .detail-body-area { flex: 1; overflow-y: auto; padding: 4px 20px 100px; }
 .detail-body-text { font-size: 15px; line-height: 1.9; color: #202124; white-space: pre-wrap; }
@@ -298,11 +298,16 @@ function starSVG(filled) {
     : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`;
 }
 
-function renderToBlock(uid, from, fromEmail, toName, toEmail, datetime) {
+function renderToLine(uid) {
   return `
     <div class="detail-to-line to-line-toggle" data-to-toggle="${uid}">
       <span>To: 自分</span><span class="to-arrow">▼</span>
     </div>
+  `;
+}
+
+function renderToPanel(uid, from, fromEmail, toName, toEmail, datetime) {
+  return `
     <div class="sender-detail-panel" data-to-panel="${uid}">
       <div class="panel-row"><span class="panel-label">From:</span><span style="font-size: 11px;">${from}・${fromEmail}</span></div>
       <div class="panel-row"><span class="panel-label">宛先:</span><span>${toName}・${toEmail}</span></div>
@@ -311,6 +316,16 @@ function renderToBlock(uid, from, fromEmail, toName, toEmail, datetime) {
         <span>🔒</span>
         <span>標準的な暗号化（TLS）が適用されています。<br><span class="security-link">セキュリティの詳細を表示</span></span>
       </div>
+    </div>
+  `;
+}
+
+function renderSenderCardIcons() {
+  return `
+    <div class="sender-card-icons">
+      <button class="mini-icon-btn" aria-label="リアクション" onclick="alert('リアクションを送信（デモ）')">😊</button>
+      <button class="mini-icon-btn" aria-label="返信" onclick="alert('返信（デモ）')">↩</button>
+      <button class="mini-icon-btn" aria-label="その他" onclick="alert('その他のオプション（デモ）')">⋮</button>
     </div>
   `;
 }
@@ -384,11 +399,9 @@ function openDetail(id) {
 
   const subjectRowHTML = `
     <div class="detail-subject-block">
-      <div class="detail-subject-text">${mail.subject}</div>
-      <div class="detail-badge-row">
-        <span class="inbox-badge">受信トレイ</span>
-        <button class="detail-title-star" data-star="${mail.id}">${starSVG(mail.starred)}</button>
-      </div>
+      <span class="detail-subject-text">${mail.subject}</span>
+      <span class="inbox-badge">受信トレイ</span>
+      <button class="detail-title-star" data-star="${mail.id}">${starSVG(mail.starred)}</button>
     </div>
   `;
 
@@ -398,9 +411,11 @@ function openDetail(id) {
         <div class="detail-avatar" style="background:${colorFor(msg.from)};">${initial(msg.from)}</div>
         <div class="detail-sender-info">
           <div class="detail-sender-name">${msg.from} <span class="thread-date-inline">${msg.date}</span></div>
+          ${renderToLine(`${mail.id}-${i}`)}
         </div>
+        ${renderSenderCardIcons()}
       </div>
-      <div class="to-panel-wrap">${renderToBlock(`${mail.id}-${i}`, msg.from, msg.fromEmail, msg.to, msg.toEmail, msg.datetime)}</div>
+      ${renderToPanel(`${mail.id}-${i}`, msg.from, msg.fromEmail, msg.to, msg.toEmail, msg.datetime)}
       <div class="detail-body-text">${msg.body}${msg.attachment ? renderAttachment(msg.attachment) : ''}</div>
     </div>
   `).join('') : '';
@@ -413,12 +428,13 @@ function openDetail(id) {
     <div class="detail-meta-row">
       <div class="detail-avatar" style="background:${colorFor(mail.name)};">${initial(mail.name)}</div>
       <div class="detail-sender-info">
-        <div class="detail-sender-name">${mail.name}</div>
+        <div class="detail-sender-name">${mail.name} <span class="thread-date-inline">${mail.date}</span></div>
         <div class="detail-sender-email">${mail.email}</div>
+        ${renderToLine(mail.id)}
       </div>
-      <span class="detail-date">${mail.date}</span>
+      ${renderSenderCardIcons()}
     </div>
-    <div class="to-panel-wrap">${renderToBlock(mail.id, mail.name, mail.email, '野口', MY_EMAIL, mail.date)}</div>
+    ${renderToPanel(mail.id, mail.name, mail.email, '野口', MY_EMAIL, mail.date)}
     <div class="detail-body-text">${mail.body}</div>
   `;
   bindToPanelToggles(area);
