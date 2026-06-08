@@ -94,10 +94,8 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 .quote-block { margin-top: 18px; padding-top: 14px; padding-left: 16px; border-top: 1px solid #ecdfc8; font-size: 13px; color: #5f6368; line-height: 1.6; }
 .quote-meta { margin-bottom: 6px; }
 .quote-link { color: #1a73e8; cursor: pointer; }
-.attachment-card { display: flex; align-items: center; gap: 14px; margin-top: 18px; padding: 14px 16px; background: #fff; border: 1px solid #dadce0; border-radius: 10px; max-width: 320px; white-space: normal; }
-.attachment-thumb { width: 52px; height: 64px; flex-shrink: 0; background: #fff; border: 1px solid #e0a0a0; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 6px 4px; }
-.attachment-thumb .label { font-size: 10px; color: #d33; font-weight: 700; }
-.attachment-thumb .amount { font-size: 9.5px; color: #333; font-weight: 700; text-align: center; line-height: 1.3; }
+.attachment-card { display: flex; align-items: center; gap: 12px; margin-top: 18px; padding: 12px 16px; background: #FAE8CC; border-radius: 12px; max-width: 320px; white-space: normal; }
+.attachment-icon { width: 40px; height: 40px; flex-shrink: 0; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
 .attachment-info { min-width: 0; }
 .attachment-name { font-size: 13.5px; color: #202124; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .attachment-meta { font-size: 12px; color: #5f6368; margin-top: 3px; }
@@ -291,7 +289,7 @@ const MAILS = [
       {
         from: '野口', fromEmail: 'volca7000@gmail.com', to: '金', toEmail: 'taku@soraboljewelry.com', date: '5月19日', datetime: '2026年5月19日(火) 11:05',
         body: 'ソラボルジュエリー株式会社 金様\n\nお世話になっております。株式会社M.T DICEの野口です。\n\n2026年5月15日に納品いたしました下記商品につきまして、請求書を添付にてお送りいたします。\n\n・K18ブレスレット用製作用パーツ一式\n・Pt900リング\n・ペンダント製品\n・SV925ネックレスクロストップ製品\n\n請求金額：1,903,000円（税込）\n支払期日：2026年6月30日\n\nご確認のほど、よろしくお願いいたします。\n\n株式会社M.T DICE\n代表取締役 野口 修造\n〒135-0016 東京都台東区台東4-49-15 上野永谷タウンプラザ211\nTEL：050-1181-9376\nMAIL：volca7000@gmail.com',
-        attachment: { name: '請求書 2026...ボル.pdf', amount: '1,903,000', size: '142 KB' },
+        attachment: { name: '請求書 2026_0518_B021.pdf', amount: '1,903,000' },
       },
       {
         from: '金', fromEmail: 'taku@soraboljewelry.com', to: '野口', toEmail: 'volca7000@gmail.com', date: '5月19日', datetime: '2026年5月19日(火) 13:47',
@@ -358,13 +356,12 @@ function bindToPanelToggles(area) {
 function renderAttachment(att) {
   return `
     <div class="attachment-card">
-      <div class="attachment-thumb">
-        <span class="label">請求書</span>
-        <span class="amount">¥${att.amount}</span>
+      <div class="attachment-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D93025" stroke-width="1.8"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z" stroke-linejoin="round"/><path d="M14 3v5h5" stroke-linejoin="round"/></svg>
       </div>
       <div class="attachment-info">
         <div class="attachment-name">${att.name}</div>
-        <div class="attachment-meta">PDF・${att.size}</div>
+        <div class="attachment-meta">請求書 ¥${att.amount}</div>
       </div>
     </div>
   `;
