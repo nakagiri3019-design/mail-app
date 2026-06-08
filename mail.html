@@ -64,6 +64,17 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 .detail-star { background: none; border: none; cursor: pointer; padding: 2px; flex-shrink: 0; }
 .detail-body-area { flex: 1; overflow-y: auto; padding: 4px 20px 100px; }
 .detail-body-text { font-size: 15px; line-height: 1.9; color: #202124; white-space: pre-wrap; }
+.thread-message { padding-bottom: 22px; margin-bottom: 22px; border-bottom: 1px solid #e8e8e8; }
+.thread-message:last-child { border-bottom: none; margin-bottom: 0; }
+.thread-message .detail-meta-row { padding: 6px 0 14px; }
+.thread-to { font-weight: 400; color: #5f6368; font-size: 13px; }
+.attachment-card { display: flex; align-items: center; gap: 14px; margin-top: 18px; padding: 14px 16px; background: #fff; border: 1px solid #dadce0; border-radius: 10px; max-width: 320px; white-space: normal; }
+.attachment-thumb { width: 52px; height: 64px; flex-shrink: 0; background: #fff; border: 1px solid #e0a0a0; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 6px 4px; }
+.attachment-thumb .label { font-size: 10px; color: #d33; font-weight: 700; }
+.attachment-thumb .amount { font-size: 9.5px; color: #333; font-weight: 700; text-align: center; line-height: 1.3; }
+.attachment-info { min-width: 0; }
+.attachment-name { font-size: 13.5px; color: #202124; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.attachment-meta { font-size: 12px; color: #5f6368; margin-top: 3px; }
 .detail-actions { position: absolute; left: 20px; right: 20px; bottom: 18px; display: flex; gap: 10px; }
 .detail-action-btn { flex: 1; background: #fff; border: 1px solid #dadce0; border-radius: 22px; padding: 11px 0; font-size: 14px; font-weight: 600; color: #444; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
 </style>
@@ -221,6 +232,39 @@ const MAILS = [
     date: '6月3日', unread: false, starred: true,
     body: '先日はお忙しい中、お時間をいただきありがとうございました。\n\nお話しいただいた内容、とても勉強になりました。今後の業務にしっかり活かしていきたいと思います。\n\nまたお会いできる機会があれば嬉しいです。今後ともどうぞよろしくお願いいたします。\n\n高橋 真理子',
   },
+  {
+    id: 'm11', name: '金', email: 'taku@soraboljewelry.com',
+    subject: 'K18ブレスレット用パーツのお見積りおよび納品予定確認',
+    snippet: '請求書を確認いたしました。請求内容に相違ございません。',
+    date: '5月19日', unread: false, starred: false,
+    thread: [
+      {
+        from: '金', fromEmail: 'taku@soraboljewelry.com', to: '野口', toEmail: 'volca7000@gmail.com', date: '5月8日',
+        body: '株式会社M.T DICE 野口様\n\nお世話になっております。ソラボルジュエリーの金です。先日はありがとうございました。\n\n追加で、K18ブレスレット用の製作用パーツが不足してきましたので、下記内容でお見積りをお願いできますでしょうか。\n\n・K18クリップ\n・K18プレート\n・K18丸カン\n・K18ブレスレット用クラスプ\n\n数量は前回と同程度で考えておりますが、在庫状況に応じて調整いただいて構いません。\n\nまた、連休前にお願いしておりましたPt900リングおよびSV925ネックレスクロストップの納品予定日についても、あわせて確認させてください。可能であれば、今回追加でお願いするK18製作用パーツと一緒に納品いただけますと助かります。\n\nお手数ですが、金額と納品予定日をご確認のうえ、ご連絡いただけますでしょうか。よろしくお願いいたします。\n\nソラボルジュエリー株式会社\n金\n〒110-0016 東京都台東区台東4-8-9\nTEL：03-3839-8400\nMAIL：taku@soraboljewelry.com',
+      },
+      {
+        from: '野口', fromEmail: 'volca7000@gmail.com', to: '金', toEmail: 'taku@soraboljewelry.com', date: '5月8日',
+        body: 'ソラボルジュエリー株式会社 金様\n\nお世話になっております。株式会社M.T DICEの野口です。ご連絡ありがとうございます。\n\nK18ブレスレット用の製作用パーツにつきまして、下記内容でご用意可能です。\n\n・K18クリップ\n・K18プレート\n・K18丸カン\n・K18ブレスレット用クラスプ\n\n上記一式で、620,000円にてお見積りいたします。\n\nまた、連休前にご依頼いただいておりましたPt900リングおよびSV925ネックレスクロストップにつきましても、あわせて納品可能です。今回追加分のK18製作用パーツと、連休前にご依頼いただいておりましたPt900リングおよびSV925ネックレスクロストップを、2026年5月15日にまとめて納品できるよう手配いたします。\n\n納品準備が整いましたら、改めてご連絡いたします。よろしくお願いいたします。\n\n株式会社M.T DICE\n代表取締役 野口 修造\n〒135-0016 東京都台東区台東4-49-15 上野永谷タウンプラザ211\nTEL：050-1181-9376\nMAIL：volca7000@gmail.com',
+      },
+      {
+        from: '金', fromEmail: 'taku@soraboljewelry.com', to: '野口', toEmail: 'volca7000@gmail.com', date: '5月8日',
+        body: '株式会社M.T DICE 野口様\n\nお世話になっております。ソラボルジュエリーの金です。お見積りありがとうございます。\n\nご提示いただいた内容で、正式に発注いたします。発注書を添付いたしますので、ご確認ください。\n\n納品日は、5月15日でお願いいたします。今回追加分のK18製作用パーツと、連休前にお願いしていたPt900リングおよびSV925ネックレスクロストップを、まとめて納品いただけますと助かります。\n\nそれでは、上記内容で進めていただけますようお願いいたします。よろしくお願いいたします。\n\nソラボルジュエリー株式会社\n金\n〒110-0016 東京都台東区台東4-8-9\nTEL：03-3839-8400\nMAIL：taku@soraboljewelry.com',
+      },
+      {
+        from: '野口', fromEmail: 'volca7000@gmail.com', to: '金', toEmail: 'taku@soraboljewelry.com', date: '5月15日',
+        body: 'ソラボルジュエリー株式会社 金様\n\nお世話になっております。株式会社M.T DICEの野口です。\n\nご発注いただいておりました下記商品につきまして、本日納品が完了いたしました。\n\n・K18ブレスレット用製作用パーツ一式\n・Pt900リング\n・ペンダント製品\n・SV925ネックレスクロストップ製品\n\nよろしくお願いいたします。\n\n株式会社M.T DICE\n代表取締役 野口 修造\n〒135-0016 東京都台東区台東4-49-15 上野永谷タウンプラザ211\nTEL：050-1181-9376\nMAIL：volca7000@gmail.com',
+      },
+      {
+        from: '野口', fromEmail: 'volca7000@gmail.com', to: '金', toEmail: 'taku@soraboljewelry.com', date: '5月19日',
+        body: 'ソラボルジュエリー株式会社 金様\n\nお世話になっております。株式会社M.T DICEの野口です。\n\n2026年5月15日に納品いたしました下記商品につきまして、請求書を添付にてお送りいたします。\n\n・K18ブレスレット用製作用パーツ一式\n・Pt900リング\n・ペンダント製品\n・SV925ネックレスクロストップ製品\n\n請求金額：1,903,000円（税込）\n支払期日：2026年6月30日\n\nご確認のほど、よろしくお願いいたします。\n\n株式会社M.T DICE\n代表取締役 野口 修造\n〒135-0016 東京都台東区台東4-49-15 上野永谷タウンプラザ211\nTEL：050-1181-9376\nMAIL：volca7000@gmail.com',
+        attachment: { name: '請求書 2026...ボル.pdf', amount: '1,903,000', size: '142 KB' },
+      },
+      {
+        from: '金', fromEmail: 'taku@soraboljewelry.com', to: '野口', toEmail: 'volca7000@gmail.com', date: '5月19日',
+        body: '株式会社M.T DICE 野口様\n\nお世話になっております。ソラボルジュエリーの金です。\n\n請求書を確認いたしました。請求内容に相違ございません。\n\n今後ともよろしくお願いいたします。\n\nソラボルジュエリー株式会社\n金\n〒110-0016 東京都台東区台東4-8-9\nTEL：03-3839-8400\nMAIL：taku@soraboljewelry.com',
+      },
+    ],
+  },
 ];
 
 function initial(name) {
@@ -231,6 +275,21 @@ function starSVG(filled) {
   return filled
     ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="#F4B400" stroke="#F4B400" stroke-width="1.5"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`
     : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`;
+}
+
+function renderAttachment(att) {
+  return `
+    <div class="attachment-card">
+      <div class="attachment-thumb">
+        <span class="label">請求書</span>
+        <span class="amount">¥${att.amount}</span>
+      </div>
+      <div class="attachment-info">
+        <div class="attachment-name">${att.name}</div>
+        <div class="attachment-meta">PDF・${att.size}</div>
+      </div>
+    </div>
+  `;
 }
 
 function renderList() {
@@ -272,7 +331,25 @@ function openDetail(id) {
   mail.unread = false;
 
   const area = document.getElementById('detail-body-area');
-  area.innerHTML = `
+
+  const threadHTML = mail.thread ? mail.thread.map((msg) => `
+    <div class="thread-message">
+      <div class="detail-meta-row">
+        <div class="detail-avatar" style="background:${colorFor(msg.from)};">${initial(msg.from)}</div>
+        <div class="detail-sender-info">
+          <div class="detail-sender-name">${msg.from} <span class="thread-to">→ ${msg.to}</span></div>
+          <div class="detail-sender-email">${msg.fromEmail}</div>
+        </div>
+        <span class="detail-date">${msg.date}</span>
+      </div>
+      <div class="detail-body-text">${msg.body}${msg.attachment ? renderAttachment(msg.attachment) : ''}</div>
+    </div>
+  `).join('') : '';
+
+  area.innerHTML = mail.thread ? `
+    <div class="detail-subject">${mail.subject}</div>
+    ${threadHTML}
+  ` : `
     <div class="detail-subject">${mail.subject}</div>
     <div class="detail-meta-row">
       <div class="detail-avatar" style="background:${colorFor(mail.name)};">${initial(mail.name)}</div>
@@ -285,10 +362,13 @@ function openDetail(id) {
     </div>
     <div class="detail-body-text">${mail.body}</div>
   `;
-  area.querySelector('.detail-star').addEventListener('click', () => {
-    mail.starred = !mail.starred;
-    area.querySelector('.detail-star').innerHTML = starSVG(mail.starred);
-  });
+  const starBtn = area.querySelector('.detail-star');
+  if (starBtn) {
+    starBtn.addEventListener('click', () => {
+      mail.starred = !mail.starred;
+      starBtn.innerHTML = starSVG(mail.starred);
+    });
+  }
   area.scrollTop = 0;
 
   document.getElementById('inbox-view').style.display = 'none';
