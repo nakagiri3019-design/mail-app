@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mail</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FEF7E0">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mail">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0f0f0; display: flex; justify-content: center; }
+#app { width: 100%; max-width: 100%; height: 100vh; height: 100dvh; background: #FEF7E0; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+
+/* INBOX VIEW */
+#inbox-view { display: flex; flex-direction: column; height: 100%; position: relative; }
+.inbox-header { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; background: #FEF7E0; }
+.menu-btn, .icon-btn-plain { background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; }
+.search-pill { flex: 1; background: #fff; border-radius: 26px; padding: 10px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.search-pill span { color: #777; font-size: 15px; flex: 1; }
+.account-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; font-size: 14px; flex-shrink: 0; }
+
+.tabs-row { display: flex; gap: 10px; padding: 6px 16px 12px; overflow-x: auto; }
+.tab-chip { border: none; border-radius: 18px; padding: 8px 18px; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; }
+.tab-chip.active { background: #1a73e8; color: #fff; }
+.tab-chip:not(.active) { background: #fff; color: #444; }
+
+.mail-list { flex: 1; overflow-y: auto; background: #FEF7E0; }
+.mail-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-bottom: 1px solid rgba(0,0,0,0.06); cursor: pointer; transition: background 0.1s; }
+.mail-row:active { background: rgba(0,0,0,0.04); }
+.mail-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+.mail-body { flex: 1; min-width: 0; }
+.mail-top-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.mail-sender { font-size: 14.5px; color: #444; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mail-row.unread .mail-sender { color: #111; font-weight: 700; }
+.mail-date { font-size: 12px; color: #777; flex-shrink: 0; }
+.mail-row.unread .mail-date { color: #111; font-weight: 700; }
+.mail-subject-line { font-size: 13.5px; color: #555; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mail-row.unread .mail-subject-line { color: #111; }
+.mail-subject-line .subj { font-weight: 600; }
+.mail-row.unread .mail-subject-line .subj { font-weight: 700; }
+.mail-snippet { color: #777; font-weight: 400; }
+.star-btn { background: none; border: none; cursor: pointer; padding: 4px; flex-shrink: 0; align-self: center; }
+
+.compose-fab { position: absolute; right: 18px; bottom: 24px; background: #FF7A00; color: #fff; border: none; border-radius: 28px; padding: 16px 24px 16px 18px; display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(255,122,0,0.4); }
+
+.bottom-tabs { display: flex; background: #fff; border-top: 1px solid #e7e0cf; padding: 8px 0 10px; }
+.tab-btn { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.tab-btn .tab-label { font-size: 10px; color: #777; }
+.tab-btn.active .tab-label { color: #1a73e8; font-weight: 700; }
+
+/* DETAIL VIEW */
+#detail-view { display: none; flex-direction: column; height: 100%; background: #fff; }
+.detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #FEF7E0; }
+.detail-header .spacer { flex: 1; }
+.detail-subject { font-size: 21px; font-weight: 500; color: #202124; padding: 18px 20px 6px; }
+.detail-meta-row { display: flex; align-items: flex-start; gap: 14px; padding: 6px 20px 16px; }
+.detail-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 17px; flex-shrink: 0; }
+.detail-sender-info { flex: 1; min-width: 0; }
+.detail-sender-name { font-size: 14.5px; font-weight: 600; color: #202124; }
+.detail-sender-email { font-size: 12.5px; color: #5f6368; margin-top: 1px; }
+.detail-date { font-size: 12px; color: #5f6368; white-space: nowrap; }
+.detail-star { background: none; border: none; cursor: pointer; padding: 2px; flex-shrink: 0; }
+.detail-body-area { flex: 1; overflow-y: auto; padding: 4px 20px 100px; }
+.detail-body-text { font-size: 15px; line-height: 1.9; color: #202124; white-space: pre-wrap; }
+.detail-actions { position: absolute; left: 20px; right: 20px; bottom: 18px; display: flex; gap: 10px; }
+.detail-action-btn { flex: 1; background: #fff; border: 1px solid #dadce0; border-radius: 22px; padding: 11px 0; font-size: 14px; font-weight: 600; color: #444; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- INBOX VIEW -->
+<div id="inbox-view">
+  <div class="inbox-header">
+    <button class="menu-btn" aria-label="メニュー">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6" stroke-linecap="round"/><line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round"/><line x1="3" y1="18" x2="21" y2="18" stroke-linecap="round"/></svg>
+    </button>
+    <div class="search-pill">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke-linecap="round"/></svg>
+      <span>メールを検索</span>
+    </div>
+    <div class="account-avatar" style="background:#7B4FCB;">中</div>
+  </div>
+
+  <div class="tabs-row">
+    <button class="tab-chip active">メイン</button>
+    <button class="tab-chip">プロモーション</button>
+    <button class="tab-chip">SNS</button>
+    <button class="tab-chip">更新情報</button>
+  </div>
+
+  <div class="mail-list" id="mail-list"></div>
+
+  <button class="compose-fab" onclick="alert('新規メールの作成（デモ）')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3"><path d="M12 20h9" stroke-linecap="round"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>作成</span>
+  </button>
+
+  <div class="bottom-tabs">
+    <button class="tab-btn active">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a73e8" stroke-width="2"><path d="M3 8l9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+      <span class="tab-label">メール</span>
+    </button>
+    <button class="tab-btn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="8" r="2.6"/><path d="M15.5 14.2c2.6.3 4.5 2.6 4.5 5.8"/></svg>
+      <span class="tab-label">Meet</span>
+    </button>
+  </div>
+</div>
+
+<!-- DETAIL VIEW -->
+<div id="detail-view">
+  <div class="detail-header">
+    <button class="icon-btn-plain" onclick="closeDetail()" aria-label="戻る">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2.2"><path d="M19 12H5" stroke-linecap="round"/><path d="M11 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="spacer"></div>
+    <button class="icon-btn-plain" aria-label="アーカイブ">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a2 2 0 002 2h10a2 2 0 002-2V9"/><line x1="10" y1="13" x2="14" y2="13" stroke-linecap="round"/></svg>
+    </button>
+    <button class="icon-btn-plain" aria-label="削除">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+    </button>
+    <button class="icon-btn-plain" aria-label="既読/未読">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><path d="M21 8l-9 6-9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+    </button>
+  </div>
+
+  <div class="detail-body-area" id="detail-body-area">
+    <!-- filled by JS -->
+  </div>
+
+  <div class="detail-actions">
+    <button class="detail-action-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2.2"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 00-4-4H4"/></svg>
+      返信
+    </button>
+    <button class="detail-action-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2.2"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 014-4h12"/></svg>
+      転送
+    </button>
+  </div>
+</div>
+
+</div>
+
+<script>
+const AVATAR_COLORS = ['#1a73e8','#D93025','#188038','#8430CE','#E37400','#0B8043','#C2185B','#00897B','#5C6BC0'];
+
+function colorFor(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+
+const MAILS = [
+  {
+    id: 'm1', name: 'Google アカウント', email: 'no-reply@accounts.google.com',
+    subject: 'セキュリティ アラート：新しいデバイスからログインがありました',
+    snippet: 'Windows のパソコンから新しいログインがありました。心当たりがない場合は、今すぐパスワードを変更してください。',
+    date: '14:32', unread: true, starred: true,
+    body: 'いつも Google をご利用いただきありがとうございます。\n\nお客様の Google アカウントに、新しいデバイス（Windows パソコン）からログインがありました。\n\n日時：本日 14:28\n場所：東京都\n\nこのログインに心当たりがない場合は、すぐにパスワードを変更し、アカウントのセキュリティ設定をご確認ください。\n\n心当たりがある場合は、このメールは無視していただいて問題ありません。\n\nGoogle アカウント チーム',
+  },
+  {
+    id: 'm2', name: '佐藤 美咲', email: 'misaki.sato@example.com',
+    subject: '明日の打ち合わせの件について',
+    snippet: 'お疲れ様です。明日14時からの打ち合わせですが、会議室を3階の第2会議室に変更させていただきました。',
+    date: '13:10', unread: true, starred: false,
+    body: 'お疲れ様です、佐藤です。\n\n明日14時からの打ち合わせの件ですが、会議室を3階の第2会議室に変更させていただきました。\n資料は前日までに共有フォルダにアップロードしておきますので、ご確認のほどよろしくお願いいたします。\n\n当日はオンライン参加の方もいらっしゃいますので、接続テストも事前に行っておきます。\n\n何かご不明な点がございましたら、お気軽にご連絡ください。\n\n佐藤 美咲',
+  },
+  {
+    id: 'm3', name: 'Amazon.co.jp', email: 'order-update@amazon.co.jp',
+    subject: 'ご注文の商品を発送しました',
+    snippet: 'ご注文いただいた商品を発送しました。お届け予定日は6月10日です。配送状況は注文履歴からご確認いただけます。',
+    date: '11:48', unread: false, starred: false,
+    body: 'いつも Amazon.co.jp をご利用いただきありがとうございます。\n\nご注文いただいた商品を発送いたしましたのでお知らせいたします。\n\n注文番号：249-1837456-2837465\nお届け予定日：6月10日（水）\n\n配送状況の確認は、注文履歴ページからいつでも行うことができます。\n\n今後とも Amazon.co.jp をよろしくお願いいたします。',
+  },
+  {
+    id: 'm4', name: '田中 健一', email: 'kenichi.tanaka@example.com',
+    subject: 'Re: 見積書の送付について',
+    snippet: 'ご連絡ありがとうございます。添付の見積書を確認しましたので、来週中にお返事させていただきます。',
+    date: '10:55', unread: false, starred: true,
+    body: 'お世話になっております。田中です。\n\nご連絡ありがとうございます。添付いただいた見積書を拝見いたしました。\n内容について社内で確認のうえ、来週中には正式なお返事をさせていただきたく存じます。\n\nお時間をいただき恐縮ですが、もうしばらくお待ちいただけますと幸いです。\n\n何卒よろしくお願いいたします。\n\n田中 健一',
+  },
+  {
+    id: 'm5', name: 'YouTube', email: 'no-reply@youtube.com',
+    subject: 'チャンネル登録チャンネルが新しい動画を投稿しました',
+    snippet: '登録チャンネルから新しい動画が公開されました。今すぐチェックしてみましょう。',
+    date: '9:20', unread: false, starred: false,
+    body: 'こんにちは\n\nあなたが登録しているチャンネルが新しい動画を公開しました。\n\n「初心者でもわかる！週末プログラミング入門」\n\n気になる方は、ぜひチェックしてみてください。\n\nYouTube チーム',
+  },
+  {
+    id: 'm6', name: '山本 さくら', email: 'sakura.yamamoto@example.com',
+    subject: '今度の同窓会について',
+    snippet: '久しぶり！来月の同窓会だけど、会場が決まったので連絡するね。日程は変わらず第三土曜日の予定だよ。',
+    date: '昨日', unread: false, starred: false,
+    body: '久しぶり！元気にしてる？\n\n来月の同窓会の件だけど、会場が決まったので連絡するね。\n日程は予定通り第三土曜日の夜からで、場所は駅前の新しくできたお店にしようと思ってるよ。\n\n参加できそうだったら、来週末までに返事もらえると助かります！\n久しぶりにみんなに会えるの楽しみにしてるね。\n\nさくら',
+  },
+  {
+    id: 'm7', name: 'note', email: 'info@note.com',
+    subject: '今週のおすすめ記事をお届けします',
+    snippet: 'あなたの興味に合わせた記事をピックアップしました。今週は「文章力を磨く5つの習慣」が人気です。',
+    date: '昨日', unread: false, starred: false,
+    body: 'いつも note をご利用いただきありがとうございます。\n\n今週、あなたにおすすめの記事をピックアップしました。\n\n・文章力を磨く5つの習慣\n・はじめてのフリーランス、収入の作り方\n・写真が劇的に良くなる構図のコツ\n\n気になる記事があれば、ぜひ読んでみてください。',
+  },
+  {
+    id: 'm8', name: '鈴木 大輔', email: 'daisuke.suzuki@example.com',
+    subject: '資料のご確認をお願いします',
+    snippet: 'お疲れ様です。先日お話しした件の資料を作成しましたので、ご確認いただけますでしょうか。',
+    date: '6月5日', unread: false, starred: false,
+    body: 'お疲れ様です、鈴木です。\n\n先日お話しした件について、資料を作成いたしましたので添付いたします。\nお忙しいところ恐縮ですが、ご確認いただけますと幸いです。\n\n修正点やご要望がありましたら、遠慮なくお知らせください。\n\n何卒よろしくお願いいたします。\n\n鈴木 大輔',
+  },
+  {
+    id: 'm9', name: 'PayPay', email: 'no-reply@paypay.ne.jp',
+    subject: 'お支払い完了のお知らせ',
+    snippet: 'コンビニエンスストアでのお支払いが完了しました。ご利用金額やご利用先の詳細はアプリでご確認いただけます。',
+    date: '6月4日', unread: false, starred: false,
+    body: 'PayPay をご利用いただきありがとうございます。\n\n下記の通り、お支払いが完了しましたのでお知らせいたします。\n\nご利用日時：6月4日 18:42\nご利用金額：1,280円\nご利用先：コンビニエンスストア\n\n詳細はアプリの利用履歴からご確認いただけます。',
+  },
+  {
+    id: 'm10', name: '高橋 真理子', email: 'mariko.takahashi@example.com',
+    subject: 'ありがとうございました！',
+    snippet: '先日はお忙しい中、貴重なお時間をいただきありがとうございました。とても勉強になりました。',
+    date: '6月3日', unread: false, starred: true,
+    body: '先日はお忙しい中、お時間をいただきありがとうございました。\n\nお話しいただいた内容、とても勉強になりました。今後の業務にしっかり活かしていきたいと思います。\n\nまたお会いできる機会があれば嬉しいです。今後ともどうぞよろしくお願いいたします。\n\n高橋 真理子',
+  },
+];
+
+function initial(name) {
+  return name.trim().charAt(0);
+}
+
+function starSVG(filled) {
+  return filled
+    ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="#F4B400" stroke="#F4B400" stroke-width="1.5"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`
+    : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`;
+}
+
+function renderList() {
+  const list = document.getElementById('mail-list');
+  list.innerHTML = MAILS.map((m) => `
+    <div class="mail-row ${m.unread ? 'unread' : ''}" data-id="${m.id}">
+      <div class="mail-avatar" style="background:${colorFor(m.name)};">${initial(m.name)}</div>
+      <div class="mail-body">
+        <div class="mail-top-row">
+          <span class="mail-sender">${m.name}</span>
+          <span class="mail-date">${m.date}</span>
+        </div>
+        <div class="mail-subject-line"><span class="subj">${m.subject}</span> <span class="mail-snippet">- ${m.snippet}</span></div>
+      </div>
+      <button class="star-btn" data-star="${m.id}">${starSVG(m.starred)}</button>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.mail-row').forEach((row) => {
+    row.addEventListener('click', (e) => {
+      if (e.target.closest('.star-btn')) return;
+      openDetail(row.getAttribute('data-id'));
+    });
+  });
+  list.querySelectorAll('.star-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute('data-star');
+      const mail = MAILS.find((x) => x.id === id);
+      mail.starred = !mail.starred;
+      btn.innerHTML = starSVG(mail.starred);
+    });
+  });
+}
+
+function openDetail(id) {
+  const mail = MAILS.find((x) => x.id === id);
+  if (!mail) return;
+  mail.unread = false;
+
+  const area = document.getElementById('detail-body-area');
+  area.innerHTML = `
+    <div class="detail-subject">${mail.subject}</div>
+    <div class="detail-meta-row">
+      <div class="detail-avatar" style="background:${colorFor(mail.name)};">${initial(mail.name)}</div>
+      <div class="detail-sender-info">
+        <div class="detail-sender-name">${mail.name}</div>
+        <div class="detail-sender-email">${mail.email}</div>
+      </div>
+      <span class="detail-date">${mail.date}</span>
+      <button class="detail-star" data-star="${mail.id}">${starSVG(mail.starred)}</button>
+    </div>
+    <div class="detail-body-text">${mail.body}</div>
+  `;
+  area.querySelector('.detail-star').addEventListener('click', () => {
+    mail.starred = !mail.starred;
+    area.querySelector('.detail-star').innerHTML = starSVG(mail.starred);
+  });
+  area.scrollTop = 0;
+
+  document.getElementById('inbox-view').style.display = 'none';
+  document.getElementById('detail-view').style.display = 'flex';
+  renderList();
+}
+
+function closeDetail() {
+  document.getElementById('detail-view').style.display = 'none';
+  document.getElementById('inbox-view').style.display = 'flex';
+  renderList();
+}
+
+renderList();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js').then((reg) => {
+      reg.update();
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'activated') {
+            window.location.reload();
+          }
+        });
+      });
+    }).catch((err) => {
+      console.error('Service worker registration failed:', err);
+    });
+
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
+  });
+}
+</script>
+</body>
+</html>
