@@ -54,15 +54,16 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 #detail-view { display: none; flex-direction: column; height: 100%; background: #FFF8F0; }
 .detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #FFEBD0; }
 .detail-header .spacer { flex: 1; }
-.detail-subject-row { display: flex; align-items: center; flex-wrap: nowrap; gap: 10px; padding: 18px 20px 6px 28px; }
-.detail-subject-text { font-size: 21px; font-weight: 500; color: #202124; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.detail-subject-block { padding: 18px 20px 6px 28px; }
+.detail-subject-text { font-size: 23px; font-weight: 500; color: #202124; line-height: 1.4; }
+.detail-badge-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
 .inbox-badge { background: #FF7A00; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
-.detail-title-star { background: none; border: none; cursor: pointer; padding: 2px; flex-shrink: 0; display: flex; }
+.detail-title-star { background: none; border: none; cursor: pointer; padding: 2px; flex-shrink: 0; display: flex; margin-left: auto; }
 .detail-meta-row { display: flex; align-items: flex-start; gap: 14px; padding: 6px 20px 16px; }
 .detail-to-line { font-size: 12px; color: #5f6368; margin-top: 2px; }
 .to-line-toggle { cursor: pointer; display: inline-flex; align-items: center; gap: 4px; user-select: none; }
 .to-arrow { font-size: 9px; }
-.sender-detail-panel { display: none; margin-top: 10px; background: #FAE8CC; border-radius: 14px; padding: 14px 16px; font-size: 12.5px; color: #444; }
+.sender-detail-panel { display: none; margin-top: 10px; background: #FAE8CC; border-radius: 14px; padding: 14px 20px; font-size: 12.5px; color: #444; }
 .sender-detail-panel.open { display: block; }
 .sender-detail-panel .panel-row { display: flex; gap: 8px; padding: 3px 0; line-height: 1.6; overflow-x: auto; }
 .sender-detail-panel .panel-row > span:last-child { white-space: nowrap; }
@@ -296,14 +297,14 @@ function starSVG(filled) {
     : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`;
 }
 
-function renderToBlock(uid, from, fromEmail, toEmail, datetime) {
+function renderToBlock(uid, from, fromEmail, toName, toEmail, datetime) {
   return `
     <div class="detail-to-line to-line-toggle" data-to-toggle="${uid}">
       <span>To: 自分</span><span class="to-arrow">▼</span>
     </div>
     <div class="sender-detail-panel" data-to-panel="${uid}">
       <div class="panel-row"><span class="panel-label">From:</span><span>${from}・${fromEmail}</span></div>
-      <div class="panel-row"><span class="panel-label">宛先:</span><span>${toEmail}</span></div>
+      <div class="panel-row"><span class="panel-label">宛先:</span><span>${toName}・${toEmail}</span></div>
       <div class="panel-row"><span class="panel-label">日付:</span><span>${datetime}</span></div>
       <div class="security-notice">
         <span>🔒</span>
@@ -381,10 +382,12 @@ function openDetail(id) {
   const area = document.getElementById('detail-body-area');
 
   const subjectRowHTML = `
-    <div class="detail-subject-row">
-      <span class="detail-subject-text">${mail.subject}</span>
-      <span class="inbox-badge">受信トレイ</span>
-      <button class="detail-title-star" data-star="${mail.id}">${starSVG(mail.starred)}</button>
+    <div class="detail-subject-block">
+      <div class="detail-subject-text">${mail.subject}</div>
+      <div class="detail-badge-row">
+        <span class="inbox-badge">受信トレイ</span>
+        <button class="detail-title-star" data-star="${mail.id}">${starSVG(mail.starred)}</button>
+      </div>
     </div>
   `;
 
@@ -395,7 +398,7 @@ function openDetail(id) {
         <div class="detail-sender-info">
           <div class="detail-sender-name">${msg.from} <span class="thread-to">→ ${msg.to}</span></div>
           <div class="detail-sender-email">${msg.fromEmail}</div>
-          ${renderToBlock(`${mail.id}-${i}`, msg.from, msg.fromEmail, msg.toEmail, msg.datetime)}
+          ${renderToBlock(`${mail.id}-${i}`, msg.from, msg.fromEmail, msg.to, msg.toEmail, msg.datetime)}
         </div>
         <span class="detail-date">${msg.date}</span>
       </div>
@@ -413,7 +416,7 @@ function openDetail(id) {
       <div class="detail-sender-info">
         <div class="detail-sender-name">${mail.name}</div>
         <div class="detail-sender-email">${mail.email}</div>
-        ${renderToBlock(mail.id, mail.name, mail.email, MY_EMAIL, mail.date)}
+        ${renderToBlock(mail.id, mail.name, mail.email, '野口', MY_EMAIL, mail.date)}
       </div>
       <span class="detail-date">${mail.date}</span>
     </div>
