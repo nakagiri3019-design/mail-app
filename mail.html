@@ -52,9 +52,9 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 
 /* DETAIL VIEW */
 #detail-view { display: none; flex-direction: column; height: 100%; background: #FFF8F0; }
-.detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #FFEBD0; }
+.detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #FFEBD0; position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
 .detail-header .spacer { flex: 1; }
-.detail-subject-block { padding: 18px 20px 6px 16px; text-align: left; }
+.detail-subject-block { padding: 12px 0 10px; text-align: left; }
 .detail-subject-text { font-size: 20px; font-weight: 400; color: #202124; line-height: 1.6; }
 .inbox-badge { display: inline-block; vertical-align: middle; background: #FF7A00; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 10px; white-space: nowrap; margin-left: 10px; }
 .detail-title-star { background: none; border: none; cursor: pointer; padding: 2px; display: inline-flex; vertical-align: middle; margin-left: 10px; }
@@ -75,14 +75,24 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 .detail-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 17px; flex-shrink: 0; }
 .detail-sender-info { flex: 1; min-width: 0; }
 .detail-sender-name { font-size: 14px; font-weight: 600; color: #202124; line-height: 1.3; }
-.detail-sender-email { font-size: 12.5px; color: #5f6368; margin-top: 0; line-height: 1.3; }
-.detail-star { background: none; border: none; cursor: pointer; padding: 2px; flex-shrink: 0; }
-.detail-body-area { flex: 1; overflow-y: auto; padding: 8px 20px 100px; }
-.detail-body-text { font-size: 15px; line-height: 1.9; color: #202124; white-space: pre-wrap; margin-top: 8px; padding: 0 16px; }
-.thread-message { padding-bottom: 22px; margin-bottom: 22px; border-bottom: 1px solid #e8e8e8; }
-.thread-message:last-child { border-bottom: none; margin-bottom: 0; }
-.thread-message .detail-meta-row { padding: 4px 0 6px; }
+.detail-body-area { flex: 1; overflow-y: auto; padding: 60px 16px 92px; }
+.detail-body-text { font-size: 15px; line-height: 1.6; color: #202124; white-space: pre-wrap; padding-left: 16px; }
 .thread-date-inline { font-weight: 400; color: #5f6368; font-size: 12px; margin-left: 6px; }
+.thread-card { background: #fff; border-radius: 14px; margin-bottom: 8px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.thread-card.collapsed { padding: 10px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.thread-card.collapsed .detail-avatar { width: 36px; height: 36px; font-size: 14px; }
+.thread-card-collapsed-info { flex: 1; min-width: 0; }
+.thread-card-row1 { display: flex; align-items: baseline; gap: 8px; }
+.thread-card-name { font-size: 13.5px; font-weight: 600; color: #202124; }
+.thread-card-date { font-size: 11.5px; color: #5f6368; margin-left: auto; flex-shrink: 0; }
+.thread-card-preview { font-size: 12.5px; color: #5f6368; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
+.thread-card.expanded { padding: 14px 16px 18px; }
+.thread-card.expanded .detail-meta-row { padding: 0 0 4px; cursor: pointer; }
+.thread-card.expanded .detail-body-text { margin-top: 10px; }
+.thread-card.expanded .sender-detail-panel { margin: 8px 0; }
+.quote-block { margin-top: 18px; padding-top: 14px; padding-left: 16px; border-top: 1px solid #ecdfc8; font-size: 13px; color: #5f6368; line-height: 1.6; }
+.quote-meta { margin-bottom: 6px; }
+.quote-link { color: #1a73e8; cursor: pointer; }
 .attachment-card { display: flex; align-items: center; gap: 14px; margin-top: 18px; padding: 14px 16px; background: #fff; border: 1px solid #dadce0; border-radius: 10px; max-width: 320px; white-space: normal; }
 .attachment-thumb { width: 52px; height: 64px; flex-shrink: 0; background: #fff; border: 1px solid #e0a0a0; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 6px 4px; }
 .attachment-thumb .label { font-size: 10px; color: #d33; font-weight: 700; }
@@ -90,7 +100,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 .attachment-info { min-width: 0; }
 .attachment-name { font-size: 13.5px; color: #202124; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .attachment-meta { font-size: 12px; color: #5f6368; margin-top: 3px; }
-.detail-actions { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 16px; background: #FFF8F0; border-top: 1px solid #ecdfc8; display: flex; align-items: center; gap: 10px; }
+.detail-actions { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px; background: #FFF8F0; border-top: 1px solid #ecdfc8; display: flex; align-items: center; gap: 10px; z-index: 10; }
 .detail-action-btn { flex: 1; background: #455A64; border: none; height: 48px; border-radius: 24px; font-size: 15px; font-weight: 600; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
 .detail-emoji-btn { width: 48px; height: 48px; flex-shrink: 0; background: #fff; border: 1.5px solid #c9b89a; border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 </style>
@@ -390,12 +400,70 @@ function renderList() {
   });
 }
 
-function openDetail(id) {
-  const mail = MAILS.find((x) => x.id === id);
-  if (!mail) return;
-  mail.unread = false;
+function previewText(body) {
+  return body.replace(/\s+/g, ' ').trim().slice(0, 60);
+}
 
+function renderQuoteBlock(prevMsg) {
+  return `
+    <div class="quote-block">
+      <div class="quote-meta">On ${prevMsg.datetime}, ${prevMsg.from} wrote:</div>
+      <span class="quote-link">元のメッセージを表示</span>
+    </div>
+  `;
+}
+
+function renderThreadCard(mail, msg, idx, expanded) {
+  const uid = `${mail.id}-${idx}`;
+  if (!expanded) {
+    return `
+      <div class="thread-card collapsed" data-card-toggle="${idx}">
+        <div class="detail-avatar" style="background:${colorFor(msg.from)};">${initial(msg.from)}</div>
+        <div class="thread-card-collapsed-info">
+          <div class="thread-card-row1">
+            <span class="thread-card-name">${msg.from}</span>
+            <span class="thread-card-date">${msg.date}</span>
+          </div>
+          <div class="thread-card-preview">${previewText(msg.body)}</div>
+        </div>
+      </div>
+    `;
+  }
+  const messages = mail._messages;
+  const quoteHTML = idx > 0 ? renderQuoteBlock(messages[idx - 1]) : '';
+  return `
+    <div class="thread-card expanded">
+      <div class="detail-meta-row" data-card-toggle="${idx}">
+        <div class="detail-avatar" style="background:${colorFor(msg.from)};">${initial(msg.from)}</div>
+        <div class="detail-sender-info">
+          <div class="detail-sender-name">${msg.from} <span class="thread-date-inline">${msg.date}</span></div>
+          ${renderToLine(uid)}
+        </div>
+        ${renderSenderCardIcons()}
+      </div>
+      ${renderToPanel(uid, msg.from, msg.fromEmail, msg.to, msg.toEmail, msg.datetime)}
+      <div class="detail-body-text">${msg.body}${msg.attachment ? renderAttachment(msg.attachment) : ''}</div>
+      ${quoteHTML}
+    </div>
+  `;
+}
+
+function bindThreadCardToggles(area, mail) {
+  area.querySelectorAll('[data-card-toggle]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('[data-to-toggle]') || e.target.closest('.sender-card-icons') || e.target.closest('.detail-title-star')) return;
+      const idx = Number(el.getAttribute('data-card-toggle'));
+      const scrollPos = area.scrollTop;
+      mail._expanded[idx] = !mail._expanded[idx];
+      renderDetailBody(mail);
+      area.scrollTop = scrollPos;
+    });
+  });
+}
+
+function renderDetailBody(mail) {
   const area = document.getElementById('detail-body-area');
+  const messages = mail._messages;
 
   const subjectRowHTML = `
     <div class="detail-subject-block">
@@ -405,39 +473,13 @@ function openDetail(id) {
     </div>
   `;
 
-  const threadHTML = mail.thread ? mail.thread.map((msg, i) => `
-    <div class="thread-message">
-      <div class="detail-meta-row">
-        <div class="detail-avatar" style="background:${colorFor(msg.from)};">${initial(msg.from)}</div>
-        <div class="detail-sender-info">
-          <div class="detail-sender-name">${msg.from} <span class="thread-date-inline">${msg.date}</span></div>
-          ${renderToLine(`${mail.id}-${i}`)}
-        </div>
-        ${renderSenderCardIcons()}
-      </div>
-      ${renderToPanel(`${mail.id}-${i}`, msg.from, msg.fromEmail, msg.to, msg.toEmail, msg.datetime)}
-      <div class="detail-body-text">${msg.body}${msg.attachment ? renderAttachment(msg.attachment) : ''}</div>
-    </div>
-  `).join('') : '';
+  const cardsHTML = messages.map((msg, i) => renderThreadCard(mail, msg, i, mail._expanded[i])).join('');
 
-  area.innerHTML = mail.thread ? `
-    ${subjectRowHTML}
-    ${threadHTML}
-  ` : `
-    ${subjectRowHTML}
-    <div class="detail-meta-row">
-      <div class="detail-avatar" style="background:${colorFor(mail.name)};">${initial(mail.name)}</div>
-      <div class="detail-sender-info">
-        <div class="detail-sender-name">${mail.name} <span class="thread-date-inline">${mail.date}</span></div>
-        <div class="detail-sender-email">${mail.email}</div>
-        ${renderToLine(mail.id)}
-      </div>
-      ${renderSenderCardIcons()}
-    </div>
-    ${renderToPanel(mail.id, mail.name, mail.email, '野口', MY_EMAIL, mail.date)}
-    <div class="detail-body-text">${mail.body}</div>
-  `;
+  area.innerHTML = `${subjectRowHTML}${cardsHTML}`;
+
   bindToPanelToggles(area);
+  bindThreadCardToggles(area, mail);
+
   const titleStarBtn = area.querySelector('.detail-title-star');
   if (titleStarBtn) {
     titleStarBtn.addEventListener('click', () => {
@@ -445,7 +487,25 @@ function openDetail(id) {
       titleStarBtn.innerHTML = starSVG(mail.starred);
     });
   }
-  area.scrollTop = 0;
+}
+
+function openDetail(id) {
+  const mail = MAILS.find((x) => x.id === id);
+  if (!mail) return;
+  mail.unread = false;
+
+  if (!mail._messages) {
+    mail._messages = mail.thread || [{
+      from: mail.name, fromEmail: mail.email, to: '野口', toEmail: MY_EMAIL,
+      date: mail.date, datetime: mail.date, body: mail.body,
+    }];
+  }
+  if (!mail._expanded) {
+    mail._expanded = mail._messages.map((_, i) => i === mail._messages.length - 1);
+  }
+
+  renderDetailBody(mail);
+  document.getElementById('detail-body-area').scrollTop = 0;
 
   document.getElementById('inbox-view').style.display = 'none';
   document.getElementById('detail-view').style.display = 'flex';
