@@ -81,7 +81,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 .thread-message { padding-bottom: 22px; margin-bottom: 22px; border-bottom: 1px solid #e8e8e8; }
 .thread-message:last-child { border-bottom: none; margin-bottom: 0; }
 .thread-message .detail-meta-row { padding: 6px 0 14px; }
-.thread-to { font-weight: 400; color: #5f6368; font-size: 13px; }
+.thread-date-inline { font-weight: 400; color: #5f6368; font-size: 12px; margin-left: 6px; }
 .attachment-card { display: flex; align-items: center; gap: 14px; margin-top: 18px; padding: 14px 16px; background: #fff; border: 1px solid #dadce0; border-radius: 10px; max-width: 320px; white-space: normal; }
 .attachment-thumb { width: 52px; height: 64px; flex-shrink: 0; background: #fff; border: 1px solid #e0a0a0; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 6px 4px; }
 .attachment-thumb .label { font-size: 10px; color: #d33; font-weight: 700; }
@@ -303,7 +303,7 @@ function renderToBlock(uid, from, fromEmail, toName, toEmail, datetime) {
       <span>To: 自分</span><span class="to-arrow">▼</span>
     </div>
     <div class="sender-detail-panel" data-to-panel="${uid}">
-      <div class="panel-row"><span class="panel-label">From:</span><span>${from}・${fromEmail}</span></div>
+      <div class="panel-row"><span class="panel-label">From:</span><span style="font-size: 11px;">${from}・${fromEmail}</span></div>
       <div class="panel-row"><span class="panel-label">宛先:</span><span>${toName}・${toEmail}</span></div>
       <div class="panel-row"><span class="panel-label">日付:</span><span>${datetime}</span></div>
       <div class="security-notice">
@@ -396,11 +396,9 @@ function openDetail(id) {
       <div class="detail-meta-row">
         <div class="detail-avatar" style="background:${colorFor(msg.from)};">${initial(msg.from)}</div>
         <div class="detail-sender-info">
-          <div class="detail-sender-name">${msg.from} <span class="thread-to">→ ${msg.to}</span></div>
-          <div class="detail-sender-email">${msg.fromEmail}</div>
+          <div class="detail-sender-name">${msg.from} <span class="thread-date-inline">${msg.date}</span></div>
           ${renderToBlock(`${mail.id}-${i}`, msg.from, msg.fromEmail, msg.to, msg.toEmail, msg.datetime)}
         </div>
-        <span class="detail-date">${msg.date}</span>
       </div>
       <div class="detail-body-text">${msg.body}${msg.attachment ? renderAttachment(msg.attachment) : ''}</div>
     </div>
