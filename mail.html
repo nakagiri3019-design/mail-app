@@ -99,8 +99,8 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 .attachment-info { min-width: 0; }
 .attachment-name { font-size: 13.5px; color: #202124; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .attachment-meta { font-size: 12px; color: #5f6368; margin-top: 3px; }
-.detail-actions { position: fixed; left: 0; right: 0; bottom: 56px; padding: 12px 16px; background: #FFF8F0; border-top: 1px solid #ecdfc8; display: flex; align-items: center; gap: 10px; z-index: 15; }
-.detail-action-btn { flex: 1; background: #546E7A; border: none; height: 44px; border-radius: 22px; margin: 0 8px; font-size: 15px; font-weight: 600; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+.detail-actions { position: fixed; left: 0; right: 0; bottom: 56px; padding: 12px 16px; background: #FFF8F0; border-top: 1px solid #ecdfc8; display: flex; align-items: center; gap: 4px; z-index: 15; }
+.detail-action-btn { flex: 1; background: #546E7A; border: none; height: 44px; border-radius: 22px; margin: 0 4px; font-size: 15px; font-weight: 600; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
 .detail-emoji-btn { width: 48px; height: 48px; flex-shrink: 0; background: #fff; border: 1.5px solid #c9b89a; border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 </style>
 </head>
@@ -166,7 +166,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 014-4h12"/></svg>
       転送
     </button>
-    <button class="detail-emoji-btn" aria-label="リアクション" onclick="alert('リアクションを送信（デモ）')">😊</button>
+    <button class="detail-emoji-btn" aria-label="リアクション" onclick="alert('リアクションを送信（デモ）')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#546E7A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button>
   </div>
 </div>
 
@@ -334,7 +334,7 @@ function renderToPanel(uid, from, fromEmail, toName, toEmail, datetime) {
 function renderSenderCardIcons() {
   return `
     <div class="sender-card-icons">
-      <button class="mini-icon-btn" aria-label="リアクション" onclick="alert('リアクションを送信（デモ）')">😊</button>
+      <button class="mini-icon-btn" aria-label="リアクション" onclick="alert('リアクションを送信（デモ）')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button>
       <button class="mini-icon-btn" aria-label="返信" onclick="alert('返信（デモ）')">↩</button>
       <button class="mini-icon-btn" aria-label="その他" onclick="alert('その他のオプション（デモ）')">⋮</button>
     </div>
