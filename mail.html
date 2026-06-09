@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Mail</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#FFEBD0">
+<meta name="theme-color" content="#FFF8F0">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,12 +14,12 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; overflow: hidden; }
-body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0f0f0; display: flex; justify-content: center; }
-#app { width: 100%; max-width: 100%; height: 100vh; height: 100dvh; background: #FFEBD0; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FFF8F0; display: flex; justify-content: center; }
+#app { width: 100%; max-width: 100%; height: 100vh; height: 100dvh; background: #FFF8F0; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
 /* INBOX VIEW */
 #inbox-view { display: flex; flex-direction: column; height: 100%; position: relative; }
-.inbox-header { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; background: #FFEBD0; }
+.inbox-header { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; background: #FFF8F0; }
 .menu-btn, .icon-btn-plain { background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; }
 .search-pill { flex: 1; background: #fff; border-radius: 26px; padding: 10px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
 .search-pill span { color: #777; font-size: 15px; flex: 1; }
@@ -28,13 +28,13 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 .tabs-row { display: flex; gap: 10px; padding: 6px 16px 12px; }
 .current-tab-label { font-size: 14px; font-weight: 700; color: #1a73e8; }
 
-.mail-list { flex: 1; overflow-y: auto; background: #FFEBD0; padding-bottom: 56px; }
-.mail-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; background: #FFF8F3; border-bottom: 1px solid rgba(0,0,0,0.06); cursor: pointer; transition: background 0.1s; }
+.mail-list { flex: 1; overflow-y: auto; background: #FFF8F0; padding: 8px 12px 72px; display: flex; flex-direction: column; gap: 8px; }
+.mail-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: #fff; border-radius: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); cursor: pointer; transition: background 0.1s; }
 .mail-row:active { background: #f5f5f5; }
-.mail-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+.mail-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 20px; flex-shrink: 0; }
 .mail-body { flex: 1; min-width: 0; }
 .mail-top-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-.mail-sender { font-size: 14.5px; color: #444; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mail-sender { font-size: 14.5px; font-weight: 700; color: #444; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mail-row.unread .mail-sender { color: #111; font-weight: 700; }
 .mail-date { font-size: 12px; color: #777; flex-shrink: 0; }
 .mail-row.unread .mail-date { color: #111; font-weight: 700; }
@@ -53,7 +53,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f0
 
 /* DETAIL VIEW */
 #detail-view { display: none; flex-direction: column; height: 100%; background: #FFF8F0; }
-.detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #FFEBD0; position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
+.detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #FFF8F0; position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
 .detail-header .spacer { flex: 1; }
 .detail-subject-block { padding: 12px 0 4px; text-align: left; }
 .detail-subject-text { font-size: 21px; font-weight: 400; color: #202124; line-height: 1.6; }
