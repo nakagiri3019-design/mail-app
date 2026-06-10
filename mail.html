@@ -121,7 +121,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke-linecap="round"/></svg>
       <span>メールを検索</span>
     </div>
-    <div class="account-avatar" style="background:#7B4FCB;">野</div>
+    <div class="account-avatar" style="background:#7B4FCB;">中</div>
   </div>
 
   <div class="tabs-row">
@@ -214,7 +214,7 @@ function colorFor(name) {
 
 const MAILS = [
   {
-    id: 'm1', name: '中村 誠', email: 'nakamura@example.com',
+    id: 'm1', name: '中村 誠', email: 'nakamura@example.com', avatarLetter: '中村',
     subject: '登記書類の確認をお願いします',
     snippet: 'お世話になっております。先日ご依頼いただきました登記書類について、ご確認をお願いいたします…',
     date: '11:20', unread: false, starred: true,
@@ -228,7 +228,7 @@ const MAILS = [
     body: 'メルカリをご利用いただきありがとうございます。\n\nただいまファミリーセールを開催中です！\n家族みんなで使えるキッズ用品、生活雑貨、家電などを特別価格でご紹介しています。\n\nこの機会にぜひチェックしてみてください。\n\nメルカリ事務局',
   },
   {
-    id: 'm3', name: '西田 裕子', email: 'nishida@example.com',
+    id: 'm3', name: '西田 裕子', email: 'nishida@example.com', avatarLetter: '西田',
     subject: 'API連携の仕様について',
     snippet: 'ご確認いただきたい点がございます。API連携の仕様について、いくつか確認させていただきたい事項が…',
     date: '10:05', unread: false, starred: false,
@@ -242,59 +242,62 @@ const MAILS = [
     body: 'お世話になっております。田中です。\n\n先月分の請求書を送付いたします。ご査収のほど、よろしくお願いいたします。\n\nお支払い期日は今月末となっております。ご不明な点がございましたら、お気軽にお問い合わせください。\n\n田中 浩二',
   },
   {
-    id: 'm5', name: '武田 綾香', email: 'ryoka@interakt.jp',
+    id: 'm5', name: '武田 綾香', email: 'ryoka@interakt.jp', avatarLetter: '武田',
     subject: 'AI決算書診断システムの開発対応について',
     listSubject: '6月以降の対応について',
     snippet: '6月以降の対応について、改めて共有いたします。',
     date: '6月5日', unread: true, starred: false,
     thread: [
       {
-        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月7日', datetime: '2026年5月7日(木) 10:18',
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月7日', datetime: '2026年5月7日(木) 10:18',
         body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>AI決算書診断システムの件で、開発開始にあたり確認事項を共有いたします。<br><br>今回、実際にアップロードされた決算書PDFを前提に、AIで会社名・期数・事業年度を読み取り、通常画面の内容と照合できる流れを重視したいと考えております。<br><br>特に、以下の点について確認をお願いいたします。<br><br>・会社名の読み取り精度<br>・期数、事業年度の反映<br>・預貯金、売掛金、買掛金、未払金などの内訳行確認<br>・PDF出力前の確認フロー<br>・通常画面へ反映したデータの保持<br><br>まずは現状の仕様を確認し、必要な修正点を整理いただけますでしょうか。<br><br>よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
       },
       {
-        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月7日', datetime: '2026年5月7日(木) 14:42',
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月7日', datetime: '2026年5月7日(木) 14:42',
         body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご連絡ありがとうございます。<br><br>AI決算書診断システムの確認事項について承知いたしました。<br><br>まずは、実アップロードPDFを前提に、会社名・期数・事業年度の読み取り状況を確認し、通常画面へ反映されるデータとの整合性を確認いたします。<br><br>また、預貯金・売掛金・買掛金・未払金などの内訳行について、行抜けや反映漏れがないかもあわせて確認いたします。<br><br>確認後、修正が必要な箇所を整理してご報告いたします。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
       },
       {
-        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月11日', datetime: '2026年5月11日(月) 11:06',
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月11日', datetime: '2026年5月11日(月) 11:06',
         body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>AI読取部分について一次確認を行いました。<br><br>会社名・期数・事業年度については、おおむね取得できておりますが、一部PDFの形式によって会社名の取得が不安定になるケースがありました。<br><br>また、内訳行については、預貯金・売掛金・買掛金・未払金の表示において、読み取り結果と通常画面側の表示に差異が出るケースを確認しております。<br><br>現在、以下を中心に修正を進めております。<br><br>・会社名検出処理の補強<br>・期数、事業年度の再確認<br>・預貯金行の抜け確認<br>・売掛金、買掛金、未払金の内訳行チェック<br>・通常画面データとの照合処理<br><br>引き続き確認を進め、修正内容を反映いたします。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
       },
       {
-        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月14日', datetime: '2026年5月14日(木) 16:20',
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月14日', datetime: '2026年5月14日(木) 16:20',
         body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>ご確認ありがとうございます。<br><br>預貯金・売掛金・買掛金・未払金の行抜け確認については、実際の利用時に重要になる部分かと思いますので、引き続き優先して調整をお願いいたします。<br><br>また、AI診断結果を通常画面へ反映した後、PDF作成時に前回データや誤った値が混ざらないよう、再照合の流れも入れられると安心です。<br><br>PDF出力前に重大な差異がある場合は、そのまま出力せず、確認画面または停止判定が出る形をご検討ください。<br><br>よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
       },
       {
-        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月18日', datetime: '2026年5月18日(月) 13:35',
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月18日', datetime: '2026年5月18日(月) 13:35',
         body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご指摘いただいた内容について、追加対応を進めております。<br><br>現在、AI診断結果と通常画面データの再照合を行い、PDF作成前に大きな差異がある場合は出力を止める方向で条件整理を行っております。<br><br>また、補正候補を表示した後、通常画面へ安全に反映し、その内容がPDF作成まで保持されるかについても確認中です。<br><br>主な対応内容は以下です。<br><br>・AI診断結果と通常画面データの再照合<br>・補正候補表示UIの調整<br>・内訳行チェックの追加<br>・PDF出力前ガード条件の整理<br>・出力停止判定の確認<br><br>引き続き検証を行い、進捗をご報告いたします。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
       },
       {
-        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月22日', datetime: '2026年5月22日(金) 15:12',
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月22日', datetime: '2026年5月22日(金) 15:12',
         body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>進捗共有ありがとうございます。<br><br>PDF出力前ガードと再照合の流れについて、方向性は問題ございません。<br><br>今後の利用を考えると、ZIP内に含まれるPDFとの照合や、出力後の帳票確認も重要になると思います。<br><br>そのため、今月分としては以下の整理まで進めていただけますでしょうか。<br><br>・PDF本文照合後の出力許可条件<br>・出力停止時の理由表示<br>・補正候補反映後の再照合<br>・ZIP内PDF照合に向けた仕様整理<br>・管理者用診断画面での確認項目整理<br><br>よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
       },
       {
-        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月26日', datetime: '2026年5月26日(火) 10:44',
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月26日', datetime: '2026年5月26日(火) 10:44',
         body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>追加仕様整理および検証対応について、現時点の内容をご報告いたします。<br><br>PDF出力前ガードについては、会社名・期数・事業年度・内訳行に大きな差異がある場合、出力前に確認できるよう条件を整理しております。<br><br>また、AI診断結果と通常画面データの再照合、補正候補表示後の安全データ反映についても調整を進めております。<br><br>ZIP内PDFとの照合については、今月中に仕様整理を行い、次月以降の対応項目として進める予定です。<br><br>5月末に、月次作業報告書として対応内容をまとめてご提出いたします。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
       },
       {
-        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月29日', datetime: '2026年5月29日(金) 14:08',
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月29日', datetime: '2026年5月29日(金) 14:08',
         body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>本日、5月分の業務委託費につきまして、ご指定の口座へ送金手続きを行いましたのでご連絡いたします。<br><br>着金をご確認いただけましたら、ご一報いただけますと幸いです。<br><br>引き続き、AI診断部分およびPDF出力前ガード、再照合関連の調整につきまして、よろしくお願いいたします。<br><br>何卒よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
       },
       {
-        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月29日', datetime: '2026年5月29日(金) 15:21',
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月29日', datetime: '2026年5月29日(金) 15:21',
         body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご連絡ありがとうございます。<br><br>ご送金分につきまして、入金を確認いたしました。<br>ご対応いただきありがとうございます。<br><br>開発部分につきましても、引き続き対応を進めてまいります。<br><br>特に、<br>・AI診断結果と通常画面データの整合性<br>・PDF出力停止条件<br>・補正候補反映後の再照合<br><br>については、引き続き確認しながら進めてまいります。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
       },
       {
-        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '6月1日', datetime: '2026年6月1日(月) 09:38',
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '6月1日', datetime: '2026年6月1日(月) 09:38',
         body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>2026年5月分の月次作業報告書および請求書を添付にてお送りいたします。<br><br>今月は主に、実アップロードPDFを前提としたAIチェック強化、預貯金・売掛金・買掛金・未払金等の行抜け確認、補正候補表示、PDF出力前ガード、通常画面との再照合を中心に開発・検証を行いました。<br><br>また、追加仕様整理および追加検証対応が発生したため、請求書には基本作業費に加え、追加対応費を計上しております。<br><br>【添付資料】<br>・月次作業報告書_株式会社Interakt_2026年5月分<br>・請求書_株式会社Interakt_2026年5月分<br><br>請求金額は、税込1,251,800円となります。<br>お支払期限は2026年6月30日です。<br><br>内容をご確認いただき、不明点等ございましたらご連絡ください。<br><br>何卒よろしくお願いいたします。<br><br>株式会社アークラボ<br>代表取締役 中桐由美子',
-        attachment: { name: '請求書_2026_0518_B021.pdf', amount: '1,251,800', url: 'https://nakagiri3019-design.github.io/mail-app/請求書_2026_0518_B021.pdf' },
+        attachments: [
+          { name: '月次作業報告書_株式会社Interakt_2026年5月分.pdf', meta: 'PDF' },
+          { name: '請求書_株式会社Interakt_2026年5月分.pdf', meta: '請求書 ¥1,251,800' },
+        ],
       },
       {
-        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'nakagiri@example.com', date: '6月3日', datetime: '2026年6月3日(水) 13:27',
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '6月3日', datetime: '2026年6月3日(水) 13:27',
         body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>月次作業報告書および請求書を確認いたしました。<br>ご対応ありがとうございます。<br><br>5月分の作業内容について、AI診断部分やPDF出力前の確認フローが以前より整理されており、実運用を想定した形に近づいていると感じております。<br><br>特に以下の点について改善が確認できました。<br><br>・預貯金、売掛金、買掛金、未払金等の行抜け確認<br>・原本PDFと通常画面データの再照合<br>・補正候補表示後の安全データ反映<br>・PDF出力前の停止条件整理<br>・管理者用診断画面およびデプロイ後確認フロー<br><br>請求内容につきましても確認いたしましたので、社内処理を進めさせていただきます。<br><br>よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
       },
       {
-        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'nakagiri@example.com', date: '6月5日', datetime: '2026年6月5日(金) 11:16',
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '6月5日', datetime: '2026年6月5日(金) 11:16',
         body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>6月以降の対応について、改めて共有いたします。<br><br>今後は、5月に整理いただいたAI診断結果と通常画面データの再照合をベースに、以下を中心に進めていただければと思います。<br><br>・PDF本文照合後の出力許可、停止条件の精度向上<br>・補正候補反映後の再照合<br>・ZIP内PDFまで含めた原本照合チェック<br>・利用者目線での画面改善<br>・操作性診断および確認フローの整理<br><br>5月分の内容については確認済みですので、引き続き6月分もよろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
       },
     ],
@@ -314,7 +317,7 @@ const MAILS = [
     body: 'お疲れ様です。林です。\n\n先日ご依頼いただきました登記申請について、進捗状況のご確認をお願いできますでしょうか。\n\n申請書類に不備がないか念のため確認させていただきたく、ご連絡いたしました。\n\nお手すきの際にご返信いただけますと幸いです。\n\n林 美穂',
   },
   {
-    id: 'm8', name: '松本 大輔', email: 'matsumoto@example.com',
+    id: 'm8', name: '松本 大輔', email: 'matsumoto@example.com', avatarLetter: '松本',
     subject: '来週の打ち合わせ日程',
     snippet: 'お世話になっております。来週の打ち合わせ日程について調整をお願いいたします…',
     date: '6月8日', unread: false, starred: false,
@@ -331,6 +334,21 @@ const MAILS = [
 
 function initial(name) {
   return name.trim().charAt(0);
+}
+
+const AVATAR_LABEL_OVERRIDES = {
+  '武田': '武田',
+  '中桐': '中桐',
+};
+
+function avatarLabel(name) {
+  return AVATAR_LABEL_OVERRIDES[name] || initial(name);
+}
+
+function renderDetailAvatar(name) {
+  const label = avatarLabel(name);
+  const fontSize = label.length > 1 ? 'font-size:11px;' : '';
+  return `<div class="detail-avatar" style="background:${colorFor(name)};${fontSize}">${label}</div>`;
 }
 
 function starSVG(filled) {
@@ -385,6 +403,7 @@ function bindToPanelToggles(area) {
 
 function renderAttachment(att) {
   const action = att.url ? `window.open('${att.url}')` : `alert('添付ファイルを開く（デモ）')`;
+  const meta = att.meta || (att.amount ? `請求書 ¥${att.amount}` : 'PDF');
   return `
     <div class="attachment-card" onclick="${action}">
       <div class="attachment-icon">
@@ -392,7 +411,7 @@ function renderAttachment(att) {
       </div>
       <div class="attachment-info">
         <div class="attachment-name">${att.name}</div>
-        <div class="attachment-meta">請求書 ¥${att.amount}</div>
+        <div class="attachment-meta">${meta}</div>
       </div>
     </div>
   `;
@@ -402,7 +421,7 @@ function renderList() {
   const list = document.getElementById('mail-list');
   list.innerHTML = MAILS.map((m) => `
     <div class="mail-row ${m.unread ? 'unread' : ''}" data-id="${m.id}">
-      <div class="mail-avatar" style="background:${colorFor(m.name)};">${m.avatarLetter || initial(m.name)}</div>
+      <div class="mail-avatar" style="background:${colorFor(m.name)};${(m.avatarLetter || initial(m.name)).length > 1 ? 'font-size:14px;' : ''}">${m.avatarLetter || initial(m.name)}</div>
       <div class="mail-body">
         <div class="mail-top-row">
           <span class="mail-sender">${m.name}</span>
@@ -449,7 +468,7 @@ function renderThreadCard(mail, msg, idx, expanded) {
   if (!expanded) {
     return `
       <div class="thread-card collapsed" data-card-toggle="${idx}">
-        <div class="detail-avatar" style="background:${colorFor(msg.from)};">${initial(msg.from)}</div>
+        ${renderDetailAvatar(msg.from)}
         <div class="thread-card-collapsed-info">
           <span class="thread-card-name">${msg.from}</span>
           <span class="thread-card-date">${msg.date}</span>
@@ -463,7 +482,7 @@ function renderThreadCard(mail, msg, idx, expanded) {
   return `
     <div class="thread-card expanded">
       <div class="detail-meta-row" data-card-toggle="${idx}">
-        <div class="detail-avatar" style="background:${colorFor(msg.from)};">${initial(msg.from)}</div>
+        ${renderDetailAvatar(msg.from)}
         <div class="detail-sender-info">
           <div class="detail-sender-name">${msg.from} <span class="thread-date-inline">${msg.date}</span></div>
           ${renderToLine(uid)}
@@ -471,7 +490,7 @@ function renderThreadCard(mail, msg, idx, expanded) {
         ${renderSenderCardIcons()}
       </div>
       ${renderToPanel(uid, msg.from, msg.fromEmail, msg.to, msg.toEmail, msg.datetime)}
-      <div class="detail-body-text">${msg.body}${msg.attachment ? renderAttachment(msg.attachment) : ''}</div>
+      <div class="detail-body-text">${msg.body}${(msg.attachments || []).map(renderAttachment).join('')}</div>
       ${quoteHTML}
     </div>
   `;
