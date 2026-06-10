@@ -93,11 +93,12 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
 .quote-block { margin-top: 18px; padding-top: 14px; padding-left: 16px; border-top: 1px solid rgba(0,0,0,0.07); font-size: 13px; color: #6B5A45; line-height: 1.6; }
 .quote-meta { margin-bottom: 6px; }
 .quote-link { color: #1a73e8; cursor: pointer; }
-.attachment-card { display: flex; align-items: center; gap: 12px; margin-top: 18px; padding: 12px 16px; background: #FAE8CC; border-radius: 12px; max-width: 320px; white-space: normal; cursor: pointer; }
-.attachment-icon { width: 40px; height: 40px; flex-shrink: 0; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-.attachment-info { min-width: 0; }
-.attachment-name { font-size: 13.5px; color: #3B2A12; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.attachment-meta { font-size: 12px; color: #6B5A45; margin-top: 3px; }
+.attachment-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+.attachment-card { width: 132px; background: #fff; border: 1px solid #E0E0E0; border-radius: 10px; overflow: hidden; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+.attachment-thumb { height: 96px; background: #fff; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #EFEFEF; }
+.attachment-info { min-width: 0; padding: 8px 10px; }
+.attachment-name { font-size: 12px; color: #3B2A12; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.attachment-meta { font-size: 11px; color: #8A8A8A; margin-top: 2px; }
 .detail-actions { position: fixed; left: 0; right: 0; bottom: 56px; padding: 12px 16px; background: #FFF4E3; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; gap: 4px; z-index: 15; }
 .detail-action-btn { flex: 1; background: #5D6A8A; border: none; height: 44px; border-radius: 22px; margin: 0 4px; font-size: 15px; font-weight: 600; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
 .detail-emoji-btn { width: 48px; height: 48px; flex-shrink: 0; background: #fff; border: 1.5px solid rgba(0,0,0,0.12); border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -288,8 +289,8 @@ const MAILS = [
         from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '6月1日', datetime: '2026年6月1日(月) 09:38',
         body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>2026年5月分の月次作業報告書および請求書を添付にてお送りいたします。<br><br>今月は主に、実アップロードPDFを前提としたAIチェック強化、預貯金・売掛金・買掛金・未払金等の行抜け確認、補正候補表示、PDF出力前ガード、通常画面との再照合を中心に開発・検証を行いました。<br><br>また、追加仕様整理および追加検証対応が発生したため、請求書には基本作業費に加え、追加対応費を計上しております。<br><br>【添付資料】<br>・月次作業報告書_株式会社Interakt_2026年5月分<br>・請求書_株式会社Interakt_2026年5月分<br><br>請求金額は、税込1,251,800円となります。<br>お支払期限は2026年6月30日です。<br><br>内容をご確認いただき、不明点等ございましたらご連絡ください。<br><br>何卒よろしくお願いいたします。<br><br>株式会社アークラボ<br>代表取締役 中桐由美子',
         attachments: [
-          { name: '月次作業報告書_株式会社Interakt_2026年5月分.pdf', meta: 'PDF' },
-          { name: '請求書_株式会社Interakt_2026年5月分.pdf', meta: '請求書 ¥1,251,800' },
+          { name: '月次作業報告書_株式会社Interakt_2026年5月分.pdf', meta: 'PDF', url: 'https://nakagiri3019-design.github.io/mail-app/月次作業報告書_株式会社Interakt_2026年5月分.pdf' },
+          { name: '請求書_株式会社Interakt_2026年5月分.pdf', meta: '請求書 ¥1,251,800', url: 'https://nakagiri3019-design.github.io/mail-app/請求書_株式会社Interakt_2026年5月分.pdf' },
         ],
       },
       {
@@ -402,12 +403,12 @@ function bindToPanelToggles(area) {
 }
 
 function renderAttachment(att) {
-  const action = att.url ? `window.open('${att.url}')` : `alert('添付ファイルを開く（デモ）')`;
+  const action = att.url ? `window.open('${att.url}', '_blank')` : `alert('添付ファイルを開く（デモ）')`;
   const meta = att.meta || (att.amount ? `請求書 ¥${att.amount}` : 'PDF');
   return `
     <div class="attachment-card" onclick="${action}">
-      <div class="attachment-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D93025" stroke-width="1.8"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z" stroke-linejoin="round"/><path d="M14 3v5h5" stroke-linejoin="round"/></svg>
+      <div class="attachment-thumb">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D93025" stroke-width="1.5"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z" stroke-linejoin="round"/><path d="M14 3v5h5" stroke-linejoin="round"/></svg>
       </div>
       <div class="attachment-info">
         <div class="attachment-name">${att.name}</div>
@@ -490,7 +491,7 @@ function renderThreadCard(mail, msg, idx, expanded) {
         ${renderSenderCardIcons()}
       </div>
       ${renderToPanel(uid, msg.from, msg.fromEmail, msg.to, msg.toEmail, msg.datetime)}
-      <div class="detail-body-text">${msg.body}${(msg.attachments || []).map(renderAttachment).join('')}</div>
+      <div class="detail-body-text">${msg.body}${(msg.attachments && msg.attachments.length) ? `<div class="attachment-grid">${msg.attachments.map(renderAttachment).join('')}</div>` : ''}</div>
       ${quoteHTML}
     </div>
   `;
