@@ -432,7 +432,7 @@ function renderList() {
 }
 
 function previewText(body) {
-  return body.replace(/\s+/g, ' ').trim().slice(0, 60);
+  return body.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 60);
 }
 
 function renderQuoteBlock(prevMsg) {
