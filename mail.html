@@ -191,7 +191,21 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
 const AVATAR_COLORS = ['#6B8E9F','#A05C5C','#5C7A5C','#7A6E9F','#9F7A4D','#4D7A7A','#9F5C7A','#5C6B9F'];
 const MY_EMAIL = 'volca7000@gmail.com';
 
+const COLOR_OVERRIDES = {
+  '中村 誠': '#4A7FB5',
+  'メルカリ': '#D9534F',
+  '西田 裕子': '#5FA85D',
+  '田中 浩二': '#E0913C',
+  '武田 綾香': '#7C5CBF',
+  '武田': '#7C5CBF',
+  'Quoraダイジェスト': '#9B6FCF',
+  '林 美穂': '#4F9F7C',
+  '松本 大輔': '#9E9E9E',
+  'Amazon.co.jp': '#43A047',
+};
+
 function colorFor(name) {
+  if (COLOR_OVERRIDES[name]) return COLOR_OVERRIDES[name];
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
   return AVATAR_COLORS[h % AVATAR_COLORS.length];
@@ -199,107 +213,118 @@ function colorFor(name) {
 
 const MAILS = [
   {
-    id: 'm1', name: 'Google アカウント', email: 'no-reply@accounts.google.com',
-    subject: 'セキュリティ アラート：新しいデバイスからログインがありました',
-    snippet: 'Windows のパソコンから新しいログインがありました。心当たりがない場合は、今すぐパスワードを変更してください。',
-    date: '14:32', unread: true, starred: true,
-    body: 'いつも Google をご利用いただきありがとうございます。\n\nお客様の Google アカウントに、新しいデバイス（Windows パソコン）からログインがありました。\n\n日時：本日 14:28\n場所：東京都\n\nこのログインに心当たりがない場合は、すぐにパスワードを変更し、アカウントのセキュリティ設定をご確認ください。\n\n心当たりがある場合は、このメールは無視していただいて問題ありません。\n\nGoogle アカウント チーム',
+    id: 'm1', name: '中村 誠', email: 'nakamura@example.com',
+    subject: '登記書類の確認をお願いします',
+    snippet: 'お世話になっております。先日ご依頼いただきました登記書類について、ご確認をお願いいたします…',
+    date: '11:20', unread: false, starred: true,
+    body: 'お世話になっております。中村でございます。\n\n先日ご依頼いただきました登記書類につきまして、内容のご確認をお願いできますでしょうか。\n\n商号・本店所在地・役員に関する記載事項をご確認のうえ、修正点がございましたらお知らせください。確認が取れ次第、登記申請の手続きを進めさせていただきます。\n\nお忙しいところ恐縮ですが、よろしくお願いいたします。\n\n中村 誠',
   },
   {
-    id: 'm2', name: '佐藤 美咲', email: 'misaki.sato@example.com',
-    subject: '明日の打ち合わせの件について',
-    snippet: 'お疲れ様です。明日14時からの打ち合わせですが、会議室を3階の第2会議室に変更させていただきました。',
-    date: '13:10', unread: true, starred: false,
-    body: 'お疲れ様です、佐藤です。\n\n明日14時からの打ち合わせの件ですが、会議室を3階の第2会議室に変更させていただきました。\n資料は前日までに共有フォルダにアップロードしておきますので、ご確認のほどよろしくお願いいたします。\n\n当日はオンライン参加の方もいらっしゃいますので、接続テストも事前に行っておきます。\n\n何かご不明な点がございましたら、お気軽にご連絡ください。\n\n佐藤 美咲',
+    id: 'm2', name: 'メルカリ', email: 'no-reply@mercari.com', avatarLetter: 'm',
+    subject: '【今ならお得】ファミリーセール開催中',
+    snippet: 'お得なアイテム揃えました。家族みんなで使えるアイテムが今だけ特別価格で…',
+    date: '10:45', unread: false, starred: false,
+    body: 'メルカリをご利用いただきありがとうございます。\n\nただいまファミリーセールを開催中です！\n家族みんなで使えるキッズ用品、生活雑貨、家電などを特別価格でご紹介しています。\n\nこの機会にぜひチェックしてみてください。\n\nメルカリ事務局',
   },
   {
-    id: 'm3', name: 'Amazon.co.jp', email: 'order-update@amazon.co.jp',
-    subject: 'ご注文の商品を発送しました',
-    snippet: 'ご注文いただいた商品を発送しました。お届け予定日は6月10日です。配送状況は注文履歴からご確認いただけます。',
-    date: '11:48', unread: false, starred: false,
-    body: 'いつも Amazon.co.jp をご利用いただきありがとうございます。\n\nご注文いただいた商品を発送いたしましたのでお知らせいたします。\n\n注文番号：249-1837456-2837465\nお届け予定日：6月10日（水）\n\n配送状況の確認は、注文履歴ページからいつでも行うことができます。\n\n今後とも Amazon.co.jp をよろしくお願いいたします。',
+    id: 'm3', name: '西田 裕子', email: 'nishida@example.com',
+    subject: 'API連携の仕様について',
+    snippet: 'ご確認いただきたい点がございます。API連携の仕様について、いくつか確認させていただきたい事項が…',
+    date: '10:05', unread: false, starred: false,
+    body: 'お世話になっております。西田です。\n\nAPI連携の仕様について、いくつか確認させていただきたい点がございます。\n\n・認証方式（APIキー/OAuth）について\n・データ取得のリクエスト頻度の上限について\n・エラー時のレスポンス形式について\n\nお手数をおかけしますが、ご確認のほどよろしくお願いいたします。\n\n西田 裕子',
   },
   {
-    id: 'm4', name: '田中 健一', email: 'kenichi.tanaka@example.com',
-    subject: 'Re: 見積書の送付について',
-    snippet: 'ご連絡ありがとうございます。添付の見積書を確認しましたので、来週中にお返事させていただきます。',
-    date: '10:55', unread: false, starred: true,
-    body: 'お世話になっております。田中です。\n\nご連絡ありがとうございます。添付いただいた見積書を拝見いたしました。\n内容について社内で確認のうえ、来週中には正式なお返事をさせていただきたく存じます。\n\nお時間をいただき恐縮ですが、もうしばらくお待ちいただけますと幸いです。\n\n何卒よろしくお願いいたします。\n\n田中 健一',
+    id: 'm4', name: '田中 浩二', email: 'tanaka.koji@example.com',
+    subject: '請求書の送付について',
+    snippet: 'お世話になっております。先月分の請求書を送付いたします…',
+    date: '9:30', unread: false, starred: false,
+    body: 'お世話になっております。田中です。\n\n先月分の請求書を送付いたします。ご査収のほど、よろしくお願いいたします。\n\nお支払い期日は今月末となっております。ご不明な点がございましたら、お気軽にお問い合わせください。\n\n田中 浩二',
   },
   {
-    id: 'm5', name: 'YouTube', email: 'no-reply@youtube.com',
-    subject: 'チャンネル登録チャンネルが新しい動画を投稿しました',
-    snippet: '登録チャンネルから新しい動画が公開されました。今すぐチェックしてみましょう。',
-    date: '9:20', unread: false, starred: false,
-    body: 'こんにちは\n\nあなたが登録しているチャンネルが新しい動画を公開しました。\n\n「初心者でもわかる！週末プログラミング入門」\n\n気になる方は、ぜひチェックしてみてください。\n\nYouTube チーム',
-  },
-  {
-    id: 'm6', name: '山本 さくら', email: 'sakura.yamamoto@example.com',
-    subject: '今度の同窓会について',
-    snippet: '久しぶり！来月の同窓会だけど、会場が決まったので連絡するね。日程は変わらず第三土曜日の予定だよ。',
-    date: '昨日', unread: false, starred: false,
-    body: '久しぶり！元気にしてる？\n\n来月の同窓会の件だけど、会場が決まったので連絡するね。\n日程は予定通り第三土曜日の夜からで、場所は駅前の新しくできたお店にしようと思ってるよ。\n\n参加できそうだったら、来週末までに返事もらえると助かります！\n久しぶりにみんなに会えるの楽しみにしてるね。\n\nさくら',
-  },
-  {
-    id: 'm7', name: 'note', email: 'info@note.com',
-    subject: '今週のおすすめ記事をお届けします',
-    snippet: 'あなたの興味に合わせた記事をピックアップしました。今週は「文章力を磨く5つの習慣」が人気です。',
-    date: '昨日', unread: false, starred: false,
-    body: 'いつも note をご利用いただきありがとうございます。\n\n今週、あなたにおすすめの記事をピックアップしました。\n\n・文章力を磨く5つの習慣\n・はじめてのフリーランス、収入の作り方\n・写真が劇的に良くなる構図のコツ\n\n気になる記事があれば、ぜひ読んでみてください。',
-  },
-  {
-    id: 'm8', name: '鈴木 大輔', email: 'daisuke.suzuki@example.com',
-    subject: '資料のご確認をお願いします',
-    snippet: 'お疲れ様です。先日お話しした件の資料を作成しましたので、ご確認いただけますでしょうか。',
-    date: '6月5日', unread: false, starred: false,
-    body: 'お疲れ様です、鈴木です。\n\n先日お話しした件について、資料を作成いたしましたので添付いたします。\nお忙しいところ恐縮ですが、ご確認いただけますと幸いです。\n\n修正点やご要望がありましたら、遠慮なくお知らせください。\n\n何卒よろしくお願いいたします。\n\n鈴木 大輔',
-  },
-  {
-    id: 'm9', name: 'PayPay', email: 'no-reply@paypay.ne.jp',
-    subject: 'お支払い完了のお知らせ',
-    snippet: 'コンビニエンスストアでのお支払いが完了しました。ご利用金額やご利用先の詳細はアプリでご確認いただけます。',
-    date: '6月4日', unread: false, starred: false,
-    body: 'PayPay をご利用いただきありがとうございます。\n\n下記の通り、お支払いが完了しましたのでお知らせいたします。\n\nご利用日時：6月4日 18:42\nご利用金額：1,280円\nご利用先：コンビニエンスストア\n\n詳細はアプリの利用履歴からご確認いただけます。',
-  },
-  {
-    id: 'm10', name: '高橋 真理子', email: 'mariko.takahashi@example.com',
-    subject: 'ありがとうございました！',
-    snippet: '先日はお忙しい中、貴重なお時間をいただきありがとうございました。とても勉強になりました。',
-    date: '6月3日', unread: false, starred: true,
-    body: '先日はお忙しい中、お時間をいただきありがとうございました。\n\nお話しいただいた内容、とても勉強になりました。今後の業務にしっかり活かしていきたいと思います。\n\nまたお会いできる機会があれば嬉しいです。今後ともどうぞよろしくお願いいたします。\n\n高橋 真理子',
-  },
-  {
-    id: 'm11', name: '金', email: 'taku@soraboljewelry.com',
-    subject: 'K18ブレスレット用パーツのお見積りおよび納品予定確認',
-    snippet: '請求書を確認いたしました。請求内容に相違ございません。',
-    date: '5月19日', unread: false, starred: false,
+    id: 'm5', name: '武田 綾香', email: 'ayaka.takeda@example.com',
+    subject: 'AI決算書診断システムの開発対応について',
+    listSubject: '6月以降の対応について',
+    snippet: '6月以降の対応について、改めて共有いたします。',
+    date: '6月5日', unread: true, starred: false,
     thread: [
       {
-        from: '金', fromEmail: 'taku@soraboljewelry.com', to: '野口', toEmail: 'volca7000@gmail.com', date: '5月8日', datetime: '2026年5月8日(金) 10:24',
-        body: '株式会社M.T DICE 野口様\n\nお世話になっております。ソラボルジュエリーの金です。先日はありがとうございました。\n\n追加で、K18ブレスレット用の製作用パーツが不足してきましたので、下記内容でお見積りをお願いできますでしょうか。\n\n・K18クリップ\n・K18プレート\n・K18丸カン\n・K18ブレスレット用クラスプ\n\n数量は前回と同程度で考えておりますが、在庫状況に応じて調整いただいて構いません。\n\nまた、連休前にお願いしておりましたPt900リングおよびSV925ネックレスクロストップの納品予定日についても、あわせて確認させてください。可能であれば、今回追加でお願いするK18製作用パーツと一緒に納品いただけますと助かります。\n\nお手数ですが、金額と納品予定日をご確認のうえ、ご連絡いただけますでしょうか。よろしくお願いいたします。\n\nソラボルジュエリー株式会社\n金\n〒110-0016 東京都台東区台東4-8-9\nTEL：03-3839-8400\nMAIL：taku@soraboljewelry.com',
+        from: '武田', fromEmail: 'ayaka.takeda@example.com', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月7日', datetime: '2026年5月7日(木) 10:18',
+        body: 'AI決算書診断システムの件で、開発開始にあたり確認事項を共有いたします。会社名の読み取り精度、期数・事業年度の反映、預貯金・売掛金・買掛金・未払金などの内訳行確認、PDF出力前の確認フロー、通常画面へ反映したデータの保持について確認をお願いいたします。',
       },
       {
-        from: '野口', fromEmail: 'volca7000@gmail.com', to: '金', toEmail: 'taku@soraboljewelry.com', date: '5月8日', datetime: '2026年5月8日(金) 14:08',
-        body: 'ソラボルジュエリー株式会社 金様\n\nお世話になっております。株式会社M.T DICEの野口です。ご連絡ありがとうございます。\n\nK18ブレスレット用の製作用パーツにつきまして、下記内容でご用意可能です。\n\n・K18クリップ\n・K18プレート\n・K18丸カン\n・K18ブレスレット用クラスプ\n\n上記一式で、620,000円にてお見積りいたします。\n\nまた、連休前にご依頼いただいておりましたPt900リングおよびSV925ネックレスクロストップにつきましても、あわせて納品可能です。今回追加分のK18製作用パーツと、連休前にご依頼いただいておりましたPt900リングおよびSV925ネックレスクロストップを、2026年5月15日にまとめて納品できるよう手配いたします。\n\n納品準備が整いましたら、改めてご連絡いたします。よろしくお願いいたします。\n\n株式会社M.T DICE\n代表取締役 野口 修造\n〒135-0016 東京都台東区台東4-49-15 上野永谷タウンプラザ211\nTEL：050-1181-9376\nMAIL：volca7000@gmail.com',
+        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ayaka.takeda@example.com', date: '5月7日', datetime: '2026年5月7日(木) 14:42',
+        body: 'ご連絡ありがとうございます。AI決算書診断システムの確認事項について承知いたしました。実アップロードPDFを前提に、会社名・期数・事業年度の読み取り状況を確認し、通常画面へ反映されるデータとの整合性を確認いたします。確認後、修正が必要な箇所を整理してご報告いたします。',
       },
       {
-        from: '金', fromEmail: 'taku@soraboljewelry.com', to: '野口', toEmail: 'volca7000@gmail.com', date: '5月8日', datetime: '2026年5月8日(金) 16:42',
-        body: '株式会社M.T DICE 野口様\n\nお世話になっております。ソラボルジュエリーの金です。お見積りありがとうございます。\n\nご提示いただいた内容で、正式に発注いたします。発注書を添付いたしますので、ご確認ください。\n\n納品日は、5月15日でお願いいたします。今回追加分のK18製作用パーツと、連休前にお願いしていたPt900リングおよびSV925ネックレスクロストップを、まとめて納品いただけますと助かります。\n\nそれでは、上記内容で進めていただけますようお願いいたします。よろしくお願いいたします。\n\nソラボルジュエリー株式会社\n金\n〒110-0016 東京都台東区台東4-8-9\nTEL：03-3839-8400\nMAIL：taku@soraboljewelry.com',
+        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ayaka.takeda@example.com', date: '5月11日', datetime: '2026年5月11日(月) 11:06',
+        body: 'AI読取部分について一次確認を行いました。会社名・期数・事業年度についてはおおむね取得できておりますが、一部PDFの形式によって会社名の取得が不安定になるケースがありました。内訳行については読み取り結果と通常画面側の表示に差異が出るケースを確認しております。現在、会社名検出処理の補強、期数・事業年度の再確認、預貯金行の抜け確認などを中心に修正を進めております。',
       },
       {
-        from: '野口', fromEmail: 'volca7000@gmail.com', to: '金', toEmail: 'taku@soraboljewelry.com', date: '5月15日', datetime: '2026年5月15日(金) 17:30',
-        body: 'ソラボルジュエリー株式会社 金様\n\nお世話になっております。株式会社M.T DICEの野口です。\n\nご発注いただいておりました下記商品につきまして、本日納品が完了いたしました。\n\n・K18ブレスレット用製作用パーツ一式\n・Pt900リング\n・ペンダント製品\n・SV925ネックレスクロストップ製品\n\nよろしくお願いいたします。\n\n株式会社M.T DICE\n代表取締役 野口 修造\n〒135-0016 東京都台東区台東4-49-15 上野永谷タウンプラザ211\nTEL：050-1181-9376\nMAIL：volca7000@gmail.com',
+        from: '武田', fromEmail: 'ayaka.takeda@example.com', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月14日', datetime: '2026年5月14日(木) 16:20',
+        body: '預貯金・売掛金・買掛金・未払金の行抜け確認については、実際の利用時に重要になる部分かと思いますので、引き続き優先して調整をお願いいたします。PDF出力前に重大な差異がある場合は、そのまま出力せず、確認画面または停止判定が出る形をご検討ください。',
       },
       {
-        from: '野口', fromEmail: 'volca7000@gmail.com', to: '金', toEmail: 'taku@soraboljewelry.com', date: '5月19日', datetime: '2026年5月19日(火) 11:05',
-        body: 'ソラボルジュエリー株式会社 金様\n\nお世話になっております。株式会社M.T DICEの野口です。\n\n2026年5月15日に納品いたしました下記商品につきまして、請求書を添付にてお送りいたします。\n\n・K18ブレスレット用製作用パーツ一式\n・Pt900リング\n・ペンダント製品\n・SV925ネックレスクロストップ製品\n\n請求金額：1,903,000円（税込）\n支払期日：2026年6月30日\n\nご確認のほど、よろしくお願いいたします。\n\n株式会社M.T DICE\n代表取締役 野口 修造\n〒135-0016 東京都台東区台東4-49-15 上野永谷タウンプラザ211\nTEL：050-1181-9376\nMAIL：volca7000@gmail.com',
-        attachment: { name: '請求書 2026_0518_B021.pdf', amount: '1,903,000' },
+        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ayaka.takeda@example.com', date: '5月18日', datetime: '2026年5月18日(月) 13:35',
+        body: 'ご指摘いただいた内容について追加対応を進めております。AI診断結果と通常画面データの再照合を行い、PDF作成前に大きな差異がある場合は出力を止める方向で条件整理を行っております。主な対応内容は、AI診断結果と通常画面データの再照合、補正候補表示UIの調整、内訳行チェックの追加、PDF出力前ガード条件の整理です。',
       },
       {
-        from: '金', fromEmail: 'taku@soraboljewelry.com', to: '野口', toEmail: 'volca7000@gmail.com', date: '5月19日', datetime: '2026年5月19日(火) 13:47',
-        body: '株式会社M.T DICE 野口様\n\nお世話になっております。ソラボルジュエリーの金です。\n\n請求書を確認いたしました。請求内容に相違ございません。\n\n今後ともよろしくお願いいたします。\n\nソラボルジュエリー株式会社\n金\n〒110-0016 東京都台東区台東4-8-9\nTEL：03-3839-8400\nMAIL：taku@soraboljewelry.com',
+        from: '武田', fromEmail: 'ayaka.takeda@example.com', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月22日', datetime: '2026年5月22日(金) 15:12',
+        body: '進捗共有ありがとうございます。PDF出力前ガードと再照合の流れについて、方向性は問題ございません。今月分としては、PDF本文照合後の出力許可条件、出力停止時の理由表示、補正候補反映後の再照合、ZIP内PDF照合に向けた仕様整理まで進めていただけますでしょうか。',
+      },
+      {
+        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ayaka.takeda@example.com', date: '5月26日', datetime: '2026年5月26日(火) 10:44',
+        body: '追加仕様整理および検証対応について現時点の内容をご報告いたします。PDF出力前ガードについては、会社名・期数・事業年度・内訳行に大きな差異がある場合、出力前に確認できるよう条件を整理しております。5月末に月次作業報告書として対応内容をまとめてご提出いたします。',
+      },
+      {
+        from: '武田', fromEmail: 'ayaka.takeda@example.com', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月29日', datetime: '2026年5月29日(金) 14:08',
+        body: '本日、5月分の業務委託費につきまして、ご指定の口座へ送金手続きを行いましたのでご連絡いたします。着金をご確認いただけましたら、ご一報いただけますと幸いです。',
+      },
+      {
+        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ayaka.takeda@example.com', date: '5月29日', datetime: '2026年5月29日(金) 15:21',
+        body: 'ご連絡ありがとうございます。ご送金分につきまして、入金を確認いたしました。ご対応いただきありがとうございます。開発部分につきましても、引き続き対応を進めてまいります。',
+      },
+      {
+        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ayaka.takeda@example.com', date: '6月1日', datetime: '2026年6月1日(月) 09:38',
+        body: '2026年5月分の月次作業報告書および請求書を添付にてお送りいたします。請求金額は税込1,251,800円となります。お支払期限は2026年6月30日です。',
+        attachment: { name: '請求書_2026_0518_B021.pdf', amount: '1,251,800', url: 'https://nakagiri3019-design.github.io/mail-app/請求書_2026_0518_B021.pdf' },
+      },
+      {
+        from: '武田', fromEmail: 'ayaka.takeda@example.com', to: '中桐', toEmail: 'nakagiri@example.com', date: '6月3日', datetime: '2026年6月3日(水) 13:27',
+        body: '月次作業報告書および請求書を確認いたしました。請求内容につきましても社内処理を進めさせていただきます。',
+      },
+      {
+        from: '武田', fromEmail: 'ayaka.takeda@example.com', to: '中桐', toEmail: 'nakagiri@example.com', date: '6月5日', datetime: '2026年6月5日(金) 11:16',
+        body: '6月以降の対応について、改めて共有いたします。今後は、PDF本文照合後の出力許可・停止条件の精度向上、補正候補反映後の再照合、ZIP内PDFまで含めた原本照合チェック、利用者目線での画面改善を中心に進めていただければと思います。',
       },
     ],
+  },
+  {
+    id: 'm6', name: 'Quoraダイジェスト', email: 'digest-noreply@quora.com',
+    subject: 'なぜシステム開発の見積もりは外れるのか',
+    snippet: '多くのエンジニアが経験するこの問題について、様々な回答が寄せられています…',
+    date: '昨日', unread: false, starred: false,
+    body: 'こんにちは\n\nあなたへのおすすめの質問をお届けします。\n\n「なぜシステム開発の見積もりは外れるのか」\n\n多くのエンジニアが経験するこの問題について、様々な回答が寄せられています。気になる方はぜひチェックしてみてください。\n\nQuora',
+  },
+  {
+    id: 'm7', name: '林 美穂', email: 'hayashi@example.com',
+    subject: '登記申請の進捗確認',
+    snippet: 'お疲れ様です。先日の申請について、進捗状況のご確認を…',
+    date: '昨日', unread: false, starred: true,
+    body: 'お疲れ様です。林です。\n\n先日ご依頼いただきました登記申請について、進捗状況のご確認をお願いできますでしょうか。\n\n申請書類に不備がないか念のため確認させていただきたく、ご連絡いたしました。\n\nお手すきの際にご返信いただけますと幸いです。\n\n林 美穂',
+  },
+  {
+    id: 'm8', name: '松本 大輔', email: 'matsumoto@example.com',
+    subject: '来週の打ち合わせ日程',
+    snippet: 'お世話になっております。来週の打ち合わせ日程について調整をお願いいたします…',
+    date: '6月8日', unread: false, starred: false,
+    body: 'お世話になっております。松本です。\n\n来週の打ち合わせ日程について、調整をお願いできますでしょうか。\n\n候補日は以下の通りです。\n\n・6月15日（月）14:00〜\n・6月16日（火）10:00〜\n・6月17日（水）15:00〜\n\nご都合の良い日時をお知らせいただけますと幸いです。\n\n松本 大輔',
+  },
+  {
+    id: 'm9', name: 'Amazon.co.jp', email: 'order-update@amazon.co.jp',
+    subject: 'ご注文の商品を発送しました',
+    snippet: 'ご注文の商品を発送しました。お届け予定日は近日中です…',
+    date: '6月7日', unread: false, starred: false,
+    body: 'いつもAmazon.co.jpをご利用いただきありがとうございます。\n\nご注文いただいた商品を発送いたしましたのでお知らせいたします。\n\n注文番号：249-7261834-1059473\nお届け予定日：6月9日（火）\n\n配送状況の確認は、注文履歴ページからご確認いただけます。\n\n今後ともAmazon.co.jpをよろしくお願いいたします。',
   },
 ];
 
@@ -358,8 +383,9 @@ function bindToPanelToggles(area) {
 }
 
 function renderAttachment(att) {
+  const action = att.url ? `window.open('${att.url}')` : `alert('添付ファイルを開く（デモ）')`;
   return `
-    <div class="attachment-card" onclick="window.open('https://nakagiri3019-design.github.io/mail-app/請求書_2026_0518_B021.pdf')">
+    <div class="attachment-card" onclick="${action}">
       <div class="attachment-icon">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D93025" stroke-width="1.8"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z" stroke-linejoin="round"/><path d="M14 3v5h5" stroke-linejoin="round"/></svg>
       </div>
@@ -375,13 +401,13 @@ function renderList() {
   const list = document.getElementById('mail-list');
   list.innerHTML = MAILS.map((m) => `
     <div class="mail-row ${m.unread ? 'unread' : ''}" data-id="${m.id}">
-      <div class="mail-avatar" style="background:${colorFor(m.name)};">${initial(m.name)}</div>
+      <div class="mail-avatar" style="background:${colorFor(m.name)};">${m.avatarLetter || initial(m.name)}</div>
       <div class="mail-body">
         <div class="mail-top-row">
           <span class="mail-sender">${m.name}</span>
           <span class="mail-date">${m.date}</span>
         </div>
-        <div class="mail-subject-line"><span class="subj">${m.subject}</span> <span class="mail-snippet">- ${m.snippet}</span></div>
+        <div class="mail-subject-line"><span class="subj">${m.listSubject || m.subject}</span> <span class="mail-snippet">- ${m.snippet}</span></div>
       </div>
       <button class="star-btn" data-star="${m.id}">${starSVG(m.starred)}</button>
     </div>
