@@ -202,6 +202,7 @@ const COLOR_OVERRIDES = {
   '林 美穂': '#4F9F7C',
   '松本 大輔': '#9E9E9E',
   'Amazon.co.jp': '#43A047',
+  '中桐': '#4CAF50',
 };
 
 function colorFor(name) {
@@ -241,60 +242,60 @@ const MAILS = [
     body: 'お世話になっております。田中です。\n\n先月分の請求書を送付いたします。ご査収のほど、よろしくお願いいたします。\n\nお支払い期日は今月末となっております。ご不明な点がございましたら、お気軽にお問い合わせください。\n\n田中 浩二',
   },
   {
-    id: 'm5', name: '武田 綾香', email: 'ayaka.takeda@example.com',
+    id: 'm5', name: '武田 綾香', email: 'ryoka@interakt.jp',
     subject: 'AI決算書診断システムの開発対応について',
     listSubject: '6月以降の対応について',
     snippet: '6月以降の対応について、改めて共有いたします。',
     date: '6月5日', unread: true, starred: false,
     thread: [
       {
-        from: '武田', fromEmail: 'ayaka.takeda@example.com', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月7日', datetime: '2026年5月7日(木) 10:18',
-        body: 'AI決算書診断システムの件で、開発開始にあたり確認事項を共有いたします。会社名の読み取り精度、期数・事業年度の反映、預貯金・売掛金・買掛金・未払金などの内訳行確認、PDF出力前の確認フロー、通常画面へ反映したデータの保持について確認をお願いいたします。',
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月7日', datetime: '2026年5月7日(木) 10:18',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>AI決算書診断システムの件で、開発開始にあたり確認事項を共有いたします。<br><br>今回、実際にアップロードされた決算書PDFを前提に、AIで会社名・期数・事業年度を読み取り、通常画面の内容と照合できる流れを重視したいと考えております。<br><br>特に、以下の点について確認をお願いいたします。<br><br>・会社名の読み取り精度<br>・期数、事業年度の反映<br>・預貯金、売掛金、買掛金、未払金などの内訳行確認<br>・PDF出力前の確認フロー<br>・通常画面へ反映したデータの保持<br><br>まずは現状の仕様を確認し、必要な修正点を整理いただけますでしょうか。<br><br>よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
       },
       {
-        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ayaka.takeda@example.com', date: '5月7日', datetime: '2026年5月7日(木) 14:42',
-        body: 'ご連絡ありがとうございます。AI決算書診断システムの確認事項について承知いたしました。実アップロードPDFを前提に、会社名・期数・事業年度の読み取り状況を確認し、通常画面へ反映されるデータとの整合性を確認いたします。確認後、修正が必要な箇所を整理してご報告いたします。',
+        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月7日', datetime: '2026年5月7日(木) 14:42',
+        body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご連絡ありがとうございます。<br><br>AI決算書診断システムの確認事項について承知いたしました。<br><br>まずは、実アップロードPDFを前提に、会社名・期数・事業年度の読み取り状況を確認し、通常画面へ反映されるデータとの整合性を確認いたします。<br><br>また、預貯金・売掛金・買掛金・未払金などの内訳行について、行抜けや反映漏れがないかもあわせて確認いたします。<br><br>確認後、修正が必要な箇所を整理してご報告いたします。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
       },
       {
-        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ayaka.takeda@example.com', date: '5月11日', datetime: '2026年5月11日(月) 11:06',
-        body: 'AI読取部分について一次確認を行いました。会社名・期数・事業年度についてはおおむね取得できておりますが、一部PDFの形式によって会社名の取得が不安定になるケースがありました。内訳行については読み取り結果と通常画面側の表示に差異が出るケースを確認しております。現在、会社名検出処理の補強、期数・事業年度の再確認、預貯金行の抜け確認などを中心に修正を進めております。',
+        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月11日', datetime: '2026年5月11日(月) 11:06',
+        body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>AI読取部分について一次確認を行いました。<br><br>会社名・期数・事業年度については、おおむね取得できておりますが、一部PDFの形式によって会社名の取得が不安定になるケースがありました。<br><br>また、内訳行については、預貯金・売掛金・買掛金・未払金の表示において、読み取り結果と通常画面側の表示に差異が出るケースを確認しております。<br><br>現在、以下を中心に修正を進めております。<br><br>・会社名検出処理の補強<br>・期数、事業年度の再確認<br>・預貯金行の抜け確認<br>・売掛金、買掛金、未払金の内訳行チェック<br>・通常画面データとの照合処理<br><br>引き続き確認を進め、修正内容を反映いたします。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
       },
       {
-        from: '武田', fromEmail: 'ayaka.takeda@example.com', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月14日', datetime: '2026年5月14日(木) 16:20',
-        body: '預貯金・売掛金・買掛金・未払金の行抜け確認については、実際の利用時に重要になる部分かと思いますので、引き続き優先して調整をお願いいたします。PDF出力前に重大な差異がある場合は、そのまま出力せず、確認画面または停止判定が出る形をご検討ください。',
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月14日', datetime: '2026年5月14日(木) 16:20',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>ご確認ありがとうございます。<br><br>預貯金・売掛金・買掛金・未払金の行抜け確認については、実際の利用時に重要になる部分かと思いますので、引き続き優先して調整をお願いいたします。<br><br>また、AI診断結果を通常画面へ反映した後、PDF作成時に前回データや誤った値が混ざらないよう、再照合の流れも入れられると安心です。<br><br>PDF出力前に重大な差異がある場合は、そのまま出力せず、確認画面または停止判定が出る形をご検討ください。<br><br>よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
       },
       {
-        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ayaka.takeda@example.com', date: '5月18日', datetime: '2026年5月18日(月) 13:35',
-        body: 'ご指摘いただいた内容について追加対応を進めております。AI診断結果と通常画面データの再照合を行い、PDF作成前に大きな差異がある場合は出力を止める方向で条件整理を行っております。主な対応内容は、AI診断結果と通常画面データの再照合、補正候補表示UIの調整、内訳行チェックの追加、PDF出力前ガード条件の整理です。',
+        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月18日', datetime: '2026年5月18日(月) 13:35',
+        body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご指摘いただいた内容について、追加対応を進めております。<br><br>現在、AI診断結果と通常画面データの再照合を行い、PDF作成前に大きな差異がある場合は出力を止める方向で条件整理を行っております。<br><br>また、補正候補を表示した後、通常画面へ安全に反映し、その内容がPDF作成まで保持されるかについても確認中です。<br><br>主な対応内容は以下です。<br><br>・AI診断結果と通常画面データの再照合<br>・補正候補表示UIの調整<br>・内訳行チェックの追加<br>・PDF出力前ガード条件の整理<br>・出力停止判定の確認<br><br>引き続き検証を行い、進捗をご報告いたします。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
       },
       {
-        from: '武田', fromEmail: 'ayaka.takeda@example.com', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月22日', datetime: '2026年5月22日(金) 15:12',
-        body: '進捗共有ありがとうございます。PDF出力前ガードと再照合の流れについて、方向性は問題ございません。今月分としては、PDF本文照合後の出力許可条件、出力停止時の理由表示、補正候補反映後の再照合、ZIP内PDF照合に向けた仕様整理まで進めていただけますでしょうか。',
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月22日', datetime: '2026年5月22日(金) 15:12',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>進捗共有ありがとうございます。<br><br>PDF出力前ガードと再照合の流れについて、方向性は問題ございません。<br><br>今後の利用を考えると、ZIP内に含まれるPDFとの照合や、出力後の帳票確認も重要になると思います。<br><br>そのため、今月分としては以下の整理まで進めていただけますでしょうか。<br><br>・PDF本文照合後の出力許可条件<br>・出力停止時の理由表示<br>・補正候補反映後の再照合<br>・ZIP内PDF照合に向けた仕様整理<br>・管理者用診断画面での確認項目整理<br><br>よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
       },
       {
-        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ayaka.takeda@example.com', date: '5月26日', datetime: '2026年5月26日(火) 10:44',
-        body: '追加仕様整理および検証対応について現時点の内容をご報告いたします。PDF出力前ガードについては、会社名・期数・事業年度・内訳行に大きな差異がある場合、出力前に確認できるよう条件を整理しております。5月末に月次作業報告書として対応内容をまとめてご提出いたします。',
+        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月26日', datetime: '2026年5月26日(火) 10:44',
+        body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>追加仕様整理および検証対応について、現時点の内容をご報告いたします。<br><br>PDF出力前ガードについては、会社名・期数・事業年度・内訳行に大きな差異がある場合、出力前に確認できるよう条件を整理しております。<br><br>また、AI診断結果と通常画面データの再照合、補正候補表示後の安全データ反映についても調整を進めております。<br><br>ZIP内PDFとの照合については、今月中に仕様整理を行い、次月以降の対応項目として進める予定です。<br><br>5月末に、月次作業報告書として対応内容をまとめてご提出いたします。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
       },
       {
-        from: '武田', fromEmail: 'ayaka.takeda@example.com', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月29日', datetime: '2026年5月29日(金) 14:08',
-        body: '本日、5月分の業務委託費につきまして、ご指定の口座へ送金手続きを行いましたのでご連絡いたします。着金をご確認いただけましたら、ご一報いただけますと幸いです。',
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'nakagiri@example.com', date: '5月29日', datetime: '2026年5月29日(金) 14:08',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>本日、5月分の業務委託費につきまして、ご指定の口座へ送金手続きを行いましたのでご連絡いたします。<br><br>着金をご確認いただけましたら、ご一報いただけますと幸いです。<br><br>引き続き、AI診断部分およびPDF出力前ガード、再照合関連の調整につきまして、よろしくお願いいたします。<br><br>何卒よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
       },
       {
-        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ayaka.takeda@example.com', date: '5月29日', datetime: '2026年5月29日(金) 15:21',
-        body: 'ご連絡ありがとうございます。ご送金分につきまして、入金を確認いたしました。ご対応いただきありがとうございます。開発部分につきましても、引き続き対応を進めてまいります。',
+        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月29日', datetime: '2026年5月29日(金) 15:21',
+        body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご連絡ありがとうございます。<br><br>ご送金分につきまして、入金を確認いたしました。<br>ご対応いただきありがとうございます。<br><br>開発部分につきましても、引き続き対応を進めてまいります。<br><br>特に、<br>・AI診断結果と通常画面データの整合性<br>・PDF出力停止条件<br>・補正候補反映後の再照合<br><br>については、引き続き確認しながら進めてまいります。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
       },
       {
-        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ayaka.takeda@example.com', date: '6月1日', datetime: '2026年6月1日(月) 09:38',
-        body: '2026年5月分の月次作業報告書および請求書を添付にてお送りいたします。請求金額は税込1,251,800円となります。お支払期限は2026年6月30日です。',
+        from: '中桐', fromEmail: 'nakagiri@example.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '6月1日', datetime: '2026年6月1日(月) 09:38',
+        body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>2026年5月分の月次作業報告書および請求書を添付にてお送りいたします。<br><br>今月は主に、実アップロードPDFを前提としたAIチェック強化、預貯金・売掛金・買掛金・未払金等の行抜け確認、補正候補表示、PDF出力前ガード、通常画面との再照合を中心に開発・検証を行いました。<br><br>また、追加仕様整理および追加検証対応が発生したため、請求書には基本作業費に加え、追加対応費を計上しております。<br><br>【添付資料】<br>・月次作業報告書_株式会社Interakt_2026年5月分<br>・請求書_株式会社Interakt_2026年5月分<br><br>請求金額は、税込1,251,800円となります。<br>お支払期限は2026年6月30日です。<br><br>内容をご確認いただき、不明点等ございましたらご連絡ください。<br><br>何卒よろしくお願いいたします。<br><br>株式会社アークラボ<br>代表取締役 中桐由美子',
         attachment: { name: '請求書_2026_0518_B021.pdf', amount: '1,251,800', url: 'https://nakagiri3019-design.github.io/mail-app/請求書_2026_0518_B021.pdf' },
       },
       {
-        from: '武田', fromEmail: 'ayaka.takeda@example.com', to: '中桐', toEmail: 'nakagiri@example.com', date: '6月3日', datetime: '2026年6月3日(水) 13:27',
-        body: '月次作業報告書および請求書を確認いたしました。請求内容につきましても社内処理を進めさせていただきます。',
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'nakagiri@example.com', date: '6月3日', datetime: '2026年6月3日(水) 13:27',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>月次作業報告書および請求書を確認いたしました。<br>ご対応ありがとうございます。<br><br>5月分の作業内容について、AI診断部分やPDF出力前の確認フローが以前より整理されており、実運用を想定した形に近づいていると感じております。<br><br>特に以下の点について改善が確認できました。<br><br>・預貯金、売掛金、買掛金、未払金等の行抜け確認<br>・原本PDFと通常画面データの再照合<br>・補正候補表示後の安全データ反映<br>・PDF出力前の停止条件整理<br>・管理者用診断画面およびデプロイ後確認フロー<br><br>請求内容につきましても確認いたしましたので、社内処理を進めさせていただきます。<br><br>よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
       },
       {
-        from: '武田', fromEmail: 'ayaka.takeda@example.com', to: '中桐', toEmail: 'nakagiri@example.com', date: '6月5日', datetime: '2026年6月5日(金) 11:16',
-        body: '6月以降の対応について、改めて共有いたします。今後は、PDF本文照合後の出力許可・停止条件の精度向上、補正候補反映後の再照合、ZIP内PDFまで含めた原本照合チェック、利用者目線での画面改善を中心に進めていただければと思います。',
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'nakagiri@example.com', date: '6月5日', datetime: '2026年6月5日(金) 11:16',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>6月以降の対応について、改めて共有いたします。<br><br>今後は、5月に整理いただいたAI診断結果と通常画面データの再照合をベースに、以下を中心に進めていただければと思います。<br><br>・PDF本文照合後の出力許可、停止条件の精度向上<br>・補正候補反映後の再照合<br>・ZIP内PDFまで含めた原本照合チェック<br>・利用者目線での画面改善<br>・操作性診断および確認フローの整理<br><br>5月分の内容については確認済みですので、引き続き6月分もよろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
       },
     ],
   },
