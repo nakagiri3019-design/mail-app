@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mail</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FFF1D8">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mail">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FFF1D8; display: flex; justify-content: center; }
+#app { width: 100%; max-width: 100%; height: 100vh; height: 100dvh; background: #FFF1D8; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+
+/* INBOX VIEW */
+#inbox-view { display: flex; flex-direction: column; height: 100%; position: relative; }
+.inbox-header { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; background: #FFF1D8; }
+.menu-btn, .icon-btn-plain { background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; }
+.search-pill { flex: 1; background: #fff; border-radius: 26px; padding: 10px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.search-pill span { color: #6B5A45; font-size: 15px; flex: 1; }
+.account-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; font-size: 14px; flex-shrink: 0; }
+
+.tabs-row { display: flex; gap: 10px; padding: 6px 16px 12px; }
+.current-tab-label { font-size: 14px; font-weight: 700; color: #1a73e8; }
+
+.mail-list { flex: 1; overflow-y: auto; background: #FFF1D8; padding: 8px 12px 72px; display: flex; flex-direction: column; gap: 8px; }
+.mail-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: #FFFCF5; border-radius: 16px; box-shadow: none; cursor: pointer; transition: background 0.1s; }
+.mail-row:active { background: #f5f5f5; }
+.mail-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 20px; flex-shrink: 0; }
+.mail-body { flex: 1; min-width: 0; }
+.mail-top-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.mail-sender { font-size: 14.5px; font-weight: 700; color: #3B2A12; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mail-row.unread .mail-sender { color: #3B2A12; font-weight: 700; }
+.mail-date { font-size: 12px; color: #6B5A45; flex-shrink: 0; }
+.mail-row.unread .mail-date { color: #3B2A12; font-weight: 700; }
+.mail-subject-line { font-size: 13.5px; color: #6B5A45; margin-top: 2px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.4; }
+.mail-row.unread .mail-subject-line { color: #3B2A12; }
+.mail-subject-line .subj { font-weight: 600; }
+.mail-row.unread .mail-subject-line .subj { font-weight: 700; }
+.mail-snippet { color: #6B5A45; font-weight: 400; }
+.star-btn { background: none; border: none; cursor: pointer; padding: 4px; flex-shrink: 0; align-self: center; }
+
+.compose-fab { position: absolute; right: 18px; bottom: 80px; background: #FF7A00; color: #fff; border: none; border-radius: 28px; padding: 16px 24px 16px 18px; display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(255,122,0,0.4); }
+
+.bottom-tabs { position: fixed; left: 0; right: 0; bottom: 0; height: 56px; padding: 4px 0 2px; background: #FFF1D8; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; justify-content: space-around; box-sizing: border-box; z-index: 20; }
+.tab-btn { flex: 1; height: 100%; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.tab-icon-circle { width: 64px; height: 32px; border-radius: 16px; background: #E8EAF6; display: flex; align-items: center; justify-content: center; }
+
+/* DETAIL VIEW */
+#detail-view { display: none; flex-direction: column; height: 100%; background: #FFF1D8; }
+.detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #FFF1D8; position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
+.detail-header .spacer { flex: 1; }
+.detail-subject-block { padding: 12px 0 4px; text-align: left; }
+.detail-subject-text { font-size: 21px; font-weight: 400; color: #3B2A12; line-height: 1.6; }
+.inbox-badge { display: inline-block; vertical-align: middle; background: #FF7A00; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 10px; white-space: nowrap; margin-left: 10px; }
+.detail-title-star { background: none; border: none; cursor: pointer; padding: 2px; display: inline-flex; vertical-align: middle; margin-left: 10px; }
+.detail-meta-row { display: flex; align-items: flex-start; gap: 12px; padding: 4px 16px 8px; }
+.detail-to-line { font-size: 12px; color: #6B5A45; margin-top: 2px; }
+.sender-card-icons { display: flex; gap: 2px; margin-left: auto; flex-shrink: 0; }
+.mini-icon-btn { background: none; border: none; cursor: pointer; font-size: 16px; line-height: 1; padding: 6px; border-radius: 8px; color: #6B5A45; }
+.mini-icon-btn:active { background: rgba(0,0,0,0.06); }
+.to-line-toggle { cursor: pointer; display: inline-flex; align-items: center; gap: 4px; user-select: none; }
+.to-arrow { font-size: 9px; }
+.sender-detail-panel { display: none; margin: 12px 8px; background: #FAE8CC; border-radius: 10px; padding: 14px 20px; font-size: 15px; line-height: 1.6; color: #6B5A45; }
+.sender-detail-panel.open { display: block; }
+.sender-detail-panel .panel-row { display: flex; gap: 8px; padding: 4px 0; line-height: 1.6; overflow-x: auto; }
+.sender-detail-panel .panel-row > span:last-child { white-space: nowrap; font-size: 15px; color: #3B2A12; }
+.sender-detail-panel .panel-label { font-size: 14px; color: #6B5A45; flex-shrink: 0; min-width: 48px; }
+.security-notice { display: flex; align-items: flex-start; gap: 8px; margin-top: 2px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.08); font-size: 15px; line-height: 1.6; }
+.security-link { color: #FF7A00; font-size: 15px; font-weight: 600; cursor: pointer; }
+.detail-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+.detail-sender-info { flex: 1; min-width: 0; }
+.detail-sender-name { font-size: 14px; font-weight: 600; color: #3B2A12; line-height: 1.3; }
+.detail-body-area { flex: 1; overflow-y: auto; padding: 60px 16px 160px; }
+.detail-body-text { font-size: 16px; line-height: 1.6; color: #3B2A12; white-space: pre-wrap; padding-left: 16px; }
+.thread-date-inline { font-weight: 400; color: #6B5A45; font-size: 12px; margin-left: 6px; }
+.thread-card { background: #FFFCF5; border-radius: 6px; margin: 0 4px 2px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: none; }
+.thread-card.collapsed { min-height: 92px; padding: 16px 12px; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
+.thread-card .detail-avatar { width: 40px; height: 40px; font-size: 15px; }
+.thread-card-collapsed-info { flex: 1; min-width: 0; }
+.thread-card-name { font-size: 15px; font-weight: 600; color: #3B2A12; }
+.thread-card-date { font-size: 11.5px; color: #6B5A45; margin-left: 6px; }
+.thread-card-preview { font-size: 13px; font-weight: 400; color: #7A6A55; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; white-space: normal; margin-top: 4px; line-height: 1.45; }
+.thread-card.expanded { padding: 14px 16px 18px; }
+.thread-card.expanded .detail-meta-row { padding: 12px 0 4px; cursor: pointer; }
+.thread-card.expanded .detail-body-text { margin-top: 12px; }
+.thread-card.expanded .sender-detail-panel { margin: 12px 8px; }
+.quote-block { margin-top: 18px; padding-top: 14px; padding-left: 16px; border-top: 1px solid rgba(0,0,0,0.07); font-size: 13px; color: #6B5A45; line-height: 1.6; }
+.quote-meta { margin-bottom: 6px; }
+.quote-link { color: #1a73e8; cursor: pointer; }
+.attachment-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; margin-right: 16px; white-space: normal; }
+.attachment-card { width: 100%; background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.attachment-preview { background: #fff; height: 220px; display: flex; align-items: flex-start; justify-content: center; overflow: hidden; }
+.attachment-preview canvas { width: 135%; height: auto; flex-shrink: 0; display: block; }
+.attachment-info-bar { background: #FFE4AE; display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
+.attachment-icon-pdf { flex-shrink: 0; }
+.attachment-file-name { flex: 1; min-width: 0; font-size: 13px; color: #3B2A12; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.attachment-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.attachment-action-icon { flex-shrink: 0; color: #6B5A45; }
+.detail-actions { position: fixed; left: 0; right: 0; bottom: 56px; padding: 12px 16px; background: #FFF1D8; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; gap: 4px; z-index: 15; }
+.detail-action-btn { flex: 1; background: #5D6A8A; border: none; height: 44px; border-radius: 22px; margin: 0 4px; font-size: 15px; font-weight: 600; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+.detail-emoji-btn { width: 48px; height: 48px; flex-shrink: 0; background: #fff; border: 1.5px solid rgba(0,0,0,0.12); border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.summary-card { display: flex; align-items: center; gap: 10px; margin: 6px 4px 10px; padding: 12px 14px; background: #FFFCF5; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); cursor: pointer; }
+.summary-card.hidden { display: none; }
+.summary-icon { width: 24px; height: 24px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #6B5A45; }
+.summary-label { flex: 1; font-size: 13.5px; color: #3B2A12; font-weight: 500; }
+.summary-dismiss { background: none; border: none; cursor: pointer; padding: 4px 6px; color: #aaa; font-size: 18px; line-height: 1; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- INBOX VIEW -->
+<div id="inbox-view">
+  <div class="inbox-header">
+    <button class="menu-btn" aria-label="メニュー">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6" stroke-linecap="round"/><line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round"/><line x1="3" y1="18" x2="21" y2="18" stroke-linecap="round"/></svg>
+    </button>
+    <div class="search-pill">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke-linecap="round"/></svg>
+      <span>メールを検索</span>
+    </div>
+    <div class="account-avatar" style="background:#7B4FCB;font-size:11px;">中桐</div>
+  </div>
+
+  <div class="tabs-row">
+    <span class="current-tab-label">メイン</span>
+  </div>
+
+  <div class="mail-list" id="mail-list"></div>
+
+  <button class="compose-fab" onclick="alert('新規メールの作成（デモ）')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3"><path d="M12 20h9" stroke-linecap="round"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>作成</span>
+  </button>
+</div>
+
+<!-- DETAIL VIEW -->
+<div id="detail-view">
+  <div class="detail-header">
+    <button class="icon-btn-plain" onclick="closeDetail()" aria-label="戻る">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2.2"><path d="M19 12H5" stroke-linecap="round"/><path d="M11 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="spacer"></div>
+    <button class="icon-btn-plain" aria-label="アーカイブ">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a2 2 0 002 2h10a2 2 0 002-2V9"/><line x1="10" y1="13" x2="14" y2="13" stroke-linecap="round"/></svg>
+    </button>
+    <button class="icon-btn-plain" aria-label="削除">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+    </button>
+    <button class="icon-btn-plain" aria-label="既読にする">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><path d="M21 8l-9 6-9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+    </button>
+    <button class="icon-btn-plain" aria-label="その他">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#444"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+    </button>
+  </div>
+
+  <div class="detail-body-area" id="detail-body-area">
+    <!-- filled by JS -->
+  </div>
+
+  <div class="detail-actions">
+    <button class="detail-action-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 00-4-4H4"/></svg>
+      返信
+    </button>
+    <button class="detail-action-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 014-4h12"/></svg>
+      転送
+    </button>
+    <button class="detail-emoji-btn" aria-label="リアクション" onclick="alert('リアクションを送信（デモ）')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5D6A8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button>
+  </div>
+</div>
+
+<div class="bottom-tabs">
+  <button class="tab-btn active" aria-label="メール">
+    <span class="tab-icon-circle">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3949AB" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+    </span>
+  </button>
+  <button class="tab-btn" aria-label="Meet">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="1.5"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+if (typeof pdfjsLib !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+const AVATAR_COLORS = ['#6B8E9F','#A05C5C','#5C7A5C','#7A6E9F','#9F7A4D','#4D7A7A','#9F5C7A','#5C6B9F'];
+const MY_EMAIL = 'volca7000@gmail.com';
+
+const COLOR_OVERRIDES = {
+  '中村 誠': '#4A7FB5',
+  'メルカリ': '#D9534F',
+  '西田 裕子': '#5FA85D',
+  '田中 浩二': '#E0913C',
+  '武田 綾香': '#7C5CBF',
+  '武田': '#7C5CBF',
+  'Quoraダイジェスト': '#9B6FCF',
+  '林 美穂': '#4F9F7C',
+  '松本 大輔': '#9E9E9E',
+  'Amazon.co.jp': '#43A047',
+  '中桐': '#4CAF50',
+  '渡辺 遥': '#4285F4',
+  '渡辺': '#4285F4',
+  '黒崎 侑佑': '#FF8C00',
+  '黒崎': '#FF8C00',
+};
+
+function colorFor(name) {
+  if (COLOR_OVERRIDES[name]) return COLOR_OVERRIDES[name];
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+
+const MAILS = [
+  {
+    id: 'm1', name: '中村 誠', email: 'nakamura@example.com', avatarLetter: '中村',
+    subject: '登記書類の確認をお願いします',
+    snippet: 'お世話になっております。先日ご依頼いただきました登記書類について、ご確認をお願いいたします…',
+    date: '11:20', unread: false, starred: true,
+    body: 'お世話になっております。中村でございます。\n\n先日ご依頼いただきました登記書類につきまして、内容のご確認をお願いできますでしょうか。\n\n商号・本店所在地・役員に関する記載事項をご確認のうえ、修正点がございましたらお知らせください。確認が取れ次第、登記申請の手続きを進めさせていただきます。\n\nお忙しいところ恐縮ですが、よろしくお願いいたします。\n\n中村 誠',
+  },
+  {
+    id: 'm2', name: 'メルカリ', email: 'no-reply@mercari.com', avatarLetter: 'm',
+    subject: '【今ならお得】ファミリーセール開催中',
+    snippet: 'お得なアイテム揃えました。家族みんなで使えるアイテムが今だけ特別価格で…',
+    date: '10:45', unread: false, starred: false,
+    body: 'メルカリをご利用いただきありがとうございます。\n\nただいまファミリーセールを開催中です！\n家族みんなで使えるキッズ用品、生活雑貨、家電などを特別価格でご紹介しています。\n\nこの機会にぜひチェックしてみてください。\n\nメルカリ事務局',
+  },
+  {
+    id: 'm10', name: '渡辺 遥', email: 'hwatanabe@vedatech.net', avatarLetter: '渡辺',
+    subject: 'NMNセフィロト15000 発注の件',
+    snippet: 'ご注文ありがとうございます。NMNセフィロト15000 50個承りました。発注書も確認いたしました…',
+    date: '10:08', unread: true, starred: false,
+    thread: [
+      {
+        from: '渡辺', fromEmail: 'hwatanabe@vedatech.net', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月7日', datetime: '2026年5月7日(木) 10:12',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社ヴェーダテクノロジーズの渡辺です。<br><br>NMNセフィロト15000を100個発注いたします。<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたしますのでご確認ください。<br><br>よろしくお願いいたします。<br><br>渡辺 遥<br>株式会社ヴェーダテクノロジーズ<br>hwatanabe@vedatech.net',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '5月7日', datetime: '2026年5月7日(木) 11:05',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト15000 100個<br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '渡辺', fromEmail: 'hwatanabe@vedatech.net', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月14日', datetime: '2026年5月14日(水) 14:26',
+        body: 'お世話になっております。<br>株式会社ヴェーダテクノロジーズの渡辺です。<br><br>追加でNMNセフィロト15000を80個発注いたします。<br><br>前回分と合わせて預り在庫より引当をお願いいたします。<br><br>発注書を添付いたします。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '5月14日', datetime: '2026年5月14日(水) 15:02',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>追加ご注文ありがとうございます。<br><br>NMNセフィロト15000 80個<br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '渡辺', fromEmail: 'hwatanabe@vedatech.net', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月21日', datetime: '2026年5月21日(木) 09:43',
+        body: 'お世話になっております。<br>株式会社ヴェーダテクノロジーズの渡辺です。<br><br>NMNセフィロト15000を70個発注いたします。<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたします。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '5月21日', datetime: '2026年5月21日(木) 10:11',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト15000 70個<br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '5月29日', datetime: '2026年5月29日(金) 10:18',
+        body: '株式会社ヴェーダテクノロジーズ<br>渡辺様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>5月分のNMNセフィロト商品代につきまして、請求書を添付にてお送りいたします。<br><br>【請求内容】<br>NMNセフィロト15000　250個<br><br>ご請求金額は、税込687,500円となります。<br>お支払期限は2026年6月30日です。<br><br>内容をご確認のほど、よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+        attachments: [
+          { name: '請求書_株式会社ヴェーダテクノロジーズ_2026年5月分.pdf', meta: '請求書 ¥687,500' },
+        ],
+      },
+      {
+        from: '渡辺', fromEmail: 'hwatanabe@vedatech.net', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月29日', datetime: '2026年5月29日(金) 11:04',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社ヴェーダテクノロジーズの渡辺です。<br><br>請求書を確認いたしました。<br>内容に相違ございません。<br><br>社内処理を進めさせていただきます。<br><br>引き続きよろしくお願いいたします。<br><br>渡辺 遥<br>株式会社ヴェーダテクノロジーズ<br>hwatanabe@vedatech.net',
+      },
+      {
+        from: '渡辺', fromEmail: 'hwatanabe@vedatech.net', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '6月5日', datetime: '2026年6月5日(金) 09:36',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社ヴェーダテクノロジーズの渡辺です。<br><br>今月分として、NMNセフィロト15000を50個発注いたします。<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたしますので、ご確認ください。<br><br>よろしくお願いいたします。<br><br>渡辺 遥<br>株式会社ヴェーダテクノロジーズ<br>hwatanabe@vedatech.net',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '6月5日', datetime: '2026年6月5日(金) 10:08',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト15000 50個<br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+    ],
+  },
+  {
+    id: 'm4', name: '田中 浩二', email: 'tanaka.koji@example.com', avatarLetter: '田中',
+    subject: '請求書の送付について',
+    snippet: 'お世話になっております。先月分の請求書を送付いたします…',
+    date: '9:30', unread: false, starred: false,
+    body: 'お世話になっております。田中です。\n\n先月分の請求書を送付いたします。ご査収のほど、よろしくお願いいたします。\n\nお支払い期日は今月末となっております。ご不明な点がございましたら、お気軽にお問い合わせください。\n\n田中 浩二',
+  },
+  {
+    id: 'm5', name: '武田 綾香', email: 'ryoka@interakt.jp', avatarLetter: '武田',
+    subject: 'AI決算書診断システムの開発対応について',
+    listSubject: '6月以降の対応について',
+    snippet: '6月以降の対応について、改めて共有いたします。',
+    date: '6月5日', unread: true, starred: false,
+    thread: [
+      {
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月7日', datetime: '2026年5月7日(木) 10:18',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>AI決算書診断システムの件で、開発開始にあたり確認事項を共有いたします。<br><br>今回、実際にアップロードされた決算書PDFを前提に、AIで会社名・期数・事業年度を読み取り、通常画面の内容と照合できる流れを重視したいと考えております。<br><br>特に、以下の点について確認をお願いいたします。<br><br>・会社名の読み取り精度<br>・期数、事業年度の反映<br>・預貯金、売掛金、買掛金、未払金などの内訳行確認<br>・PDF出力前の確認フロー<br>・通常画面へ反映したデータの保持<br><br>まずは現状の仕様を確認し、必要な修正点を整理いただけますでしょうか。<br><br>よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月7日', datetime: '2026年5月7日(木) 14:42',
+        body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご連絡ありがとうございます。<br><br>AI決算書診断システムの確認事項について承知いたしました。<br><br>まずは、実アップロードPDFを前提に、会社名・期数・事業年度の読み取り状況を確認し、通常画面へ反映されるデータとの整合性を確認いたします。<br><br>また、預貯金・売掛金・買掛金・未払金などの内訳行について、行抜けや反映漏れがないかもあわせて確認いたします。<br><br>確認後、修正が必要な箇所を整理してご報告いたします。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月11日', datetime: '2026年5月11日(月) 11:06',
+        body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>AI読取部分について一次確認を行いました。<br><br>会社名・期数・事業年度については、おおむね取得できておりますが、一部PDFの形式によって会社名の取得が不安定になるケースがありました。<br><br>また、内訳行については、預貯金・売掛金・買掛金・未払金の表示において、読み取り結果と通常画面側の表示に差異が出るケースを確認しております。<br><br>現在、以下を中心に修正を進めております。<br><br>・会社名検出処理の補強<br>・期数、事業年度の再確認<br>・預貯金行の抜け確認<br>・売掛金、買掛金、未払金の内訳行チェック<br>・通常画面データとの照合処理<br><br>引き続き確認を進め、修正内容を反映いたします。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+      {
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月14日', datetime: '2026年5月14日(木) 16:20',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>ご確認ありがとうございます。<br><br>預貯金・売掛金・買掛金・未払金の行抜け確認については、実際の利用時に重要になる部分かと思いますので、引き続き優先して調整をお願いいたします。<br><br>また、AI診断結果を通常画面へ反映した後、PDF作成時に前回データや誤った値が混ざらないよう、再照合の流れも入れられると安心です。<br><br>PDF出力前に重大な差異がある場合は、そのまま出力せず、確認画面または停止判定が出る形をご検討ください。<br><br>よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月18日', datetime: '2026年5月18日(月) 13:35',
+        body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご指摘いただいた内容について、追加対応を進めております。<br><br>現在、AI診断結果と通常画面データの再照合を行い、PDF作成前に大きな差異がある場合は出力を止める方向で条件整理を行っております。<br><br>また、補正候補を表示した後、通常画面へ安全に反映し、その内容がPDF作成まで保持されるかについても確認中です。<br><br>主な対応内容は以下です。<br><br>・AI診断結果と通常画面データの再照合<br>・補正候補表示UIの調整<br>・内訳行チェックの追加<br>・PDF出力前ガード条件の整理<br>・出力停止判定の確認<br><br>引き続き検証を行い、進捗をご報告いたします。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+      {
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月22日', datetime: '2026年5月22日(金) 15:12',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>進捗共有ありがとうございます。<br><br>PDF出力前ガードと再照合の流れについて、方向性は問題ございません。<br><br>今後の利用を考えると、ZIP内に含まれるPDFとの照合や、出力後の帳票確認も重要になると思います。<br><br>そのため、今月分としては以下の整理まで進めていただけますでしょうか。<br><br>・PDF本文照合後の出力許可条件<br>・出力停止時の理由表示<br>・補正候補反映後の再照合<br>・ZIP内PDF照合に向けた仕様整理<br>・管理者用診断画面での確認項目整理<br><br>よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月26日', datetime: '2026年5月26日(火) 10:44',
+        body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>追加仕様整理および検証対応について、現時点の内容をご報告いたします。<br><br>PDF出力前ガードについては、会社名・期数・事業年度・内訳行に大きな差異がある場合、出力前に確認できるよう条件を整理しております。<br><br>また、AI診断結果と通常画面データの再照合、補正候補表示後の安全データ反映についても調整を進めております。<br><br>ZIP内PDFとの照合については、今月中に仕様整理を行い、次月以降の対応項目として進める予定です。<br><br>5月末に、月次作業報告書として対応内容をまとめてご提出いたします。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+      {
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月29日', datetime: '2026年5月29日(金) 14:08',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>本日、5月分の業務委託費につきまして、ご指定の口座へ送金手続きを行いましたのでご連絡いたします。<br><br>着金をご確認いただけましたら、ご一報いただけますと幸いです。<br><br>引き続き、AI診断部分およびPDF出力前ガード、再照合関連の調整につきまして、よろしくお願いいたします。<br><br>何卒よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '5月29日', datetime: '2026年5月29日(金) 15:21',
+        body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご連絡ありがとうございます。<br><br>ご送金分につきまして、入金を確認いたしました。<br>ご対応いただきありがとうございます。<br><br>開発部分につきましても、引き続き対応を進めてまいります。<br><br>特に、<br>・AI診断結果と通常画面データの整合性<br>・PDF出力停止条件<br>・補正候補反映後の再照合<br><br>については、引き続き確認しながら進めてまいります。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '武田', toEmail: 'ryoka@interakt.jp', date: '6月1日', datetime: '2026年6月1日(月) 09:38',
+        body: '株式会社Interakt<br>武田様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>2026年5月分の月次作業報告書および請求書を添付にてお送りいたします。<br><br>今月は主に、実アップロードPDFを前提としたAIチェック強化、預貯金・売掛金・買掛金・未払金等の行抜け確認、補正候補表示、PDF出力前ガード、通常画面との再照合を中心に開発・検証を行いました。<br><br>また、追加仕様整理および追加検証対応が発生したため、請求書には基本作業費に加え、追加対応費を計上しております。<br><br>【添付資料】<br>・月次作業報告書_株式会社Interakt_2026年5月分<br>・請求書_株式会社Interakt_2026年5月分<br><br>請求金額は、税込1,251,800円となります。<br>お支払期限は2026年6月30日です。<br><br>内容をご確認いただき、不明点等ございましたらご連絡ください。<br><br>何卒よろしくお願いいたします。<br><br>株式会社アークラボ<br>代表取締役 中桐由美子',
+        attachments: [
+          { name: '月次作業報告書_株式会社Interakt_2026年5月分.pdf', meta: 'PDF', url: 'https://nakagiri3019-design.github.io/mail-app/月次作業報告書_株式会社Interakt_2026年5月分.pdf' },
+          { name: '請求書_株式会社Interakt_2026年5月分.pdf', meta: '請求書 ¥1,251,800', url: 'https://nakagiri3019-design.github.io/mail-app/請求書_株式会社Interakt_2026年5月分.pdf' },
+        ],
+      },
+      {
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '6月3日', datetime: '2026年6月3日(水) 13:27',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>月次作業報告書および請求書を確認いたしました。<br>ご対応ありがとうございます。<br><br>5月分の作業内容について、AI診断部分やPDF出力前の確認フローが以前より整理されており、実運用を想定した形に近づいていると感じております。<br><br>特に以下の点について改善が確認できました。<br><br>・預貯金、売掛金、買掛金、未払金等の行抜け確認<br>・原本PDFと通常画面データの再照合<br>・補正候補表示後の安全データ反映<br>・PDF出力前の停止条件整理<br>・管理者用診断画面およびデプロイ後確認フロー<br><br>請求内容につきましても確認いたしましたので、社内処理を進めさせていただきます。<br><br>よろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
+      },
+      {
+        from: '武田', fromEmail: 'ryoka@interakt.jp', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '6月5日', datetime: '2026年6月5日(金) 11:16',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社Interaktの武田です。<br><br>6月以降の対応について、改めて共有いたします。<br><br>今後は、5月に整理いただいたAI診断結果と通常画面データの再照合をベースに、以下を中心に進めていただければと思います。<br><br>・PDF本文照合後の出力許可、停止条件の精度向上<br>・補正候補反映後の再照合<br>・ZIP内PDFまで含めた原本照合チェック<br>・利用者目線での画面改善<br>・操作性診断および確認フローの整理<br><br>5月分の内容については確認済みですので、引き続き6月分もよろしくお願いいたします。<br><br>武田 綾香<br>株式会社 Interakt<br>E-mail：ryoka@interakt.jp',
+      },
+    ],
+  },
+  {
+    id: 'm11', name: '黒崎 侑佑', email: 'kurosaki@jkoso.com', avatarLetter: '黒崎',
+    subject: 'NMNセフィロト商品発注の件',
+    snippet: 'ご注文ありがとうございます。NMNセフィロト30000 50個 NMNセフィロト15000 50個承りました…',
+    date: '6月3日', unread: true, starred: false,
+    thread: [
+      {
+        from: '黒崎', fromEmail: 'kurosaki@jkoso.com', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月8日', datetime: '2026年5月8日(金) 11:20',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>日本酵素開発株式会社の黒崎です。<br><br>下記商品を発注いたします。<br><br>・NMNセフィロト30000　50個<br>・NMNセフィロト15000　80個<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたします。<br><br>よろしくお願いいたします。<br><br>黒崎 侑佑<br>日本酵素開発株式会社<br>kurosaki@jkoso.com',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '黒崎', toEmail: 'kurosaki@jkoso.com', date: '5月8日', datetime: '2026年5月8日(金) 12:01',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト30000 50個<br>NMNセフィロト15000 80個<br><br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '黒崎', fromEmail: 'kurosaki@jkoso.com', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月15日', datetime: '2026年5月15日(金) 13:14',
+        body: 'お世話になっております。<br>日本酵素開発株式会社の黒崎です。<br><br>追加で下記商品を発注いたします。<br><br>・NMNセフィロト30000　50個<br>・NMNセフィロト7500　80個<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたします。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '黒崎', toEmail: 'kurosaki@jkoso.com', date: '5月15日', datetime: '2026年5月15日(金) 13:48',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト30000 50個<br>NMNセフィロト7500 80個<br><br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '黒崎', fromEmail: 'kurosaki@jkoso.com', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月22日', datetime: '2026年5月22日(金) 16:35',
+        body: 'お世話になっております。<br>日本酵素開発株式会社の黒崎です。<br><br>追加で下記商品を発注いたします。<br><br>・NMNセフィロト15000　100個<br>・NMNセフィロト7500　100個<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたします。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '黒崎', toEmail: 'kurosaki@jkoso.com', date: '5月22日', datetime: '2026年5月22日(金) 17:12',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト15000 100個<br>NMNセフィロト7500 100個<br><br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '黒崎', toEmail: 'kurosaki@jkoso.com', date: '5月29日', datetime: '2026年5月29日(金) 10:32',
+        body: '日本酵素開発株式会社<br>黒崎様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>5月分のNMNセフィロト商品代につきまして、請求書を添付にてお送りいたします。<br><br>【請求内容】<br>NMNセフィロト30000　100個<br>NMNセフィロト15000　180個<br>NMNセフィロト7500　180個<br><br>ご請求金額は、税込1,346,400円となります。<br>お支払期限は2026年6月30日です。<br><br>内容をご確認のほど、よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+        attachments: [
+          { name: '請求書_日本酵素開発株式会社_2026年5月分.pdf', meta: '請求書 ¥1,346,400' },
+        ],
+      },
+      {
+        from: '黒崎', fromEmail: 'kurosaki@jkoso.com', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月29日', datetime: '2026年5月29日(金) 11:18',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>日本酵素開発株式会社の黒崎です。<br><br>請求書を確認いたしました。<br>内容に相違ございません。<br><br>社内処理を進めさせていただきます。<br><br>引き続きよろしくお願いいたします。<br><br>黒崎 侑佑<br>日本酵素開発株式会社<br>kurosaki@jkoso.com',
+      },
+      {
+        from: '黒崎', fromEmail: 'kurosaki@jkoso.com', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '6月3日', datetime: '2026年6月3日(水) 14:22',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>日本酵素開発株式会社の黒崎です。<br><br>今月分として、下記商品を発注いたします。<br><br>・NMNセフィロト30000　50個<br>・NMNセフィロト15000　50個<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたしますので、ご確認ください。<br><br>よろしくお願いいたします。<br><br>黒崎 侑佑<br>日本酵素開発株式会社<br>kurosaki@jkoso.com',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '黒崎', toEmail: 'kurosaki@jkoso.com', date: '6月3日', datetime: '2026年6月3日(水) 15:01',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト30000 50個<br>NMNセフィロト15000 50個<br><br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+    ],
+  },
+  {
+    id: 'm6', name: 'Quoraダイジェスト', email: 'digest-noreply@quora.com',
+    subject: 'なぜシステム開発の見積もりは外れるのか',
+    snippet: '多くのエンジニアが経験するこの問題について、様々な回答が寄せられています…',
+    date: '昨日', unread: false, starred: false,
+    body: 'こんにちは\n\nあなたへのおすすめの質問をお届けします。\n\n「なぜシステム開発の見積もりは外れるのか」\n\n多くのエンジニアが経験するこの問題について、様々な回答が寄せられています。気になる方はぜひチェックしてみてください。\n\nQuora',
+  },
+  {
+    id: 'm7', name: '林 美穂', email: 'hayashi@example.com',
+    subject: '登記申請の進捗確認',
+    snippet: 'お疲れ様です。先日の申請について、進捗状況のご確認を…',
+    date: '昨日', unread: false, starred: true,
+    body: 'お疲れ様です。林です。\n\n先日ご依頼いただきました登記申請について、進捗状況のご確認をお願いできますでしょうか。\n\n申請書類に不備がないか念のため確認させていただきたく、ご連絡いたしました。\n\nお手すきの際にご返信いただけますと幸いです。\n\n林 美穂',
+  },
+  {
+    id: 'm8', name: '松本 大輔', email: 'matsumoto@example.com', avatarLetter: '松本',
+    subject: '来週の打ち合わせ日程',
+    snippet: 'お世話になっております。来週の打ち合わせ日程について調整をお願いいたします…',
+    date: '6月8日', unread: false, starred: false,
+    body: 'お世話になっております。松本です。\n\n来週の打ち合わせ日程について、調整をお願いできますでしょうか。\n\n候補日は以下の通りです。\n\n・6月15日（月）14:00〜\n・6月16日（火）10:00〜\n・6月17日（水）15:00〜\n\nご都合の良い日時をお知らせいただけますと幸いです。\n\n松本 大輔',
+  },
+  {
+    id: 'm9', name: 'Amazon.co.jp', email: 'order-update@amazon.co.jp',
+    subject: 'ご注文の商品を発送しました',
+    snippet: 'ご注文の商品を発送しました。お届け予定日は近日中です…',
+    date: '6月7日', unread: false, starred: false,
+    body: 'いつもAmazon.co.jpをご利用いただきありがとうございます。\n\nご注文いただいた商品を発送いたしましたのでお知らせいたします。\n\n注文番号：249-7261834-1059473\nお届け予定日：6月9日（火）\n\n配送状況の確認は、注文履歴ページからご確認いただけます。\n\n今後ともAmazon.co.jpをよろしくお願いいたします。',
+  },
+];
+
+function initial(name) {
+  return name.trim().charAt(0);
+}
+
+const AVATAR_LABEL_OVERRIDES = {
+  '武田': '武田',
+  '中桐': '中桐',
+  '渡辺': '渡辺',
+  '黒崎': '黒崎',
+};
+
+function avatarLabel(name) {
+  return AVATAR_LABEL_OVERRIDES[name] || initial(name);
+}
+
+function renderDetailAvatar(name) {
+  const label = avatarLabel(name);
+  const fontSize = label.length > 1 ? 'font-size:11px;' : '';
+  return `<div class="detail-avatar" style="background:${colorFor(name)};${fontSize}">${label}</div>`;
+}
+
+function starSVG(filled) {
+  return filled
+    ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="#F4B400" stroke="#F4B400" stroke-width="1.5"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`
+    : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`;
+}
+
+function renderToLine(uid) {
+  return `
+    <div class="detail-to-line to-line-toggle" data-to-toggle="${uid}">
+      <span>To: 自分</span><span class="to-arrow">▼</span>
+    </div>
+  `;
+}
+
+function renderToPanel(uid, from, fromEmail, toName, toEmail, datetime) {
+  return `
+    <div class="sender-detail-panel" data-to-panel="${uid}">
+      <div class="panel-row"><span class="panel-label">From:</span><span>${from}・${fromEmail}</span></div>
+      <div class="panel-row"><span class="panel-label">宛先:</span><span>${toName}・${toEmail}</span></div>
+      <div class="panel-row"><span class="panel-label">日付:</span><span>${datetime}</span></div>
+      <div class="security-notice">
+        <span>🔒</span>
+        <span>標準的な暗号化（TLS）が適用されています。<br><span class="security-link">セキュリティの詳細を表示</span></span>
+      </div>
+    </div>
+  `;
+}
+
+function renderSenderCardIcons() {
+  return `
+    <div class="sender-card-icons">
+      <button class="mini-icon-btn" aria-label="リアクション" onclick="alert('リアクションを送信（デモ）')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B5A45" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button>
+      <button class="mini-icon-btn" aria-label="返信" onclick="alert('返信（デモ）')">↩</button>
+      <button class="mini-icon-btn" aria-label="その他" onclick="alert('その他のオプション（デモ）')">⋮</button>
+    </div>
+  `;
+}
+
+function bindToPanelToggles(area) {
+  area.querySelectorAll('[data-to-toggle]').forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+      const id = toggle.getAttribute('data-to-toggle');
+      const panel = area.querySelector(`[data-to-panel="${id}"]`);
+      const arrow = toggle.querySelector('.to-arrow');
+      const isOpen = panel.classList.toggle('open');
+      arrow.textContent = isOpen ? '▲' : '▼';
+    });
+  });
+}
+
+function renderAttachment(att) {
+  const action = att.url ? `window.open('${att.url}', '_blank')` : `alert('添付ファイルを開く（デモ）')`;
+  const preview = att.url
+    ? `<canvas class="pdf-thumb-canvas" data-pdf-url="${att.url}"></canvas>`
+    : `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D93025" stroke-width="1.5"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z" stroke-linejoin="round"/><path d="M14 3v5h5" stroke-linejoin="round"/></svg>`;
+  return `
+    <div class="attachment-card" onclick="${action}">
+      <div class="attachment-preview">${preview}</div>
+      <div class="attachment-info-bar">
+        <svg class="attachment-icon-pdf" width="26" height="26" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3" fill="#D93025"/><text x="12" y="16" font-size="8.5" font-weight="700" fill="#fff" text-anchor="middle" font-family="Arial, sans-serif">PDF</text></svg>
+        <span class="attachment-file-name">${att.name}</span>
+        <span class="attachment-actions">
+          <svg class="attachment-action-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+          <svg class="attachment-action-icon" width="18" height="18" viewBox="0 0 24 24"><path d="M8.5 2L1 14.5h6l7.5-12.5z" fill="currentColor"/><path d="M7 15.5l-3.5 6h14l3.5-6z" fill="currentColor"/><path d="M15.5 2L23 14.5h-7L9.5 2z" fill="currentColor"/></svg>
+        </span>
+      </div>
+    </div>
+  `;
+}
+
+function renderPdfThumbnails(area) {
+  if (typeof pdfjsLib === 'undefined') return;
+  area.querySelectorAll('canvas.pdf-thumb-canvas[data-pdf-url]').forEach((canvas) => {
+    if (canvas.dataset.rendered) return;
+    canvas.dataset.rendered = '1';
+    const url = canvas.getAttribute('data-pdf-url');
+    pdfjsLib.getDocument(url).promise
+      .then((pdf) => pdf.getPage(1))
+      .then((page) => {
+        const containerWidth = canvas.parentElement.clientWidth;
+        const baseViewport = page.getViewport({ scale: 1 });
+        const scale = containerWidth / baseViewport.width;
+        const viewport = page.getViewport({ scale });
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        return page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+      })
+      .catch((err) => console.error('PDF preview render failed:', err));
+  });
+}
+
+function renderList() {
+  const list = document.getElementById('mail-list');
+  list.innerHTML = MAILS.map((m) => `
+    <div class="mail-row ${m.unread ? 'unread' : ''}" data-id="${m.id}">
+      <div class="mail-avatar" style="background:${colorFor(m.name)};${(m.avatarLetter || initial(m.name)).length > 1 ? 'font-size:14px;' : ''}">${m.avatarLetter || initial(m.name)}</div>
+      <div class="mail-body">
+        <div class="mail-top-row">
+          <span class="mail-sender">${m.name}</span>
+          <span class="mail-date">${m.date}</span>
+        </div>
+        <div class="mail-subject-line"><span class="subj">${m.listSubject || m.subject}</span> <span class="mail-snippet">- ${m.snippet}</span></div>
+      </div>
+      <button class="star-btn" data-star="${m.id}">${starSVG(m.starred)}</button>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.mail-row').forEach((row) => {
+    row.addEventListener('click', (e) => {
+      if (e.target.closest('.star-btn')) return;
+      openDetail(row.getAttribute('data-id'));
+    });
+  });
+  list.querySelectorAll('.star-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute('data-star');
+      const mail = MAILS.find((x) => x.id === id);
+      mail.starred = !mail.starred;
+      btn.innerHTML = starSVG(mail.starred);
+    });
+  });
+}
+
+function previewText(body) {
+  return body.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 60);
+}
+
+function renderQuoteBlock(prevMsg) {
+  return `
+    <div class="quote-block">
+      <div class="quote-meta">On ${prevMsg.datetime}, ${prevMsg.from} wrote:</div>
+      <span class="quote-link">元のメッセージを表示</span>
+    </div>
+  `;
+}
+
+function renderThreadCard(mail, msg, idx, expanded) {
+  const uid = `${mail.id}-${idx}`;
+  if (!expanded) {
+    return `
+      <div class="thread-card collapsed" data-card-toggle="${idx}">
+        ${renderDetailAvatar(msg.from)}
+        <div class="thread-card-collapsed-info">
+          <span class="thread-card-name">${msg.from}</span>
+          <span class="thread-card-date">${msg.date}</span>
+          <div class="thread-card-preview">${previewText(msg.body)}</div>
+        </div>
+      </div>
+    `;
+  }
+  const messages = mail._messages;
+  const quoteHTML = idx > 0 ? renderQuoteBlock(messages[idx - 1]) : '';
+  return `
+    <div class="thread-card expanded">
+      <div class="detail-meta-row" data-card-toggle="${idx}">
+        ${renderDetailAvatar(msg.from)}
+        <div class="detail-sender-info">
+          <div class="detail-sender-name">${msg.from} <span class="thread-date-inline">${msg.date}</span></div>
+          ${renderToLine(uid)}
+        </div>
+        ${renderSenderCardIcons()}
+      </div>
+      ${renderToPanel(uid, msg.from, msg.fromEmail, msg.to, msg.toEmail, msg.datetime)}
+      <div class="detail-body-text">${msg.body}${(msg.attachments && msg.attachments.length) ? `<div class="attachment-grid">${msg.attachments.map(renderAttachment).join('')}</div>` : ''}</div>
+      ${quoteHTML}
+    </div>
+  `;
+}
+
+function bindThreadCardToggles(area, mail) {
+  area.querySelectorAll('[data-card-toggle]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('[data-to-toggle]') || e.target.closest('.sender-card-icons') || e.target.closest('.detail-title-star')) return;
+      const idx = Number(el.getAttribute('data-card-toggle'));
+      const scrollPos = area.scrollTop;
+      mail._expanded[idx] = !mail._expanded[idx];
+      renderDetailBody(mail);
+      area.scrollTop = scrollPos;
+    });
+  });
+}
+
+function renderDetailBody(mail) {
+  const area = document.getElementById('detail-body-area');
+  const messages = mail._messages;
+
+  const subjectRowHTML = `
+    <div class="detail-subject-block">
+      <span class="detail-subject-text">${mail.subject}</span>
+      <span class="inbox-badge">受信トレイ</span>
+      <button class="detail-title-star" data-star="${mail.id}">${starSVG(mail.starred)}</button>
+    </div>
+  `;
+
+  const cardsHTML = messages.map((msg, i) => renderThreadCard(mail, msg, i, mail._expanded[i])).join('');
+
+  const summaryCardHTML = `
+    <div class="summary-card" id="summary-card-${mail.id}">
+      <div class="summary-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="3"/>
+          <line x1="7" y1="8" x2="17" y2="8"/>
+          <line x1="7" y1="12" x2="17" y2="12"/>
+          <line x1="7" y1="16" x2="13" y2="16"/>
+        </svg>
+      </div>
+      <span class="summary-label">このメールを要約</span>
+      <button class="summary-dismiss" onclick="event.stopPropagation();document.getElementById('summary-card-${mail.id}').classList.add('hidden')" aria-label="閉じる">×</button>
+    </div>
+  `;
+
+  area.innerHTML = `${subjectRowHTML}${summaryCardHTML}${cardsHTML}`;
+
+  bindToPanelToggles(area);
+  bindThreadCardToggles(area, mail);
+  renderPdfThumbnails(area);
+
+  const titleStarBtn = area.querySelector('.detail-title-star');
+  if (titleStarBtn) {
+    titleStarBtn.addEventListener('click', () => {
+      mail.starred = !mail.starred;
+      titleStarBtn.innerHTML = starSVG(mail.starred);
+    });
+  }
+}
+
+function openDetail(id) {
+  const mail = MAILS.find((x) => x.id === id);
+  if (!mail) return;
+  mail.unread = false;
+
+  if (!mail._messages) {
+    mail._messages = mail.thread || [{
+      from: mail.name, fromEmail: mail.email, to: '野口', toEmail: MY_EMAIL,
+      date: mail.date, datetime: mail.date, body: mail.body,
+    }];
+  }
+  if (!mail._expanded) {
+    mail._expanded = mail._messages.map((_, i) => i === mail._messages.length - 1);
+  }
+
+  renderDetailBody(mail);
+  document.getElementById('detail-body-area').scrollTop = 0;
+
+  document.getElementById('inbox-view').style.display = 'none';
+  document.getElementById('detail-view').style.display = 'flex';
+  renderList();
+}
+
+function closeDetail() {
+  document.getElementById('detail-view').style.display = 'none';
+  document.getElementById('inbox-view').style.display = 'flex';
+  renderList();
+}
+
+renderList();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js').then((reg) => {
+      reg.update();
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'activated') {
+            window.location.reload();
+          }
+        });
+      });
+    }).catch((err) => {
+      console.error('Service worker registration failed:', err);
+    });
+
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
+  });
+}
+</script>
+</body>
+</html>
