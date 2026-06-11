@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mail-cache-v14';
+const CACHE_NAME = 'mail-cache-v15';
 const PRECACHE_URLS = [
   './mail.html',
   './manifest.json',
