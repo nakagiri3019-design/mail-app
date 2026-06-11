@@ -121,7 +121,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke-linecap="round"/></svg>
       <span>メールを検索</span>
     </div>
-    <div class="account-avatar" style="background:#7B4FCB;">野</div>
+    <div class="account-avatar" style="background:#7B4FCB;font-size:11px;">野口</div>
   </div>
 
   <div class="tabs-row">
@@ -307,6 +307,19 @@ function initial(name) {
   return name.trim().charAt(0);
 }
 
+const AVATAR_LABEL_OVERRIDES = {
+  '野口': '野口',
+  '佐藤 美咲': '佐藤',
+  '田中 健一': '田中',
+  '山本 さくら': '山本',
+  '鈴木 大輔': '鈴木',
+  '高橋 真理子': '高橋',
+};
+
+function avatarLabel(name) {
+  return AVATAR_LABEL_OVERRIDES[name] || initial(name);
+}
+
 function starSVG(filled) {
   return filled
     ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="#F4B400" stroke="#F4B400" stroke-width="1.5"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`
@@ -375,7 +388,7 @@ function renderList() {
   const list = document.getElementById('mail-list');
   list.innerHTML = MAILS.map((m) => `
     <div class="mail-row ${m.unread ? 'unread' : ''}" data-id="${m.id}">
-      <div class="mail-avatar" style="background:${colorFor(m.name)};">${initial(m.name)}</div>
+      <div class="mail-avatar" style="background:${colorFor(m.name)};${avatarLabel(m.name).length > 1 ? 'font-size:14px;' : ''}">${avatarLabel(m.name)}</div>
       <div class="mail-body">
         <div class="mail-top-row">
           <span class="mail-sender">${m.name}</span>
@@ -422,7 +435,7 @@ function renderThreadCard(mail, msg, idx, expanded) {
   if (!expanded) {
     return `
       <div class="thread-card collapsed" data-card-toggle="${idx}">
-        <div class="detail-avatar" style="background:${colorFor(msg.from)};">${initial(msg.from)}</div>
+        <div class="detail-avatar" style="background:${colorFor(msg.from)};${avatarLabel(msg.from).length > 1 ? 'font-size:11px;' : ''}">${avatarLabel(msg.from)}</div>
         <div class="thread-card-collapsed-info">
           <span class="thread-card-name">${msg.from}</span>
           <span class="thread-card-date">${msg.date}</span>
@@ -436,7 +449,7 @@ function renderThreadCard(mail, msg, idx, expanded) {
   return `
     <div class="thread-card expanded">
       <div class="detail-meta-row" data-card-toggle="${idx}">
-        <div class="detail-avatar" style="background:${colorFor(msg.from)};">${initial(msg.from)}</div>
+        <div class="detail-avatar" style="background:${colorFor(msg.from)};${avatarLabel(msg.from).length > 1 ? 'font-size:11px;' : ''}">${avatarLabel(msg.from)}</div>
         <div class="detail-sender-info">
           <div class="detail-sender-name">${msg.from} <span class="thread-date-inline">${msg.date}</span></div>
           ${renderToLine(uid)}
