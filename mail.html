@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Mail</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#FFF4E3">
+<meta name="theme-color" content="#FFF1D8">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,12 +14,12 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; overflow: hidden; }
-body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FFF4E3; display: flex; justify-content: center; }
-#app { width: 100%; max-width: 100%; height: 100vh; height: 100dvh; background: #FFF4E3; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FFF1D8; display: flex; justify-content: center; }
+#app { width: 100%; max-width: 100%; height: 100vh; height: 100dvh; background: #FFF1D8; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
 /* INBOX VIEW */
 #inbox-view { display: flex; flex-direction: column; height: 100%; position: relative; }
-.inbox-header { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; background: #FFF4E3; }
+.inbox-header { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; background: #FFF1D8; }
 .menu-btn, .icon-btn-plain { background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; }
 .search-pill { flex: 1; background: #fff; border-radius: 26px; padding: 10px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
 .search-pill span { color: #6B5A45; font-size: 15px; flex: 1; }
@@ -28,8 +28,8 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
 .tabs-row { display: flex; gap: 10px; padding: 6px 16px 12px; }
 .current-tab-label { font-size: 14px; font-weight: 700; color: #1a73e8; }
 
-.mail-list { flex: 1; overflow-y: auto; background: #FFF4E3; padding: 8px 12px 72px; display: flex; flex-direction: column; gap: 8px; }
-.mail-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: #FFFDF9; border-radius: 16px; box-shadow: none; cursor: pointer; transition: background 0.1s; }
+.mail-list { flex: 1; overflow-y: auto; background: #FFF1D8; padding: 8px 12px 72px; display: flex; flex-direction: column; gap: 8px; }
+.mail-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: #FFFCF5; border-radius: 16px; box-shadow: none; cursor: pointer; transition: background 0.1s; }
 .mail-row:active { background: #f5f5f5; }
 .mail-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 20px; flex-shrink: 0; }
 .mail-body { flex: 1; min-width: 0; }
@@ -47,13 +47,13 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
 
 .compose-fab { position: absolute; right: 18px; bottom: 80px; background: #FF7A00; color: #fff; border: none; border-radius: 28px; padding: 16px 24px 16px 18px; display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(255,122,0,0.4); }
 
-.bottom-tabs { position: fixed; left: 0; right: 0; bottom: 0; height: 56px; padding: 4px 0 2px; background: #FFF4E3; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; justify-content: space-around; box-sizing: border-box; z-index: 20; }
+.bottom-tabs { position: fixed; left: 0; right: 0; bottom: 0; height: 56px; padding: 4px 0 2px; background: #FFF1D8; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; justify-content: space-around; box-sizing: border-box; z-index: 20; }
 .tab-btn { flex: 1; height: 100%; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .tab-icon-circle { width: 64px; height: 32px; border-radius: 16px; background: #E8EAF6; display: flex; align-items: center; justify-content: center; }
 
 /* DETAIL VIEW */
-#detail-view { display: none; flex-direction: column; height: 100%; background: #FFF4E3; }
-.detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #FFF4E3; position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
+#detail-view { display: none; flex-direction: column; height: 100%; background: #FFF1D8; }
+.detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #FFF1D8; position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
 .detail-header .spacer { flex: 1; }
 .detail-subject-block { padding: 12px 0 4px; text-align: left; }
 .detail-subject-text { font-size: 21px; font-weight: 400; color: #3B2A12; line-height: 1.6; }
@@ -79,7 +79,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
 .detail-body-area { flex: 1; overflow-y: auto; padding: 60px 16px 160px; }
 .detail-body-text { font-size: 16px; line-height: 1.6; color: #3B2A12; white-space: pre-wrap; padding-left: 16px; }
 .thread-date-inline { font-weight: 400; color: #6B5A45; font-size: 12px; margin-left: 6px; }
-.thread-card { background: #FFFDF9; border-radius: 6px; margin: 0 4px 2px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: none; }
+.thread-card { background: #FFFCF5; border-radius: 6px; margin: 0 4px 2px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: none; }
 .thread-card.collapsed { min-height: 92px; padding: 16px 12px; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
 .thread-card .detail-avatar { width: 40px; height: 40px; font-size: 15px; }
 .thread-card-collapsed-info { flex: 1; min-width: 0; }
@@ -102,10 +102,10 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
 .attachment-file-name { flex: 1; min-width: 0; font-size: 13px; color: #3B2A12; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .attachment-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .attachment-action-icon { flex-shrink: 0; color: #6B5A45; }
-.detail-actions { position: fixed; left: 0; right: 0; bottom: 56px; padding: 12px 16px; background: #FFF4E3; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; gap: 4px; z-index: 15; }
+.detail-actions { position: fixed; left: 0; right: 0; bottom: 56px; padding: 12px 16px; background: #FFF1D8; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; gap: 4px; z-index: 15; }
 .detail-action-btn { flex: 1; background: #5D6A8A; border: none; height: 44px; border-radius: 22px; margin: 0 4px; font-size: 15px; font-weight: 600; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
 .detail-emoji-btn { width: 48px; height: 48px; flex-shrink: 0; background: #fff; border: 1.5px solid rgba(0,0,0,0.12); border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.summary-card { display: flex; align-items: center; gap: 10px; margin: 6px 4px 10px; padding: 12px 14px; background: #FFFDF9; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); cursor: pointer; }
+.summary-card { display: flex; align-items: center; gap: 10px; margin: 6px 4px 10px; padding: 12px 14px; background: #FFFCF5; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); cursor: pointer; }
 .summary-card.hidden { display: none; }
 .summary-icon { width: 24px; height: 24px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #6B5A45; }
 .summary-label { flex: 1; font-size: 13.5px; color: #3B2A12; font-weight: 500; }
