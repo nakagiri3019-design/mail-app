@@ -212,6 +212,10 @@ const COLOR_OVERRIDES = {
   '松本 大輔': '#9E9E9E',
   'Amazon.co.jp': '#43A047',
   '中桐': '#4CAF50',
+  '渡辺 遥': '#4285F4',
+  '渡辺': '#4285F4',
+  '黒崎 侑佑': '#FF8C00',
+  '黒崎': '#FF8C00',
 };
 
 function colorFor(name) {
@@ -237,11 +241,55 @@ const MAILS = [
     body: 'メルカリをご利用いただきありがとうございます。\n\nただいまファミリーセールを開催中です！\n家族みんなで使えるキッズ用品、生活雑貨、家電などを特別価格でご紹介しています。\n\nこの機会にぜひチェックしてみてください。\n\nメルカリ事務局',
   },
   {
-    id: 'm3', name: '西田 裕子', email: 'nishida@example.com', avatarLetter: '西田',
-    subject: 'API連携の仕様について',
-    snippet: 'ご確認いただきたい点がございます。API連携の仕様について、いくつか確認させていただきたい事項が…',
-    date: '10:05', unread: false, starred: false,
-    body: 'お世話になっております。西田です。\n\nAPI連携の仕様について、いくつか確認させていただきたい点がございます。\n\n・認証方式（APIキー/OAuth）について\n・データ取得のリクエスト頻度の上限について\n・エラー時のレスポンス形式について\n\nお手数をおかけしますが、ご確認のほどよろしくお願いいたします。\n\n西田 裕子',
+    id: 'm10', name: '渡辺 遥', email: 'hwatanabe@vedatech.net', avatarLetter: '渡辺',
+    subject: 'NMNセフィロト15000 発注の件',
+    snippet: 'ご注文ありがとうございます。NMNセフィロト15000 50個承りました。発注書も確認いたしました…',
+    date: '10:08', unread: true, starred: false,
+    thread: [
+      {
+        from: '渡辺', fromEmail: 'hwatanabe@vedatech.net', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月7日', datetime: '2026年5月7日(木) 10:12',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社ヴェーダテクノロジーズの渡辺です。<br><br>NMNセフィロト15000を100個発注いたします。<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたしますのでご確認ください。<br><br>よろしくお願いいたします。<br><br>渡辺 遥<br>株式会社ヴェーダテクノロジーズ<br>hwatanabe@vedatech.net',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '5月7日', datetime: '2026年5月7日(木) 11:05',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト15000 100個<br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '渡辺', fromEmail: 'hwatanabe@vedatech.net', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月14日', datetime: '2026年5月14日(水) 14:26',
+        body: 'お世話になっております。<br>株式会社ヴェーダテクノロジーズの渡辺です。<br><br>追加でNMNセフィロト15000を80個発注いたします。<br><br>前回分と合わせて預り在庫より引当をお願いいたします。<br><br>発注書を添付いたします。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '5月14日', datetime: '2026年5月14日(水) 15:02',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>追加ご注文ありがとうございます。<br><br>NMNセフィロト15000 80個<br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '渡辺', fromEmail: 'hwatanabe@vedatech.net', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月21日', datetime: '2026年5月21日(木) 09:43',
+        body: 'お世話になっております。<br>株式会社ヴェーダテクノロジーズの渡辺です。<br><br>NMNセフィロト15000を70個発注いたします。<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたします。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '5月21日', datetime: '2026年5月21日(木) 10:11',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト15000 70個<br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '5月29日', datetime: '2026年5月29日(金) 10:18',
+        body: '株式会社ヴェーダテクノロジーズ<br>渡辺様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>5月分のNMNセフィロト商品代につきまして、請求書を添付にてお送りいたします。<br><br>【請求内容】<br>NMNセフィロト15000　250個<br><br>ご請求金額は、税込687,500円となります。<br>お支払期限は2026年6月30日です。<br><br>内容をご確認のほど、よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+        attachments: [
+          { name: '請求書_株式会社ヴェーダテクノロジーズ_2026年5月分.pdf', meta: '請求書 ¥687,500' },
+        ],
+      },
+      {
+        from: '渡辺', fromEmail: 'hwatanabe@vedatech.net', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月29日', datetime: '2026年5月29日(金) 11:04',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社ヴェーダテクノロジーズの渡辺です。<br><br>請求書を確認いたしました。<br>内容に相違ございません。<br><br>社内処理を進めさせていただきます。<br><br>引き続きよろしくお願いいたします。<br><br>渡辺 遥<br>株式会社ヴェーダテクノロジーズ<br>hwatanabe@vedatech.net',
+      },
+      {
+        from: '渡辺', fromEmail: 'hwatanabe@vedatech.net', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '6月5日', datetime: '2026年6月5日(金) 09:36',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>株式会社ヴェーダテクノロジーズの渡辺です。<br><br>今月分として、NMNセフィロト15000を50個発注いたします。<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたしますので、ご確認ください。<br><br>よろしくお願いいたします。<br><br>渡辺 遥<br>株式会社ヴェーダテクノロジーズ<br>hwatanabe@vedatech.net',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '6月5日', datetime: '2026年6月5日(金) 10:08',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト15000 50個<br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+    ],
   },
   {
     id: 'm4', name: '田中 浩二', email: 'tanaka.koji@example.com', avatarLetter: '田中',
@@ -312,6 +360,57 @@ const MAILS = [
     ],
   },
   {
+    id: 'm11', name: '黒崎 侑佑', email: 'kurosaki@jkoso.com', avatarLetter: '黒崎',
+    subject: 'NMNセフィロト商品発注の件',
+    snippet: 'ご注文ありがとうございます。NMNセフィロト30000 50個 NMNセフィロト15000 50個承りました…',
+    date: '6月3日', unread: true, starred: false,
+    thread: [
+      {
+        from: '黒崎', fromEmail: 'kurosaki@jkoso.com', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月8日', datetime: '2026年5月8日(金) 11:20',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>日本酵素開発株式会社の黒崎です。<br><br>下記商品を発注いたします。<br><br>・NMNセフィロト30000　50個<br>・NMNセフィロト15000　80個<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたします。<br><br>よろしくお願いいたします。<br><br>黒崎 侑佑<br>日本酵素開発株式会社<br>kurosaki@jkoso.com',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '黒崎', toEmail: 'kurosaki@jkoso.com', date: '5月8日', datetime: '2026年5月8日(金) 12:01',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト30000 50個<br>NMNセフィロト15000 80個<br><br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '黒崎', fromEmail: 'kurosaki@jkoso.com', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月15日', datetime: '2026年5月15日(金) 13:14',
+        body: 'お世話になっております。<br>日本酵素開発株式会社の黒崎です。<br><br>追加で下記商品を発注いたします。<br><br>・NMNセフィロト30000　50個<br>・NMNセフィロト7500　80個<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたします。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '黒崎', toEmail: 'kurosaki@jkoso.com', date: '5月15日', datetime: '2026年5月15日(金) 13:48',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト30000 50個<br>NMNセフィロト7500 80個<br><br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '黒崎', fromEmail: 'kurosaki@jkoso.com', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月22日', datetime: '2026年5月22日(金) 16:35',
+        body: 'お世話になっております。<br>日本酵素開発株式会社の黒崎です。<br><br>追加で下記商品を発注いたします。<br><br>・NMNセフィロト15000　100個<br>・NMNセフィロト7500　100個<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたします。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '黒崎', toEmail: 'kurosaki@jkoso.com', date: '5月22日', datetime: '2026年5月22日(金) 17:12',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト15000 100個<br>NMNセフィロト7500 100個<br><br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '黒崎', toEmail: 'kurosaki@jkoso.com', date: '5月29日', datetime: '2026年5月29日(金) 10:32',
+        body: '日本酵素開発株式会社<br>黒崎様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>5月分のNMNセフィロト商品代につきまして、請求書を添付にてお送りいたします。<br><br>【請求内容】<br>NMNセフィロト30000　100個<br>NMNセフィロト15000　180個<br>NMNセフィロト7500　180個<br><br>ご請求金額は、税込1,346,400円となります。<br>お支払期限は2026年6月30日です。<br><br>内容をご確認のほど、よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+        attachments: [
+          { name: '請求書_日本酵素開発株式会社_2026年5月分.pdf', meta: '請求書 ¥1,346,400' },
+        ],
+      },
+      {
+        from: '黒崎', fromEmail: 'kurosaki@jkoso.com', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月29日', datetime: '2026年5月29日(金) 11:18',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>日本酵素開発株式会社の黒崎です。<br><br>請求書を確認いたしました。<br>内容に相違ございません。<br><br>社内処理を進めさせていただきます。<br><br>引き続きよろしくお願いいたします。<br><br>黒崎 侑佑<br>日本酵素開発株式会社<br>kurosaki@jkoso.com',
+      },
+      {
+        from: '黒崎', fromEmail: 'kurosaki@jkoso.com', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '6月3日', datetime: '2026年6月3日(水) 14:22',
+        body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>日本酵素開発株式会社の黒崎です。<br><br>今月分として、下記商品を発注いたします。<br><br>・NMNセフィロト30000　50個<br>・NMNセフィロト15000　50個<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたしますので、ご確認ください。<br><br>よろしくお願いいたします。<br><br>黒崎 侑佑<br>日本酵素開発株式会社<br>kurosaki@jkoso.com',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '黒崎', toEmail: 'kurosaki@jkoso.com', date: '6月3日', datetime: '2026年6月3日(水) 15:01',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト30000 50個<br>NMNセフィロト15000 50個<br><br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+    ],
+  },
+  {
     id: 'm6', name: 'Quoraダイジェスト', email: 'digest-noreply@quora.com',
     subject: 'なぜシステム開発の見積もりは外れるのか',
     snippet: '多くのエンジニアが経験するこの問題について、様々な回答が寄せられています…',
@@ -348,6 +447,8 @@ function initial(name) {
 const AVATAR_LABEL_OVERRIDES = {
   '武田': '武田',
   '中桐': '中桐',
+  '渡辺': '渡辺',
+  '黒崎': '黒崎',
 };
 
 function avatarLabel(name) {
