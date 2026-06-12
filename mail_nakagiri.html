@@ -227,14 +227,14 @@ const MAILS = [
     id: 'm1', name: '中村 誠', email: 'nakamura@example.com', avatarLetter: '中村',
     subject: '登記書類の確認をお願いします',
     snippet: 'お世話になっております。先日ご依頼いただきました登記書類について、ご確認をお願いいたします…',
-    date: '11:20', unread: false, starred: true,
+    date: '11:20', datetime: '2026年6月13日 午前11:20', unread: false, starred: true,
     body: 'お世話になっております。中村でございます。\n\n先日ご依頼いただきました登記書類につきまして、内容のご確認をお願いできますでしょうか。\n\n商号・本店所在地・役員に関する記載事項をご確認のうえ、修正点がございましたらお知らせください。確認が取れ次第、登記申請の手続きを進めさせていただきます。\n\nお忙しいところ恐縮ですが、よろしくお願いいたします。\n\n中村 誠',
   },
   {
     id: 'm2', name: 'メルカリ', email: 'no-reply@mercari.com', avatarLetter: 'm',
     subject: '【今ならお得】ファミリーセール開催中',
     snippet: 'お得なアイテム揃えました。家族みんなで使えるアイテムが今だけ特別価格で…',
-    date: '10:45', unread: false, starred: false,
+    date: '10:45', datetime: '2026年6月13日 午前10:45', unread: false, starred: false,
     body: 'メルカリをご利用いただきありがとうございます。\n\nただいまファミリーセールを開催中です！\n家族みんなで使えるキッズ用品、生活雑貨、家電などを特別価格でご紹介しています。\n\nこの機会にぜひチェックしてみてください。\n\nメルカリ事務局',
   },
   {
@@ -292,7 +292,7 @@ const MAILS = [
     id: 'm4', name: '田中 浩二', email: 'tanaka.koji@example.com', avatarLetter: '田中',
     subject: '請求書の送付について',
     snippet: 'お世話になっております。先月分の請求書を送付いたします…',
-    date: '9:30', unread: false, starred: false,
+    date: '9:30', datetime: '2026年6月13日 午前9:30', unread: false, starred: false,
     body: 'お世話になっております。田中です。\n\n先月分の請求書を送付いたします。ご査収のほど、よろしくお願いいたします。\n\nお支払い期日は今月末となっております。ご不明な点がございましたら、お気軽にお問い合わせください。\n\n田中 浩二',
   },
   {
@@ -703,7 +703,7 @@ function openDetail(id) {
   if (!mail._messages) {
     mail._messages = mail.thread || [{
       from: mail.name, fromEmail: mail.email, to: '中桐由美子', toEmail: MY_EMAIL,
-      date: mail.date, datetime: mail.date, body: mail.body,
+      date: mail.date, datetime: mail.datetime || mail.date, body: mail.body,
     }];
   }
   if (!mail._expanded) {
