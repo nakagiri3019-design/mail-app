@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Mail</title>
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="manifest_nakagiri.json">
 <meta name="theme-color" content="#FFF1D8">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -194,9 +194,10 @@ if (typeof pdfjsLib !== 'undefined') {
 }
 
 const AVATAR_COLORS = ['#6B8E9F','#A05C5C','#5C7A5C','#7A6E9F','#9F7A4D','#4D7A7A','#9F5C7A','#5C6B9F'];
-const MY_EMAIL = 'volca7000@gmail.com';
+const MY_EMAIL = 'yumiyumi3019@gmail.com';
 
 const COLOR_OVERRIDES = {
+  '遥渡辺': '#2E7D9A',
   '中村 誠': '#4A7FB5',
   'メルカリ': '#D9534F',
   '西田 裕子': '#5FA85D',
@@ -356,6 +357,19 @@ const MAILS = [
     ],
   },
   {
+    id: 'm12', name: '遥渡辺', email: 'keasuru100@gmail.com', avatarLetter: '遥渡',
+    subject: '預り在庫報告および発注書送付の件',
+    snippet: '今月分の預り在庫の状況につきましてご報告申し上げます。発注書を添付にてお送りいたします…',
+    date: '6月5日', unread: true, starred: false,
+    thread: [
+      {
+        from: '遥渡辺', fromEmail: 'keasuru100@gmail.com', to: '中桐由美子', toEmail: 'yumiyumi3019@gmail.com',
+        date: '6月5日', datetime: '2026年6月5日 午前11:43',
+        body: '株式会社アークラボ<br>中桐由美子様<br><br>お世話になっております。<br>エールジャパン株式会社の武田でございます。<br><br>今月分の預り在庫の状況につきまして、ご報告申し上げます。<br><br>つきましては、発注書を添付にてお送りいたしますので、ご確認のほどよろしくお願いいたします。<br><br>何卒よろしくお願いいたします。<br><br>武田<br>エールジャパン株式会社<br>keasuru100@gmail.com',
+      },
+    ],
+  },
+  {
     id: 'm11', name: '黒崎 侑佑', email: 'kurosaki@jkoso.com', avatarLetter: '黒崎',
     subject: 'NMNセフィロト商品発注の件',
     snippet: 'ご注文ありがとうございます。NMNセフィロト30000 50個 NMNセフィロト15000 50個承りました…',
@@ -445,10 +459,22 @@ const AVATAR_LABEL_OVERRIDES = {
   '中桐': '中桐',
   '渡辺': '渡辺',
   '黒崎': '黒崎',
+  '遥渡辺': '遥渡',
 };
 
 function avatarLabel(name) {
   return AVATAR_LABEL_OVERRIDES[name] || initial(name);
+}
+
+function formatDatetime(dt) {
+  if (!dt || dt.includes('午前') || dt.includes('午後')) return dt;
+  const m = dt.match(/(\d{4}年\d+月\d+日)[^0-9]*(\d+):(\d+)/);
+  if (!m) return dt;
+  const h = parseInt(m[2], 10);
+  const min = m[3];
+  const ampm = h < 12 ? '午前' : '午後';
+  const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${m[1]} ${ampm}${h12}:${min}`;
 }
 
 function renderDetailAvatar(name) {
@@ -476,7 +502,7 @@ function renderToPanel(uid, from, fromEmail, toName, toEmail, datetime) {
     <div class="sender-detail-panel" data-to-panel="${uid}">
       <div class="panel-row"><span class="panel-label">From:</span><span>${from}・${fromEmail}</span></div>
       <div class="panel-row"><span class="panel-label">宛先:</span><span>${toName}・${toEmail}</span></div>
-      <div class="panel-row"><span class="panel-label">日付:</span><span>${datetime}</span></div>
+      <div class="panel-row"><span class="panel-label">日付:</span><span>${formatDatetime(datetime)}</span></div>
       <div class="security-notice">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#6B5A45" style="flex-shrink:0;margin-top:3px"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
         <span>標準的な暗号化（TLS）が適用されています。<br><span class="security-link">セキュリティの詳細を表示</span></span>
@@ -588,7 +614,7 @@ function previewText(body) {
 function renderQuoteBlock(prevMsg) {
   return `
     <div class="quote-block">
-      <div class="quote-meta">On ${prevMsg.datetime}, ${prevMsg.from} wrote:</div>
+      <div class="quote-meta">On ${formatDatetime(prevMsg.datetime)}, ${prevMsg.from} wrote:</div>
       <span class="quote-link">元のメッセージを表示</span>
     </div>
   `;
@@ -676,7 +702,7 @@ function openDetail(id) {
 
   if (!mail._messages) {
     mail._messages = mail.thread || [{
-      from: mail.name, fromEmail: mail.email, to: '野口', toEmail: MY_EMAIL,
+      from: mail.name, fromEmail: mail.email, to: '中桐由美子', toEmail: MY_EMAIL,
       date: mail.date, datetime: mail.date, body: mail.body,
     }];
   }
