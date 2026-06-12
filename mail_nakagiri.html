@@ -14,12 +14,12 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; overflow: hidden; }
-body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FFF1D8; display: flex; justify-content: center; }
-#app { width: 100%; max-width: 100%; height: 100vh; height: 100dvh; background: #FFF1D8; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #F5D4AE; display: flex; justify-content: center; }
+#app { width: 100%; max-width: 100%; height: 100vh; height: 100dvh; background: #F5D4AE; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
 /* INBOX VIEW */
 #inbox-view { display: flex; flex-direction: column; height: 100%; position: relative; }
-.inbox-header { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; background: #FFF1D8; }
+.inbox-header { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; background: #F5D4AE; }
 .menu-btn, .icon-btn-plain { background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; }
 .search-pill { flex: 1; background: #fff; border-radius: 26px; padding: 10px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
 .search-pill span { color: #6B5A45; font-size: 15px; flex: 1; }
@@ -28,7 +28,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
 .tabs-row { display: flex; gap: 10px; padding: 6px 16px 12px; }
 .current-tab-label { font-size: 14px; font-weight: 700; color: #1a73e8; }
 
-.mail-list { flex: 1; overflow-y: auto; background: #FFF1D8; padding: 8px 12px 72px; display: flex; flex-direction: column; gap: 8px; }
+.mail-list { flex: 1; overflow-y: auto; background: #F5D4AE; padding: 8px 12px 72px; display: flex; flex-direction: column; gap: 8px; }
 .mail-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: #FFFCF5; border-radius: 16px; box-shadow: none; cursor: pointer; transition: background 0.1s; }
 .mail-row:active { background: #f5f5f5; }
 .mail-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 20px; flex-shrink: 0; }
@@ -47,17 +47,17 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
 
 .compose-fab { position: absolute; right: 18px; bottom: 80px; background: #FF7A00; color: #fff; border: none; border-radius: 28px; padding: 16px 24px 16px 18px; display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(255,122,0,0.4); }
 
-.bottom-tabs { position: fixed; left: 0; right: 0; bottom: 0; height: 56px; padding: 4px 0 2px; background: #FFF1D8; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; justify-content: space-around; box-sizing: border-box; z-index: 20; }
+.bottom-tabs { position: fixed; left: 0; right: 0; bottom: 0; height: 56px; padding: 4px 0 2px; background: #F5D4AE; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; justify-content: space-around; box-sizing: border-box; z-index: 20; }
 .tab-btn { flex: 1; height: 100%; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.tab-icon-circle { width: 64px; height: 32px; border-radius: 16px; background: #E8EAF6; display: flex; align-items: center; justify-content: center; }
+.tab-icon-circle { width: 64px; height: 32px; border-radius: 16px; background: #EDD5A8; display: flex; align-items: center; justify-content: center; }
 
 /* DETAIL VIEW */
-#detail-view { display: none; flex-direction: column; height: 100%; background: #FFF1D8; }
-.detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #FFF1D8; position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
+#detail-view { display: none; flex-direction: column; height: 100%; background: #F5D4AE; }
+.detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #F5D4AE; position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
 .detail-header .spacer { flex: 1; }
 .detail-subject-block { padding: 12px 0 4px; text-align: left; }
 .detail-subject-text { font-size: 21px; font-weight: 400; color: #3B2A12; line-height: 1.6; }
-.inbox-badge { display: inline-block; vertical-align: middle; background: #FF7A00; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 10px; white-space: nowrap; margin-left: 10px; }
+.inbox-badge { display: inline-block; vertical-align: middle; background: #EDCA7A; color: #5C3210; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 10px; white-space: nowrap; margin-left: 10px; }
 .detail-title-star { background: none; border: none; cursor: pointer; padding: 2px; display: inline-flex; vertical-align: middle; margin-left: 10px; }
 .detail-meta-row { display: flex; align-items: flex-start; gap: 12px; padding: 4px 16px 8px; }
 .detail-to-line { font-size: 12px; color: #6B5A45; margin-top: 2px; }
@@ -72,7 +72,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
 .sender-detail-panel .panel-row > span:last-child { font-size: 15px; color: #3B2A12; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .sender-detail-panel .panel-label { font-size: 14px; color: #6B5A45; flex-shrink: 0; min-width: 48px; }
 .security-notice { display: flex; align-items: flex-start; gap: 8px; margin-top: 2px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.08); font-size: 15px; line-height: 1.6; }
-.security-link { color: #6B5A45; font-size: 15px; font-weight: 600; cursor: pointer; }
+.security-link { color: #C07820; font-size: 15px; font-weight: 600; cursor: pointer; }
 .detail-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 15px; flex-shrink: 0; }
 .detail-sender-info { flex: 1; min-width: 0; }
 .detail-sender-name { font-size: 14px; font-weight: 600; color: #3B2A12; line-height: 1.3; }
@@ -102,9 +102,9 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
 .attachment-file-name { flex: 1; min-width: 0; font-size: 13px; color: #3B2A12; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .attachment-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .attachment-action-icon { flex-shrink: 0; color: #6B5A45; }
-.detail-actions { position: fixed; left: 0; right: 0; bottom: 56px; padding: 12px 16px; background: #FFF1D8; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; gap: 4px; z-index: 15; }
-.detail-action-btn { flex: 1; background: #5D6A8A; border: none; height: 44px; border-radius: 22px; margin: 0 4px; font-size: 15px; font-weight: 600; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
-.detail-emoji-btn { width: 48px; height: 48px; flex-shrink: 0; background: #fff; border: 1.5px solid rgba(0,0,0,0.12); border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.detail-actions { position: fixed; left: 0; right: 0; bottom: 56px; padding: 12px 16px; background: #F5D4AE; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; gap: 4px; z-index: 15; }
+.detail-action-btn { flex: 1; background: #475A6E; border: none; height: 44px; border-radius: 22px; margin: 0 4px; font-size: 15px; font-weight: 600; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+.detail-emoji-btn { width: 48px; height: 48px; flex-shrink: 0; background: #475A6E; border: none; border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
 </style>
 </head>
@@ -115,7 +115,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
 <div id="inbox-view">
   <div class="inbox-header">
     <button class="menu-btn" aria-label="メニュー">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6" stroke-linecap="round"/><line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round"/><line x1="3" y1="18" x2="21" y2="18" stroke-linecap="round"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6" stroke-linecap="round"/><line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round"/><line x1="3" y1="18" x2="21" y2="18" stroke-linecap="round"/></svg>
     </button>
     <div class="search-pill">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke-linecap="round"/></svg>
@@ -140,20 +140,20 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
 <div id="detail-view">
   <div class="detail-header">
     <button class="icon-btn-plain" onclick="closeDetail()" aria-label="戻る">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2.2"><path d="M19 12H5" stroke-linecap="round"/><path d="M11 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2.2"><path d="M19 12H5" stroke-linecap="round"/><path d="M11 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
     <div class="spacer"></div>
     <button class="icon-btn-plain" aria-label="アーカイブ">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a2 2 0 002 2h10a2 2 0 002-2V9"/><line x1="10" y1="13" x2="14" y2="13" stroke-linecap="round"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a2 2 0 002 2h10a2 2 0 002-2V9"/><line x1="10" y1="13" x2="14" y2="13" stroke-linecap="round"/></svg>
     </button>
     <button class="icon-btn-plain" aria-label="削除">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
     </button>
     <button class="icon-btn-plain" aria-label="既読にする">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2"><path d="M21 8l-9 6-9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2"><path d="M21 8l-9 6-9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
     </button>
     <button class="icon-btn-plain" aria-label="その他">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="#444"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#5C4030"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
     </button>
   </div>
 
@@ -170,7 +170,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FF
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 014-4h12"/></svg>
       転送
     </button>
-    <button class="detail-emoji-btn" aria-label="リアクション" onclick="alert('リアクションを送信（デモ）')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5D6A8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button>
+    <button class="detail-emoji-btn" aria-label="リアクション" onclick="alert('リアクションを送信（デモ）')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button>
   </div>
 </div>
 
@@ -486,7 +486,7 @@ function renderDetailAvatar(name) {
 function starSVG(filled) {
   return filled
     ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="#F4B400" stroke="#F4B400" stroke-width="1.5"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`
-    : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`;
+    : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B6D55" stroke-width="1.8"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`;
 }
 
 function renderToLine(uid) {
@@ -504,7 +504,7 @@ function renderToPanel(uid, from, fromEmail, toName, toEmail, datetime) {
       <div class="panel-row"><span class="panel-label">宛先:</span><span>${toName}・${toEmail}</span></div>
       <div class="panel-row"><span class="panel-label">日付:</span><span>${formatDatetime(datetime)}</span></div>
       <div class="security-notice">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#6B5A45" style="flex-shrink:0;margin-top:3px"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#8B6D55" style="flex-shrink:0;margin-top:3px"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
         <span>標準的な暗号化（TLS）が適用されています。<br><span class="security-link">セキュリティの詳細を表示</span></span>
       </div>
     </div>
