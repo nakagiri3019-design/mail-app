@@ -379,7 +379,7 @@ const MAILS = [
         from: '黒崎', fromEmail: 'kurosaki@jkoso.com', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月8日', datetime: '2026年5月8日(金) 11:20',
         body: '株式会社アークラボ<br>中桐様<br><br>お世話になっております。<br>日本酵素開発株式会社の黒崎です。<br><br>下記商品を発注いたします。<br><br>・NMNセフィロト30000　50個<br>・NMNセフィロト15000　80個<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたします。<br><br>よろしくお願いいたします。<br><br>黒崎 侑佑<br>日本酵素開発株式会社<br>kurosaki@jkoso.com',
         attachments: [
-          { name: '日本酵素_20260508.pdf', url: 'attachments/nakagiri/日本酵素_20260508.pdf' },
+          { name: '日本酵素_20260508.pdf', url: 'attachments/nakagiri/日本酵素_20260508.pdf', noPreview: true },
         ],
       },
       {
@@ -390,7 +390,7 @@ const MAILS = [
         from: '黒崎', fromEmail: 'kurosaki@jkoso.com', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月15日', datetime: '2026年5月15日(金) 13:14',
         body: 'お世話になっております。<br>日本酵素開発株式会社の黒崎です。<br><br>追加で下記商品を発注いたします。<br><br>・NMNセフィロト30000　50個<br>・NMNセフィロト7500　80個<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたします。<br><br>よろしくお願いいたします。',
         attachments: [
-          { name: '日本酵素_20260515.pdf', url: 'attachments/nakagiri/日本酵素_20260515.pdf' },
+          { name: '日本酵素_20260515.pdf', url: 'attachments/nakagiri/日本酵素_20260515.pdf', noPreview: true },
         ],
       },
       {
@@ -401,7 +401,7 @@ const MAILS = [
         from: '黒崎', fromEmail: 'kurosaki@jkoso.com', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月22日', datetime: '2026年5月22日(金) 16:35',
         body: 'お世話になっております。<br>日本酵素開発株式会社の黒崎です。<br><br>追加で下記商品を発注いたします。<br><br>・NMNセフィロト15000　100個<br>・NMNセフィロト7500　100個<br><br>預り在庫より引当をお願いいたします。<br><br>発注書を添付いたします。<br><br>よろしくお願いいたします。',
         attachments: [
-          { name: '日本酵素_20260522.pdf', url: 'attachments/nakagiri/日本酵素_20260522.pdf' },
+          { name: '日本酵素_20260522.pdf', url: 'attachments/nakagiri/日本酵素_20260522.pdf', noPreview: true },
         ],
       },
       {
@@ -547,12 +547,15 @@ function bindToPanelToggles(area) {
 
 function renderAttachment(att) {
   const action = att.url ? `window.open('${att.url}', '_blank')` : `alert('添付ファイルを開く（デモ）')`;
-  const preview = att.url
-    ? `<canvas class="pdf-thumb-canvas" data-pdf-url="${att.url}"></canvas>`
-    : `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D93025" stroke-width="1.5"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z" stroke-linejoin="round"/><path d="M14 3v5h5" stroke-linejoin="round"/></svg>`;
+  const previewHTML = att.noPreview ? '' : (() => {
+    const preview = att.url
+      ? `<canvas class="pdf-thumb-canvas" data-pdf-url="${att.url}"></canvas>`
+      : `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D93025" stroke-width="1.5"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z" stroke-linejoin="round"/><path d="M14 3v5h5" stroke-linejoin="round"/></svg>`;
+    return `<div class="attachment-preview">${preview}</div>`;
+  })();
   return `
     <div class="attachment-card" onclick="${action}">
-      <div class="attachment-preview">${preview}</div>
+      ${previewHTML}
       <div class="attachment-info-bar">
         <svg class="attachment-icon-pdf" width="26" height="26" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3" fill="#D93025"/><text x="12" y="16" font-size="8.5" font-weight="700" fill="#fff" text-anchor="middle" font-family="Arial, sans-serif">PDF</text></svg>
         <span class="attachment-file-name">${att.name}</span>
