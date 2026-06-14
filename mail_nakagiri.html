@@ -240,7 +240,7 @@ const MAILS = [
   {
     id: 'm10', name: '渡辺 遥', email: 'hwatanabe@vedatech.net', avatarLetter: '渡辺',
     subject: 'NMNセフィロト15000 発注の件',
-    snippet: '今月分として下記商品を発注いたします。NMNセフィロト15000 50個…',
+    snippet: 'ご注文ありがとうございます。NMNセフィロト15000 50個承りました。発注書も確認いたしました…',
     date: '6月5日', unread: true, starred: false,
     thread: [
       {
@@ -248,16 +248,39 @@ const MAILS = [
         body: '株式会社アークラボ 中桐様<br><br>お世話になっております。<br>株式会社ヴェーダテクノロジーの渡辺です。<br><br>下記商品を発注いたします。<br>・NMNセフィロト15000　100個<br><br>いつも通り月末締めでお願いいたします。<br>内容をご確認のほど、よろしくお願いいたします。<br><br>渡辺 遥<br>株式会社ヴェーダテクノロジー<br>hwatanabe@vedatech.net',
       },
       {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '5月7日', datetime: '2026年5月7日(木) 11:05',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト15000 100個<br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
+      },
+      {
         from: '渡辺', fromEmail: 'hwatanabe@vedatech.net', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月14日', datetime: '2026年5月14日(水) 午後2:08',
         body: '株式会社アークラボ 中桐様<br><br>お世話になっております。<br>株式会社ヴェーダテクノロジーの渡辺です。<br><br>追加で下記商品を発注いたします。<br>・NMNセフィロト15000　80個<br><br>いつも通り月末締めでお願いいたします。<br>内容をご確認のほど、よろしくお願いいたします。<br><br>渡辺 遥<br>株式会社ヴェーダテクノロジー<br>hwatanabe@vedatech.net',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '5月14日', datetime: '2026年5月14日(水) 15:02',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>追加ご注文ありがとうございます。<br><br>NMNセフィロト15000 80個<br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
       },
       {
         from: '渡辺', fromEmail: 'hwatanabe@vedatech.net', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '5月21日', datetime: '2026年5月21日(木) 午前11:20',
         body: '株式会社アークラボ 中桐様<br><br>お世話になっております。<br>株式会社ヴェーダテクノロジーの渡辺です。<br><br>追加で下記商品を発注いたします。<br>・NMNセフィロト15000　70個<br><br>いつも通り月末締めでお願いいたします。<br>内容をご確認のほど、よろしくお願いいたします。<br><br>渡辺 遥<br>株式会社ヴェーダテクノロジー<br>hwatanabe@vedatech.net',
       },
       {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '5月21日', datetime: '2026年5月21日(木) 10:11',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト15000 70個<br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '5月29日', datetime: '2026年5月29日(金) 10:18',
+        body: '株式会社ヴェーダテクノロジーズ<br>渡辺様<br><br>お世話になっております。<br>株式会社アークラボの中桐です。<br><br>5月分のNMNセフィロト商品代につきまして、請求書を添付にてお送りいたします。<br><br>【請求内容】<br>NMNセフィロト15000　250個<br><br>ご請求金額は、税込687,500円となります。<br>お支払期限は2026年6月30日です。<br><br>内容をご確認のほど、よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+        attachments: [
+          { name: '株式会社ヴェーダテクノロジーズ_請求書.pdf', url: './attachments/nakagiri/invoice_veda_20260529.pdf' },
+        ],
+      },
+      {
         from: '渡辺', fromEmail: 'hwatanabe@vedatech.net', to: '中桐', toEmail: 'yumiyumi3019@gmail.com', date: '6月5日', datetime: '2026年6月5日(金) 午後1:25',
         body: '株式会社アークラボ 中桐様<br><br>お世話になっております。<br>株式会社ヴェーダテクノロジーの渡辺です。<br><br>今月分として下記商品を発注いたします。<br>・NMNセフィロト15000　50個<br><br>いつも通り月末締めでお願いいたします。<br>内容をご確認のほど、よろしくお願いいたします。<br><br>渡辺 遥<br>株式会社ヴェーダテクノロジー<br>hwatanabe@vedatech.net',
+      },
+      {
+        from: '中桐', fromEmail: 'yumiyumi3019@gmail.com', to: '渡辺', toEmail: 'hwatanabe@vedatech.net', date: '6月5日', datetime: '2026年6月5日(金) 10:08',
+        body: 'お世話になっております。<br>株式会社アークラボの中桐です。<br><br>ご注文ありがとうございます。<br><br>NMNセフィロト15000 50個<br>承りました。<br><br>発注書も確認いたしました。<br><br>よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
       },
     ],
   },
