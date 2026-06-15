@@ -34,6 +34,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
 .content-me{flex-direction:row-reverse;}
 .content-them{flex-direction:row;}
 .bubble{padding:9px 13px;border-radius:20px;font-size:14.5px;line-height:1.5;color:#111;white-space:pre-wrap;word-break:break-word;box-shadow:0 1px 2px rgba(0,0,0,0.10);}
+.bubble:has(.call-card){padding-top:7px;padding-bottom:7px;}
 .bbl-me{background:#8FEA6E/* この色は今後指示なく変更しない */;border-top-right-radius:4px;}
 .bbl-them{background:#fff/* この色は今後指示なく変更しない */;border-top-left-radius:4px;}
 .msg-meta{flex-shrink:0;padding-bottom:2px;display:flex;flex-direction:column;gap:1px;}
@@ -53,16 +54,16 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
 .ai-chip:active{opacity:0.7;}
 .call-card{display:flex;flex-direction:column;width:240px;box-sizing:border-box;}
 .call-missed{}
-.call-missed-main{display:flex;align-items:center;gap:10px;padding:2px 0 6px;}
+.call-missed-main{display:flex;align-items:center;gap:8px;padding:0 0 4px;}
 .call-phone-icon{font-size:20px;flex-shrink:0;}
 .call-title{font-size:14px;font-weight:700;color:#111;}
 .call-ended{}
-.call-ended-main{display:flex;align-items:center;gap:10px;padding:2px 0 6px;}
+.call-ended-main{display:flex;align-items:center;gap:8px;padding:0 0 4px;}
 .call-phone-icon-lg{font-size:28px;flex-shrink:0;}
-.call-ended-info{display:flex;flex-direction:column;gap:2px;}
-.call-title-lg{font-size:16px;font-weight:700;color:#111;line-height:1.3;}
+.call-ended-info{display:flex;flex-direction:column;gap:0;}
+.call-title-lg{font-size:15px;font-weight:700;color:#111;line-height:1.2;}
 .call-duration{font-size:13px;color:rgba(0,0,0,0.5);line-height:1.3;}
-.call-ringtone-row{display:flex;align-items:center;gap:6px;border-top:1px solid rgba(0,0,0,0.10);padding-top:8px;}
+.call-ringtone-row{display:flex;align-items:center;gap:6px;border-top:1px solid rgba(0,0,0,0.10);padding-top:5px;}
 .call-music-icon{font-size:14px;}
 .call-ringtone-text{flex:1;font-size:12px;color:rgba(0,0,0,0.45);}
 .call-chevron{font-size:14px;color:rgba(0,0,0,0.35);}

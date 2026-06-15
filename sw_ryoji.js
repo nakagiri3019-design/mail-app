@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'ryoji-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v3';
+const CACHE_NAME = CACHE_PREFIX + 'v4';
 const PRECACHE_URLS = [
   './ryoji_chat.html',
   './manifest_ryoji.json',
