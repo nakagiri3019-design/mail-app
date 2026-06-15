@@ -51,20 +51,21 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
 .ai-dot{width:22px;height:22px;border-radius:50%;background:#7B68EE;flex-shrink:0;}
 .ai-chip{font-size:12.5px;color:#555;cursor:pointer;user-select:none;}
 .ai-chip:active{opacity:0.7;}
-.call-card{display:flex;}
-.call-missed{flex-direction:row;align-items:center;gap:9px;max-width:195px;}
-.call-icon{font-size:17px;flex-shrink:0;}
-.call-info{display:flex;flex-direction:column;gap:1px;}
-.call-title{font-size:13px;font-weight:700;color:#111;line-height:1.3;}
-.call-sub{font-size:10.5px;color:rgba(0,0,0,0.4);line-height:1.5;}
-.call-ended{flex-direction:column;align-items:stretch;gap:0;min-width:205px;}
-.call-ended-top{display:flex;align-items:center;gap:10px;padding-bottom:8px;}
-.call-icon-lg{font-size:23px;flex-shrink:0;}
-.call-ended-info{display:flex;flex-direction:column;gap:3px;}
-.call-title-lg{font-size:13px;font-weight:700;color:#111;line-height:1.3;}
-.call-duration{font-size:12px;color:rgba(0,0,0,0.5);line-height:1.3;}
-.call-divider{height:1px;background:rgba(0,0,0,0.12);margin:0 -2px;}
-.call-footer{padding-top:7px;font-size:11px;color:rgba(0,0,0,0.45);}
+.call-card{display:flex;flex-direction:column;}
+.call-missed{min-width:230px;}
+.call-missed-main{display:flex;align-items:center;gap:14px;padding:4px 0 10px;}
+.call-phone-icon{font-size:28px;flex-shrink:0;}
+.call-title{font-size:16px;font-weight:700;color:#111;}
+.call-ended{min-width:200px;}
+.call-ended-main{display:flex;align-items:center;gap:14px;padding-bottom:10px;}
+.call-phone-icon-lg{font-size:28px;flex-shrink:0;}
+.call-ended-info{display:flex;flex-direction:column;gap:4px;}
+.call-title-lg{font-size:16px;font-weight:700;color:#111;line-height:1.3;}
+.call-duration{font-size:13px;color:rgba(0,0,0,0.5);line-height:1.3;}
+.call-ringtone-row{display:flex;align-items:center;gap:6px;border-top:1px solid rgba(0,0,0,0.10);padding-top:8px;}
+.call-music-icon{font-size:14px;}
+.call-ringtone-text{flex:1;font-size:12px;color:rgba(0,0,0,0.45);}
+.call-chevron{font-size:14px;color:rgba(0,0,0,0.35);}
 </style>
 </head>
 <body>
@@ -102,10 +103,14 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
       <div class="msg-content content-them">
         <div class="bubble bbl-them">
           <div class="call-card call-missed">
-            <span class="call-icon">📞</span>
-            <div class="call-info">
+            <div class="call-missed-main">
+              <span class="call-phone-icon">📞</span>
               <span class="call-title">不在着信</span>
-              <span class="call-sub">着信音・呼出音 &gt;</span>
+            </div>
+            <div class="call-ringtone-row">
+              <span class="call-music-icon">🎵</span>
+              <span class="call-ringtone-text">着信音・呼出音</span>
+              <span class="call-chevron">›</span>
             </div>
           </div>
         </div>
@@ -173,15 +178,18 @@ Interakt様側では、まず実際の決算書PDFを入れて、数字が正し
         </div>
         <div class="bubble bbl-me">
           <div class="call-card call-ended">
-            <div class="call-ended-top">
-              <span class="call-icon-lg">📞</span>
+            <div class="call-ended-main">
+              <span class="call-phone-icon-lg">📞</span>
               <div class="call-ended-info">
                 <span class="call-title-lg">音声通話が終了しました</span>
                 <span class="call-duration">02:06</span>
               </div>
             </div>
-            <div class="call-divider"></div>
-            <div class="call-footer">🎵 着信音・呼出音 &gt;</div>
+            <div class="call-ringtone-row">
+              <span class="call-music-icon">🎵</span>
+              <span class="call-ringtone-text">着信音・呼出音</span>
+              <span class="call-chevron">›</span>
+            </div>
           </div>
         </div>
       </div>
@@ -196,10 +204,14 @@ Interakt様側では、まず実際の決算書PDFを入れて、数字が正し
       <div class="msg-content content-them">
         <div class="bubble bbl-them">
           <div class="call-card call-missed">
-            <span class="call-icon">📞</span>
-            <div class="call-info">
+            <div class="call-missed-main">
+              <span class="call-phone-icon">📞</span>
               <span class="call-title">不在着信</span>
-              <span class="call-sub">着信音・呼出音 &gt;</span>
+            </div>
+            <div class="call-ringtone-row">
+              <span class="call-music-icon">🎵</span>
+              <span class="call-ringtone-text">着信音・呼出音</span>
+              <span class="call-chevron">›</span>
             </div>
           </div>
         </div>
@@ -254,15 +266,18 @@ Interakt様に見せる前に、預金と売掛金の読み取りはもう少し
         </div>
         <div class="bubble bbl-me">
           <div class="call-card call-ended">
-            <div class="call-ended-top">
-              <span class="call-icon-lg">📞</span>
+            <div class="call-ended-main">
+              <span class="call-phone-icon-lg">📞</span>
               <div class="call-ended-info">
                 <span class="call-title-lg">音声通話が終了しました</span>
                 <span class="call-duration">05:33</span>
               </div>
             </div>
-            <div class="call-divider"></div>
-            <div class="call-footer">🎵 着信音・呼出音 &gt;</div>
+            <div class="call-ringtone-row">
+              <span class="call-music-icon">🎵</span>
+              <span class="call-ringtone-text">着信音・呼出音</span>
+              <span class="call-chevron">›</span>
+            </div>
           </div>
         </div>
       </div>
