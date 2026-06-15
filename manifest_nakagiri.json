@@ -4,7 +4,7 @@
   "description": "Mail - 中桐由美子のメールアプリ",
   "id": "./mail_nakagiri.html",
   "start_url": "./mail_nakagiri.html",
-  "scope": "./",
+  "scope": "./mail_nakagiri.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#FBE8D2",

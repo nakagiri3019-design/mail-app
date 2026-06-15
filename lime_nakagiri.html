@@ -407,7 +407,7 @@ Interakt様に見せる前に、預金と売掛金の読み取りはもう少し
 </div>
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js');
+  navigator.serviceWorker.register('./sw_lime_nakagiri.js', { scope: './lime_nakagiri.html' });
 }
 
 const listView = document.getElementById('list-view');

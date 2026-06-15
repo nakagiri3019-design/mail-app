@@ -4,7 +4,7 @@
   "description": "LINE - 中桐由美子のトークアプリ",
   "id": "./lime_nakagiri.html",
   "start_url": "./lime_nakagiri.html",
-  "scope": "./",
+  "scope": "./lime_nakagiri.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#8DB0D9",
