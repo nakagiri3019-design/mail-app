@@ -318,8 +318,19 @@ Interakt様に見せる前に、預金と売掛金の読み取りはもう少し
 
 </div>
 <script>
+// SW登録を無効化（開発中キャッシュ対策）
+// if ('serviceWorker' in navigator) {
+//   navigator.serviceWorker.register('./sw_ryoji.js', { scope: './ryoji_chat.html' });
+// }
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw_ryoji.js', { scope: './ryoji_chat.html' });
+  navigator.serviceWorker.getRegistrations().then(function(regs) {
+    regs.forEach(function(r) { r.unregister(); });
+  });
+  if (window.caches) {
+    caches.keys().then(function(keys) {
+      keys.forEach(function(k) { caches.delete(k); });
+    });
+  }
 }
 
 function setThemeColor(color) {
