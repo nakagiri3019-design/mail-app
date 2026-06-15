@@ -6,7 +6,7 @@
 <title>RYOJI - LINE</title>
 <meta name="theme-color" content="#3D6B8C"><!-- この色は今後指示なく変更しない -->
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="manifest" href="manifest_lime_nakagiri.json">
+<link rel="manifest" href="manifest_ryoji.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="LINE">
@@ -189,7 +189,7 @@ Interakt様に見せる前に、預金と売掛金の読み取りはもう少し
 </div>
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js');
+  navigator.serviceWorker.register('./sw_ryoji.js', { scope: './ryoji_chat.html' });
 }
 document.getElementById('back-btn').addEventListener('click', () => {
   if (history.length > 1) { history.back(); }
