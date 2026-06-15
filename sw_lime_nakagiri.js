@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'lime-nakagiri-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v3';
+const CACHE_NAME = CACHE_PREFIX + 'v4';
 const PRECACHE_URLS = [
   './lime_nakagiri.html',
   './manifest_lime_nakagiri.json',

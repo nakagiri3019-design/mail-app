@@ -105,6 +105,8 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
 .call-music-icon{font-size:14px;}
 .call-ringtone-text{flex:1;font-size:12px;color:rgba(0,0,0,0.45);}
 .call-chevron{font-size:14px;color:rgba(0,0,0,0.35);}
+.bubble-img{padding:3px;overflow:hidden;}
+.msg-photo{width:190px;height:auto;border-radius:16px;display:block;}
 </style>
 </head>
 <body>
@@ -412,8 +414,99 @@ Interakt様側では、まず実際の決算書PDFを入れて、数字が正し
       </div>
     </div>
 
+    <!-- Ryoji → 中桐 (雑談) -->
+    <div class="msg-row row-them">
+      <div class="avatar-slot"><div class="msg-av">🏔️</div></div>
+      <div class="msg-content content-them">
+        <div class="bubble bbl-them">ところで先週の登山、写真送りますね</div>
+        <div class="msg-meta meta-them"><span class="time-lbl">13:15</span></div>
+      </div>
+    </div>
+
+    <!-- Ryoji → 中桐 (山の写真) -->
+    <div class="msg-row row-them">
+      <div class="avatar-slot"></div>
+      <div class="msg-content content-them">
+        <div class="bubble bbl-them bubble-img">
+          <img class="msg-photo" src="images/mountain.jpg" alt="山の写真">
+        </div>
+        <div class="msg-meta meta-them"><span class="time-lbl">13:16</span></div>
+      </div>
+    </div>
+
+    <!-- 中桐 → Ryoji -->
+    <div class="msg-row row-me">
+      <div class="msg-content content-me">
+        <div class="msg-meta meta-me">
+          <span class="read-lbl">既読</span>
+          <span class="time-lbl">13:20</span>
+        </div>
+        <div class="bubble bbl-me">ありがとうございます！楽しみにしてます</div>
+      </div>
+    </div>
+
+    <!-- Ryoji → 中桐 -->
+    <div class="msg-row row-them">
+      <div class="avatar-slot"></div>
+      <div class="msg-content content-them">
+        <div class="bubble bbl-them">眺め最高でしたよ。また行きましょう</div>
+        <div class="msg-meta meta-them"><span class="time-lbl">13:21</span></div>
+      </div>
+    </div>
+
+    <!-- 中桐 → Ryoji -->
+    <div class="msg-row row-me">
+      <div class="msg-content content-me">
+        <div class="msg-meta meta-me">
+          <span class="read-lbl">既読</span>
+          <span class="time-lbl">13:22</span>
+        </div>
+        <div class="bubble bbl-me">ぜひ！次は私も行きます</div>
+      </div>
+    </div>
+
     <!-- 5月14日 -->
     <div class="date-divider"><span class="date-pill">5月14日(水)</span></div>
+
+    <!-- Ryoji → 中桐 -->
+    <div class="msg-row row-them">
+      <div class="avatar-slot"><div class="msg-av">🏔️</div></div>
+      <div class="msg-content content-them">
+        <div class="bubble bbl-them">さっき電話したんですが</div>
+        <div class="msg-meta meta-them"><span class="time-lbl">10:52</span></div>
+      </div>
+    </div>
+
+    <!-- 中桐 → Ryoji -->
+    <div class="msg-row row-me">
+      <div class="msg-content content-me">
+        <div class="msg-meta meta-me">
+          <span class="read-lbl">既読</span>
+          <span class="time-lbl">10:58</span>
+        </div>
+        <div class="bubble bbl-me">ごめんなさい、打合せ中でした！今大丈夫ですか？</div>
+      </div>
+    </div>
+
+    <!-- Ryoji → 中桐 -->
+    <div class="msg-row row-them">
+      <div class="avatar-slot"></div>
+      <div class="msg-content content-them">
+        <div class="bubble bbl-them">大丈夫です。メールで送りますね</div>
+        <div class="msg-meta meta-them"><span class="time-lbl">11:00</span></div>
+      </div>
+    </div>
+
+    <!-- 中桐 → Ryoji -->
+    <div class="msg-row row-me">
+      <div class="msg-content content-me">
+        <div class="msg-meta meta-me">
+          <span class="read-lbl">既読</span>
+          <span class="time-lbl">11:02</span>
+        </div>
+        <div class="bubble bbl-me">助かります、ありがとうございます</div>
+      </div>
+    </div>
 
     <!-- 不在着信 (RYOJI → 中桐) -->
     <div class="msg-row row-them">
@@ -497,6 +590,37 @@ Interakt様に見せる前に、預金と売掛金の読み取りはもう少し
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- 中桐 → Ryoji (雑談) -->
+    <div class="msg-row row-me">
+      <div class="msg-content content-me">
+        <div class="msg-meta meta-me">
+          <span class="read-lbl">既読</span>
+          <span class="time-lbl">15:10</span>
+        </div>
+        <div class="bubble bbl-me">今日中に確認します、少し時間ください</div>
+      </div>
+    </div>
+
+    <!-- Ryoji → 中桐 -->
+    <div class="msg-row row-them">
+      <div class="avatar-slot"><div class="msg-av">🏔️</div></div>
+      <div class="msg-content content-them">
+        <div class="bubble bbl-them">了解です。お疲れ様です、無理せず</div>
+        <div class="msg-meta meta-them"><span class="time-lbl">15:12</span></div>
+      </div>
+    </div>
+
+    <!-- 中桐 → Ryoji -->
+    <div class="msg-row row-me">
+      <div class="msg-content content-me">
+        <div class="msg-meta meta-me">
+          <span class="read-lbl">既読</span>
+          <span class="time-lbl">15:15</span>
+        </div>
+        <div class="bubble bbl-me">笑　ありがとうございます</div>
       </div>
     </div>
 
