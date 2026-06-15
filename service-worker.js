@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mail-cache-v45';
+const CACHE_NAME = 'mail-cache-v46';
 const PRECACHE_URLS = [
   './mail.html',
   './lime_nakagiri.html',

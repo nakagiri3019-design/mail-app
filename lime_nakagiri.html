@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>LINE</title>
-<meta name="theme-color" content="#8FA7C8">
+<meta name="theme-color" content="#ffffff">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest_lime_nakagiri.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -55,40 +55,37 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
 
 /* ── CHAT VIEW ───────────────────────────── */
 #chat-view{display:none;flex-direction:column;height:100%;}
-.chat-header{background:#8FA7C8;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.back-btn{background:none;border:none;cursor:pointer;padding:2px;display:flex;align-items:center;}
-.chat-name{font-weight:700;font-size:17px;flex:1;color:#111;}
-.chat-icons{display:flex;gap:18px;align-items:center;}
+.chat-header{background:#fff;border-bottom:1px solid #e5e5e5;padding:10px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.back-btn{background:none;border:none;cursor:pointer;padding:4px 6px 4px 2px;display:flex;align-items:center;}
+.chat-name{font-weight:700;font-size:18px;flex:1;color:#111;}
+.chat-icons{display:flex;gap:14px;align-items:center;}
 .c-icon-btn{background:none;border:none;cursor:pointer;display:flex;align-items:center;}
-.video-box{width:24px;height:24px;border:1.8px solid #333;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative;}
-.video-ear{position:absolute;top:-4px;width:2px;height:6px;background:#333;border-radius:1px;}
-.video-text{font-size:10px;font-weight:700;color:#333;margin-top:2px;}
-.messages-area{flex:1;overflow-y:auto;background:#8FA7C8;padding:12px 10px;}
+.messages-area{flex:1;overflow-y:auto;background:#C2D4E0;padding:10px 10px 14px;}
 .date-divider{display:flex;justify-content:center;margin:10px 0 14px;}
-.date-pill{background:rgba(100,100,100,0.35);color:#fff;font-size:12px;padding:4px 16px;border-radius:20px;font-weight:500;}
-.msg-row{display:flex;align-items:flex-end;gap:6px;margin-bottom:5px;}
+.date-pill{background:rgba(0,0,0,0.18);color:#fff;font-size:11px;padding:3px 14px;border-radius:20px;font-weight:500;}
+.msg-row{display:flex;align-items:flex-end;gap:5px;margin-bottom:4px;}
 .row-me{flex-direction:row-reverse;}
 .row-them{flex-direction:row;}
-.row-indent{padding-left:42px;}
-.avatar-slot{width:36px;flex-shrink:0;}
-.msg-av{width:36px;height:36px;border-radius:50%;background:#B0C4D8;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.row-indent{padding-left:44px;}
+.avatar-slot{width:38px;flex-shrink:0;}
+.msg-av{width:38px;height:38px;border-radius:50%;background:#B0C4D8;display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0;}
 .msg-content{display:flex;align-items:flex-end;gap:4px;max-width:75%;}
 .content-me{flex-direction:row-reverse;}
 .content-them{flex-direction:row;}
-.bubble{padding:10px 14px;border-radius:18px;font-size:14.5px;line-height:22px;color:#111;white-space:pre-wrap;word-break:break-word;box-shadow:0 1px 3px rgba(0,0,0,0.12);}
-.bbl-me{background:#AAD97A;border-top-right-radius:4px;}
+.bubble{padding:9px 13px;border-radius:18px;font-size:14.5px;line-height:1.5;color:#111;white-space:pre-wrap;word-break:break-word;box-shadow:0 1px 2px rgba(0,0,0,0.10);}
+.bbl-me{background:#B2F590;border-top-right-radius:4px;}
 .bbl-them{background:#fff;border-top-left-radius:4px;}
-.msg-meta{flex-shrink:0;padding-bottom:2px;display:flex;flex-direction:column;}
+.msg-meta{flex-shrink:0;padding-bottom:2px;display:flex;flex-direction:column;gap:1px;}
 .meta-me{align-items:flex-end;}
 .meta-them{align-items:flex-start;}
-.read-lbl{font-size:10px;color:#555;font-weight:600;line-height:12px;}
-.time-lbl{font-size:10px;color:#555;}
-.input-bar{background:#fff;border-top:1px solid #e0e0e0;padding:8px 10px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.i-icon-btn{background:none;border:none;cursor:pointer;padding:2px;display:flex;align-items:center;}
+.read-lbl{font-size:11px;color:#aaa;font-weight:400;line-height:1.3;}
+.time-lbl{font-size:11px;color:#aaa;line-height:1.3;}
+.input-bar{background:#fff;border-top:1px solid #e8e8e8;padding:7px 8px;display:flex;align-items:center;gap:2px;flex-shrink:0;}
+.i-icon-btn{background:none;border:none;cursor:pointer;padding:5px;display:flex;align-items:center;flex-shrink:0;}
 .input-wrap{flex:1;position:relative;display:flex;align-items:center;}
-.msg-input{width:100%;border:1px solid #ddd;border-radius:22px;padding:9px 38px 9px 14px;font-size:15px;background:#fafafa;color:#111;outline:none;font-family:inherit;line-height:1.4;}
-.smile-slot{position:absolute;right:10px;display:flex;align-items:center;justify-content:center;pointer-events:none;}
-.send-btn{background:#06C755;border:none;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.msg-input{width:100%;border:1px solid #ddd;border-radius:22px;padding:9px 62px 9px 14px;font-size:15px;background:#f8f8f8;color:#111;outline:none;font-family:inherit;line-height:1.4;}
+.input-right{position:absolute;right:6px;display:flex;align-items:center;gap:0;}
+.i-sm-btn{background:none;border:none;cursor:pointer;padding:5px;display:flex;align-items:center;}
 </style>
 </head>
 <body>
@@ -274,13 +271,19 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
 <div id="chat-view">
   <div class="chat-header">
     <button class="back-btn" id="back-btn">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      <svg width="10" height="18" viewBox="0 0 10 18" fill="none" stroke="#333" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 1L1 9l8 8"/></svg>
     </button>
-    <span class="chat-name">Ryoji</span>
+    <span class="chat-name">RYOJI</span>
     <div class="chat-icons">
-      <button class="c-icon-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
-      <button class="c-icon-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.8 19.8 0 01-8.63-3.07A19.5 19.5 0 013.9 11.1 19.8 19.8 0 01.86 2.46A2 2 0 012.84.29h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 7.91a16 16 0 006.12 6.12l1.66-1.66a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg></button>
-      <button class="c-icon-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="1.5" fill="#333"/><circle cx="12" cy="12" r="1.5" fill="#333"/><circle cx="12" cy="19" r="1.5" fill="#333"/></svg></button>
+      <button class="c-icon-btn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="c-icon-btn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.8 19.8 0 01-8.63-3.07A19.5 19.5 0 013.9 11.1 19.8 19.8 0 01.86 2.46A2 2 0 012.84.29h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 7.91a16 16 0 006.12 6.12l1.66-1.66a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+      </button>
+      <button class="c-icon-btn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="1.5" fill="#333"/><circle cx="12" cy="12" r="1.5" fill="#333"/><circle cx="12" cy="19" r="1.5" fill="#333"/></svg>
+      </button>
     </div>
   </div>
 
@@ -309,9 +312,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
         <div class="bubble bbl-them">承知しました。
 前回分の処理をベースに、PDF読込と確認画面、出力部分を優先して進めます。
 仕様で確認したい点が出たら連絡します。</div>
-        <div class="msg-meta meta-them">
-          <span class="time-lbl">10:32</span>
-        </div>
+        <div class="msg-meta meta-them"><span class="time-lbl">10:32</span></div>
       </div>
     </div>
 
@@ -335,9 +336,7 @@ Interakt様側では、まず実際の決算書PDFを入れて、数字が正し
         <div class="bubble bbl-them">了解です。
 まずはアップロード後の確認画面と、読み取り結果の表示部分から対応します。
 動作確認用の画面ができたら共有します。</div>
-        <div class="msg-meta meta-them">
-          <span class="time-lbl">10:45</span>
-        </div>
+        <div class="msg-meta meta-them"><span class="time-lbl">10:45</span></div>
       </div>
     </div>
 
@@ -351,9 +350,7 @@ Interakt様側では、まず実際の決算書PDFを入れて、数字が正し
         <div class="bubble bbl-them">決算書PDFの読み取り画面を仮実装しました。
 会社名、売上、利益、預金、売掛金あたりは取得できる状態です。
 一部のPDFで科目名がずれるので、追加で補正処理を入れます。</div>
-        <div class="msg-meta meta-them">
-          <span class="time-lbl">14:10</span>
-        </div>
+        <div class="msg-meta meta-them"><span class="time-lbl">14:10</span></div>
       </div>
     </div>
 
@@ -377,27 +374,33 @@ Interakt様に見せる前に、預金と売掛金の読み取りはもう少し
         <div class="bubble bbl-them">可能です。
 読み取りできない項目は確認メッセージを出す形に修正します。
 あわせて、手入力で修正できるようにしておきます。</div>
-        <div class="msg-meta meta-them">
-          <span class="time-lbl">14:31</span>
-        </div>
+        <div class="msg-meta meta-them"><span class="time-lbl">14:31</span></div>
       </div>
     </div>
 
   </div>
 
   <div class="input-bar">
-    <button class="i-icon-btn">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12" stroke-linecap="round"/><line x1="12" y1="8" x2="12" y2="16" stroke-linecap="round"/></svg>
+    <button class="i-icon-btn" aria-label="追加">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+    <button class="i-icon-btn" aria-label="カメラ">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    </button>
+    <button class="i-icon-btn" aria-label="画像">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="#555" stroke="none"/><polyline points="21 15 16 10 5 21"/></svg>
     </button>
     <div class="input-wrap">
       <input class="msg-input" type="text" placeholder="メッセージを入力">
-      <span class="smile-slot">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2" stroke-linecap="round"/><circle cx="9" cy="9.5" r="1" fill="#bbb"/><circle cx="15" cy="9.5" r="1" fill="#bbb"/></svg>
-      </span>
+      <div class="input-right">
+        <button class="i-sm-btn" aria-label="スタンプ">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2" stroke-linecap="round"/><circle cx="9" cy="9.5" r="1" fill="#aaa" stroke="none"/><circle cx="15" cy="9.5" r="1" fill="#aaa" stroke="none"/></svg>
+        </button>
+        <button class="i-sm-btn" aria-label="音声入力">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="9" y1="23" x2="15" y2="23"/></svg>
+        </button>
+      </div>
     </div>
-    <button class="send-btn">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2" fill="#fff" stroke="none"/></svg>
-    </button>
   </div>
 </div>
 
