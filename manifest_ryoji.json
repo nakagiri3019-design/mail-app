@@ -3,7 +3,7 @@
   "short_name": "RYOJI",
   "start_url": "./ryoji_chat.html",
   "id": "./ryoji_chat.html",
-  "scope": "./ryoji_chat.html",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#3D6B8C",

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>RYOJI - LINE</title>
-<meta name="theme-color" content="#3D6B8C"><!-- この色は今後指示なく変更しない -->
+<meta name="theme-color" content="#8DB0D9">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest_ryoji.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -191,6 +191,16 @@ Interakt様に見せる前に、預金と売掛金の読み取りはもう少し
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw_ryoji.js', { scope: './ryoji_chat.html' });
 }
+
+function setThemeColor(color) {
+  const el = document.querySelector('meta[name="theme-color"]');
+  if (el) el.setAttribute('content', color);
+}
+
+window.addEventListener('load', () => {
+  setThemeColor('#3D6B8C');
+});
+
 document.getElementById('back-btn').addEventListener('click', () => {
   if (history.length > 1) { history.back(); }
   else { window.location.href = './lime_nakagiri.html'; }
