@@ -51,6 +51,12 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
 .ai-dot{width:22px;height:22px;border-radius:50%;background:#7B68EE;flex-shrink:0;}
 .ai-chip{font-size:12.5px;color:#555;cursor:pointer;user-select:none;}
 .ai-chip:active{opacity:0.7;}
+.call-card{display:flex;align-items:center;gap:10px;min-width:175px;}
+.call-icon{font-size:19px;flex-shrink:0;}
+.call-info{display:flex;flex-direction:column;gap:2px;}
+.call-title{font-size:13.5px;font-weight:700;color:#111;line-height:1.3;}
+.call-duration{font-size:11.5px;color:rgba(0,0,0,0.5);line-height:1.3;}
+.call-sub{font-size:11px;color:rgba(0,0,0,0.45);line-height:1.4;margin-top:3px;}
 </style>
 </head>
 <body>
@@ -78,6 +84,26 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
   </div>
 
   <div class="messages-area" id="messages-area">
+
+    <!-- 5月7日 -->
+    <div class="date-divider"><span class="date-pill">5月7日(木)</span></div>
+
+    <!-- 不在着信 (RYOJI → 中桐) -->
+    <div class="msg-row row-them">
+      <div class="avatar-slot"><div class="msg-av">🏔️</div></div>
+      <div class="msg-content content-them">
+        <div class="bubble bbl-them">
+          <div class="call-card">
+            <span class="call-icon">📞</span>
+            <div class="call-info">
+              <span class="call-title">不在着信</span>
+              <span class="call-sub">着信音・呼出音 &gt;</span>
+            </div>
+          </div>
+        </div>
+        <div class="msg-meta meta-them"><span class="time-lbl">15:30</span></div>
+      </div>
+    </div>
 
     <!-- 5月8日 -->
     <div class="date-divider"><span class="date-pill">5月8日(金)</span></div>
@@ -130,6 +156,46 @@ Interakt様側では、まず実際の決算書PDFを入れて、数字が正し
       </div>
     </div>
 
+    <!-- 音声通話が終了しました (中桐 → RYOJI) -->
+    <div class="msg-row row-me">
+      <div class="msg-content content-me">
+        <div class="msg-meta meta-me">
+          <span class="read-lbl">既読</span>
+          <span class="time-lbl">12:20</span>
+        </div>
+        <div class="bubble bbl-me">
+          <div class="call-card">
+            <span class="call-icon">📞</span>
+            <div class="call-info">
+              <span class="call-title">音声通話が終了しました</span>
+              <span class="call-duration">02:06</span>
+              <span class="call-sub">着信音・呼出音 &gt;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5月14日 -->
+    <div class="date-divider"><span class="date-pill">5月14日(水)</span></div>
+
+    <!-- 不在着信 (RYOJI → 中桐) -->
+    <div class="msg-row row-them">
+      <div class="avatar-slot"><div class="msg-av">🏔️</div></div>
+      <div class="msg-content content-them">
+        <div class="bubble bbl-them">
+          <div class="call-card">
+            <span class="call-icon">📞</span>
+            <div class="call-info">
+              <span class="call-title">不在着信</span>
+              <span class="call-sub">着信音・呼出音 &gt;</span>
+            </div>
+          </div>
+        </div>
+        <div class="msg-meta meta-them"><span class="time-lbl">11:05</span></div>
+      </div>
+    </div>
+
     <!-- 5月15日 -->
     <div class="date-divider"><span class="date-pill">5月15日(金)</span></div>
 
@@ -165,6 +231,26 @@ Interakt様に見せる前に、預金と売掛金の読み取りはもう少し
 読み取りできない項目は確認メッセージを出す形に修正します。
 あわせて、手入力で修正できるようにしておきます。</div>
         <div class="msg-meta meta-them"><span class="time-lbl">14:31</span></div>
+      </div>
+    </div>
+
+    <!-- 音声通話が終了しました (中桐 → RYOJI) -->
+    <div class="msg-row row-me">
+      <div class="msg-content content-me">
+        <div class="msg-meta meta-me">
+          <span class="read-lbl">既読</span>
+          <span class="time-lbl">14:55</span>
+        </div>
+        <div class="bubble bbl-me">
+          <div class="call-card">
+            <span class="call-icon">📞</span>
+            <div class="call-info">
+              <span class="call-title">音声通話が終了しました</span>
+              <span class="call-duration">05:33</span>
+              <span class="call-sub">着信音・呼出音 &gt;</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
