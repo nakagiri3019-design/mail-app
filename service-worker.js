@@ -1,4 +1,5 @@
-const CACHE_NAME = 'mail-cache-v49';
+const CACHE_PREFIX = 'mail-cache-';
+const CACHE_NAME = CACHE_PREFIX + 'v50';
 const PRECACHE_URLS = [
   './mail.html',
   './lime_nakagiri.html',
@@ -20,7 +21,11 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((names) =>
-      Promise.all(names.filter((name) => name !== CACHE_NAME).map((name) => caches.delete(name)))
+      Promise.all(
+        names
+          .filter((name) => name.startsWith(CACHE_PREFIX) && name !== CACHE_NAME)
+          .map((name) => caches.delete(name))
+      )
     ).then(() => self.clients.claim())
   );
 });

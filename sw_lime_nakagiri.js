@@ -1,8 +1,7 @@
 const CACHE_PREFIX = 'lime-nakagiri-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v1';
+const CACHE_NAME = CACHE_PREFIX + 'v2';
 const PRECACHE_URLS = [
   './lime_nakagiri.html',
-  './ryoji_chat.html',
   './manifest_lime_nakagiri.json',
   './icons/lime_nakagiri_192.png',
   './icons/lime_nakagiri_512.png',
