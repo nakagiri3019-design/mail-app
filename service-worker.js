@@ -1,7 +1,8 @@
-const CACHE_NAME = 'mail-cache-v47';
+const CACHE_NAME = 'mail-cache-v48';
 const PRECACHE_URLS = [
   './mail.html',
   './lime_nakagiri.html',
+  './ryoji_chat.html',
   './manifest.json',
   './manifest_lime_nakagiri.json',
   './icons/icon-192.png',
