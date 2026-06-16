@@ -39,10 +39,15 @@
     min-height: 100vh;
     position: relative;
   }
-  .loading-ov { position: fixed; inset: 0; background: rgba(255,255,255,.96); display: none; align-items: center; justify-content: center; z-index: 9999; }
+  .loading-ov { position: fixed; top:0; right:0; bottom:0; left:0; background: rgba(255,255,255,.96); display: none; align-items: center; justify-content: center; z-index: 9999; }
   .loading-ov.show { display: flex; }
   .loading-ov .spinner { width: 46px; height: 46px; border-radius: 50%; border: 4px solid #dbe3ec; border-top-color: #2074d4; animation: sbi-spin .8s linear infinite; }
   @keyframes sbi-spin { to { transform: rotate(360deg); } }
+  #screen-meisai { overflow-x: hidden; }
+  @keyframes m-slide-r { from { transform: translateX(64px); opacity:.15; } to { transform: translateX(0); opacity:1; } }
+  @keyframes m-slide-l { from { transform: translateX(-64px); opacity:.15; } to { transform: translateX(0); opacity:1; } }
+  #m-list.slide-r { animation: m-slide-r .32s ease-out; }
+  #m-list.slide-l { animation: m-slide-l .32s ease-out; }
 
   /* ---- status bar ---- */
   .statusbar {
@@ -1091,10 +1096,21 @@
     ov.classList.add('show');
     setTimeout(function(){ showScreen(id); ov.classList.remove('show'); }, ms || 850);
   }
+  var monthOrder = ['jan','feb','mar','apr','may','jun'];
+  var curMonthKey = 'jun';
   function selectMonth(m){
     var ov = document.getElementById('loading-ov');
     ov.classList.add('show');
-    setTimeout(function(){ renderMonth(m); ov.classList.remove('show'); }, 600);
+    var dir = (monthOrder.indexOf(m) >= monthOrder.indexOf(curMonthKey)) ? 'slide-r' : 'slide-l';
+    setTimeout(function(){
+      renderMonth(m);
+      curMonthKey = m;
+      var list = document.getElementById('m-list');
+      list.classList.remove('slide-r','slide-l');
+      void list.offsetWidth;
+      list.classList.add(dir);
+      ov.classList.remove('show');
+    }, 600);
   }
 
   // ---- PIN entry ----
