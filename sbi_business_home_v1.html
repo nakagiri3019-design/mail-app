@@ -353,15 +353,15 @@
 
   .m-card { background:linear-gradient(160deg,#3b93ec 0%,#2074d4 100%); padding:16px 14px 0; }
   .m-accs { display:flex; gap:10px; margin-bottom:16px; }
-  .m-acc { background:#fff; border-radius:9px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; color:#1a1a1a; font-size:15.5px; font-weight:600; }
+  .m-acc { background:rgba(255,255,255,.2); border-radius:9px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; color:#fff; font-size:15.5px; font-weight:600; }
   .m-acc.wide { flex:1; } .m-acc.narrow { width:92px; }
-  .m-acc .cv { color:#6b7280; }
+  .m-acc .cv { color:#fff; }
   .m-acc .cv svg { width:16px; height:16px; }
   .m-balline { display:flex; align-items:baseline; justify-content:space-between; color:#fff; padding:0 4px 6px; }
   .m-balline .lab { font-size:15px; font-weight:600; }
   .m-balline .big { font-size:30px; font-weight:700; }
   .m-balline .big small { font-size:14px; font-weight:600; margin-left:4px; }
-  .chart { display:flex; height:140px; position:relative; padding:0 4px; }
+  .chart { display:flex; height:112px; position:relative; padding:0 4px; }
   .chart .cline { position:absolute; left:4px; right:4px; top:50%; height:2px; background:rgba(255,255,255,.45); }
   .bcol { flex:1; display:flex; flex-direction:column; }
   .bcol .ht { flex:1; display:flex; align-items:flex-end; justify-content:center; }
@@ -725,8 +725,8 @@
 
     <div class="m-card">
       <div class="m-accs">
-        <div class="m-acc wide">代表口座 <span class="cv"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span></div>
-        <div class="m-acc narrow">円 <span class="cv"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span></div>
+        <div class="m-acc wide">代表口座 <span class="cv"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span></div>
+        <div class="m-acc narrow">円 <span class="cv"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span></div>
       </div>
       <div class="m-balline">
         <span class="lab">現在残高</span>
@@ -1104,7 +1104,7 @@
     keys.forEach(function(k){
       maxv = Math.max(maxv, n(MONTHS[k].in), n(MONTHS[k].out));
     });
-    var MAXH = 66;
+    var MAXH = 50;
     function h(v){ return Math.max(3, Math.round(v / maxv * MAXH)); }
     keys.forEach(function(k){
       document.getElementById('bar-'+k+'-up').style.height = h(n(MONTHS[k].in)) + 'px';
