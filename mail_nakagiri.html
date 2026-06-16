@@ -213,6 +213,8 @@ const COLOR_OVERRIDES = {
   '渡辺': '#4285F4',
   '黒崎 侑佑': '#FF8C00',
   '黒崎': '#FF8C00',
+  '駒宮亮二': '#5C6B9F',
+  '駒宮': '#5C6B9F',
 };
 
 function colorFor(name) {
@@ -453,6 +455,23 @@ const MAILS = [
     date: '6月7日', unread: false, starred: false,
     body: 'いつもAmazon.co.jpをご利用いただきありがとうございます。\n\nご注文いただいた商品を発送いたしましたのでお知らせいたします。\n\n注文番号：249-7261834-1059473\nお届け予定日：6月9日（火）\n\n配送状況の確認は、注文履歴ページからご確認いただけます。\n\n今後ともAmazon.co.jpをよろしくお願いいたします。',
   },
+  {
+    id: 'm13', name: '駒宮亮二', email: 'info@komasyou.net', avatarLetter: '駒宮',
+    subject: '請求書',
+    snippet: 'お世話になっております。合同会社駒商です。株式会社Interakt様向け決算シミュレーター開発支援業務につきまして、2026年5月分の請求書および作業報告書を添付にてお送りいたします…',
+    date: '5月29日', unread: false, starred: false,
+    thread: [
+      {
+        from: '駒宮亮二', fromEmail: 'info@komasyou.net', to: '中桐由美子', toEmail: 'yumiyumi3019@gmail.com',
+        date: '5月29日', datetime: '2026年5月29日(金) 午後3:15',
+        body: '株式会社アークラボ 中桐由美子 様<br><br>お世話になっております。 合同会社駒商です。<br>株式会社Interakt様向け決算シミュレーター開発支援業務につきまして、 2026年5月分の請求書および作業報告書を添付にてお送りいたします。<br><br>今月は、決算書PDF読込機能、確認画面、修正入力機能、PDF出力機能、エラー表示・確認項目表示の調整を中心に対応いたしました。<br><br>内容をご確認いただき、不明点や修正点がございましたらご連絡ください。<br><br>何卒よろしくお願いいたします。<br><br>駒宮亮二',
+        attachments: [
+          { name: 'invoice_KOMA-202605.pdf', url: './invoice_KOMA-202605.pdf' },
+          { name: 'workreport_202605.pdf', url: './workreport_202605.pdf' },
+        ],
+      },
+    ],
+  },
 ];
 
 function initial(name) {
@@ -465,6 +484,7 @@ const AVATAR_LABEL_OVERRIDES = {
   '渡辺': '渡辺',
   '黒崎': '黒崎',
   '武田直弥': '武田',
+  '駒宮亮二': '駒宮',
 };
 
 function avatarLabel(name) {
