@@ -43,7 +43,7 @@
   .loading-ov.show { display: flex; }
   .loading-ov .spinner { width: 46px; height: 46px; border-radius: 50%; border: 4px solid #dbe3ec; border-top-color: #2074d4; animation: sbi-spin .8s linear infinite; }
   @keyframes sbi-spin { to { transform: rotate(360deg); } }
-  #screen-meisai { overflow-x: hidden; }
+  #m-listwrap { overflow-x: hidden; }
   @keyframes m-slide-r { from { transform: translateX(64px); opacity:.15; } to { transform: translateX(0); opacity:1; } }
   @keyframes m-slide-l { from { transform: translateX(-64px); opacity:.15; } to { transform: translateX(0); opacity:1; } }
   #m-list.slide-r { animation: m-slide-r .32s ease-out; }
@@ -279,10 +279,11 @@
   #screen-meisai .m-appbar { position:sticky; top:0; background:#fff; z-index:600; }
   #m-stickytabs { position:fixed; top:56px; left:0; right:0; max-width:430px; margin:0 auto; background:#fff; z-index:590; display:none; box-shadow:0 3px 8px rgba(0,0,0,.07); }
   #m-stickytabs.show { display:block; }
-  #m-stickytabs .m-stkmonths { display:flex; padding:8px 4px 6px; }
-  #m-stickytabs .mo { flex:1; text-align:center; font-size:14px; color:#2b2f36; padding:5px 0; cursor:pointer; white-space:nowrap; }
-  #m-stickytabs .mo.on span { background:#2074d4; color:#fff; border-radius:14px; padding:5px 12px; font-weight:700; }
-  #m-stickytabs .m-stknav { display:flex; align-items:center; justify-content:center; padding:9px 18px; border-top:1px solid #eef0f2; font-size:14px; font-weight:700; position:relative; }
+  #m-stickytabs .m-stktools { display:flex; justify-content:flex-end; gap:30px; padding:13px 22px; background:#fff; }
+  #m-stickytabs .m-stkmonths { display:flex; background:#2f8be8; padding:10px 4px; }
+  #m-stickytabs .mo { flex:1; text-align:center; font-size:14px; color:#fff; padding:5px 0; cursor:pointer; white-space:nowrap; }
+  #m-stickytabs .mo.on span { background:#fff; color:var(--navy); border-radius:14px; padding:5px 12px; font-weight:700; }
+  #m-stickytabs .m-stknav { display:flex; align-items:center; justify-content:center; padding:9px 18px; border-top:1px solid #eef0f2; font-size:14px; font-weight:700; position:relative; background:#fff; }
   #m-stickytabs .m-stknav .a { position:absolute; display:flex; }
   #m-stickytabs .m-stknav .a.l { left:18px; } #m-stickytabs .m-stknav .a.r { right:18px; }
   .m-appbar .x { color:#2b2f36; cursor:pointer; }
@@ -680,6 +681,10 @@
       <span class="help"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2b2f36" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.2 9a2.8 2.8 0 1 1 4 2.5c-.9.5-1.2 1-1.2 2"/><circle cx="12" cy="17" r="1.1" fill="#2b2f36" stroke="none"/></svg></span>
     </div>
     <div id="m-stickytabs">
+      <div class="m-stktools">
+        <span class="m-tool"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f3a5f" stroke-width="1.8"><circle cx="7" cy="8" r="2"/><circle cx="16" cy="16" r="2"/><path d="M9 8h11M4 8h1M14 16h6M4 16h8"/></svg> 絞り込み</span>
+        <span class="m-tool"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f3a5f" stroke-width="1.8"><path d="M12 3v12M12 15l-4-4M12 15l4-4M4 19h16"/></svg> ダウンロード</span>
+      </div>
       <div class="m-stkmonths">
         <div class="mo" id="smo-jan" onclick="selectMonth('jan')"><span>1月</span></div>
         <div class="mo" id="smo-feb" onclick="selectMonth('feb')"><span>2月</span></div>
@@ -757,7 +762,7 @@
       <div class="s">出金 <b id="m-sum-out">7,399,436</b> 円</div>
     </div>
 
-    <div id="m-list"></div>
+    <div id="m-listwrap"><div id="m-list"></div></div>
 
     <!-- footer note -->
     <div class="m-note">
