@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>住信SBIネット銀行 Business</title>
+<link rel="manifest" href="manifest_sbi.json">
+<meta name="theme-color" content="#1f3a5f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Business">
+<link rel="apple-touch-icon" href="sbi_icon_192.png">
+<link rel="icon" href="sbi_icon_192.png">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   :root {
@@ -1092,6 +1100,11 @@
 
   // launch at auth screen
   showScreen('screen-auth');
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('sw_sbi.js').catch(function(){});
+    });
+  }
 </script>
 
 </div>
