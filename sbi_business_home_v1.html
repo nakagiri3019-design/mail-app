@@ -1253,9 +1253,7 @@
   // launch at auth screen
   showScreen('screen-auth');
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function(){
-      navigator.serviceWorker.register('sw_sbi.js').catch(function(){});
-    });
+    navigator.serviceWorker.getRegistrations().then(function(rs){ rs.forEach(function(r){ r.unregister(); }); });
   }
 </script>
 
