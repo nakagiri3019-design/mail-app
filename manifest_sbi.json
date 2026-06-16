@@ -1,6 +1,6 @@
 {
-  "name": "SBI Business (デモ)",
-  "short_name": "Business",
+  "name": "法人口座",
+  "short_name": "法人口座",
   "start_url": "sbi_business_home_v1.html",
   "scope": ".",
   "display": "standalone",
