@@ -60,9 +60,12 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
 .chat-name{font-weight:700;font-size:18px;flex:1;color:#111;}
 .chat-icons{display:flex;gap:14px;align-items:center;}
 .c-icon-btn{background:none;border:none;cursor:pointer;display:flex;align-items:center;}
-.messages-area{flex:1;overflow-y:auto;background:#8FB2DD/* この色は今後指示なく変更しない */;background-image:radial-gradient(ellipse 120px 80px at 18% 12%,rgba(255,255,255,0.15) 0%,transparent 70%),radial-gradient(ellipse 90px 55px at 72% 28%,rgba(255,255,255,0.12) 0%,transparent 70%),radial-gradient(ellipse 110px 70px at 45% 62%,rgba(255,255,255,0.14) 0%,transparent 70%),radial-gradient(ellipse 80px 50px at 88% 78%,rgba(255,255,255,0.10) 0%,transparent 70%)/* この色は今後指示なく変更しない */;padding:10px 4px 14px 10px;}
+.messages-area{flex:1;overflow-y:auto;background:#8FB2DD/* この色は今後指示なく変更しない */;background-image:radial-gradient(ellipse 120px 80px at 18% 12%,rgba(255,255,255,0.15) 0%,transparent 70%),radial-gradient(ellipse 90px 55px at 72% 28%,rgba(255,255,255,0.12) 0%,transparent 70%),radial-gradient(ellipse 110px 70px at 45% 62%,rgba(255,255,255,0.14) 0%,transparent 70%),radial-gradient(ellipse 80px 50px at 88% 78%,rgba(255,255,255,0.10) 0%,transparent 70%)/* この色は今後指示なく変更しない */;padding:10px 4px 14px 10px;position:relative;}
 .date-divider{display:flex;justify-content:center;margin:10px 0 14px;}
 .date-pill{background:rgba(86,112,145,0.65)/* この色は今後指示なく変更しない */;color:#fff;font-size:11px;padding:3px 14px;border-radius:20px;font-weight:500;}
+.float-date-wrap{position:sticky;top:8px;height:0;z-index:10;display:flex;justify-content:center;pointer-events:none;}
+.floating-date{background:rgba(86,112,145,0.65);color:#fff;font-size:11px;padding:3px 14px;border-radius:20px;font-weight:500;opacity:0;transition:opacity 0.25s;box-shadow:0 1px 3px rgba(0,0,0,0.15);}
+.floating-date.show{opacity:1;}
 .msg-row{display:flex;align-items:flex-end;gap:5px;margin-bottom:6px;}
 .row-me{flex-direction:row-reverse;}
 .row-them{flex-direction:row;align-items:flex-start;}
@@ -314,6 +317,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
   </div>
 
   <div class="messages-area" id="messages-area">
+    <div class="float-date-wrap"><div class="floating-date" id="floating-date"></div></div>
 
     <!-- 5月7日 -->
     <div class="date-divider"><span class="date-pill">5月7日(木)</span></div>
@@ -680,6 +684,31 @@ document.getElementById('back-btn').addEventListener('click', () => {
   chatView.style.display = 'none';
   listView.style.display = 'flex';
   setThemeColor('#8DB0D9');
+});
+
+// スクロール中に日付を上部に薄く表示（本物のLINE風・止まると消える）
+const floatingDate = document.getElementById('floating-date');
+const dateDividers = Array.from(document.querySelectorAll('.date-divider'));
+let dateScrollTimer;
+messagesArea.addEventListener('scroll', () => {
+  const st = messagesArea.scrollTop;
+  let label = '';
+  for (let i = 0; i < dateDividers.length; i++) {
+    if (dateDividers[i].offsetTop <= st + 16) {
+      const pill = dateDividers[i].querySelector('.date-pill');
+      label = pill ? pill.textContent : '';
+    } else {
+      break;
+    }
+  }
+  if (label) {
+    floatingDate.textContent = label;
+    floatingDate.classList.add('show');
+  }
+  clearTimeout(dateScrollTimer);
+  dateScrollTimer = setTimeout(() => {
+    floatingDate.classList.remove('show');
+  }, 1100);
 });
 </script>
 </body>
