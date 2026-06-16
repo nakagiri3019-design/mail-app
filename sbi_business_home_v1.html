@@ -276,6 +276,15 @@
   /* ===== 入出金明細 (meisai) screen ===== */
   #screen-meisai { display:none; background:#fff; min-height:100vh; }
   .m-appbar { height:56px; display:flex; align-items:center; padding:0 18px; }
+  #screen-meisai .m-appbar { position:sticky; top:0; background:#fff; z-index:600; }
+  #m-stickytabs { position:fixed; top:56px; left:0; right:0; max-width:430px; margin:0 auto; background:#fff; z-index:590; display:none; box-shadow:0 3px 8px rgba(0,0,0,.07); }
+  #m-stickytabs.show { display:block; }
+  #m-stickytabs .m-stkmonths { display:flex; padding:8px 4px 6px; }
+  #m-stickytabs .mo { flex:1; text-align:center; font-size:14px; color:#2b2f36; padding:5px 0; cursor:pointer; white-space:nowrap; }
+  #m-stickytabs .mo.on span { background:#2074d4; color:#fff; border-radius:14px; padding:5px 12px; font-weight:700; }
+  #m-stickytabs .m-stknav { display:flex; align-items:center; justify-content:center; padding:9px 18px; border-top:1px solid #eef0f2; font-size:14px; font-weight:700; position:relative; }
+  #m-stickytabs .m-stknav .a { position:absolute; display:flex; }
+  #m-stickytabs .m-stknav .a.l { left:18px; } #m-stickytabs .m-stknav .a.r { right:18px; }
   .m-appbar .x { color:#2b2f36; cursor:pointer; }
   .m-appbar .help { margin-left:auto; }
   .m-tools { display:flex; justify-content:flex-end; gap:30px; padding:14px 22px 18px; }
@@ -670,6 +679,21 @@
       <span class="x" onclick="closeMeisai()"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#2b2f36" stroke-width="2"><path d="M5 5l14 14M19 5L5 19"/></svg></span>
       <span class="help"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2b2f36" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.2 9a2.8 2.8 0 1 1 4 2.5c-.9.5-1.2 1-1.2 2"/><circle cx="12" cy="17" r="1.1" fill="#2b2f36" stroke="none"/></svg></span>
     </div>
+    <div id="m-stickytabs">
+      <div class="m-stkmonths">
+        <div class="mo" id="smo-jan" onclick="selectMonth('jan')"><span>1月</span></div>
+        <div class="mo" id="smo-feb" onclick="selectMonth('feb')"><span>2月</span></div>
+        <div class="mo" id="smo-mar" onclick="selectMonth('mar')"><span>3月</span></div>
+        <div class="mo" id="smo-apr" onclick="selectMonth('apr')"><span>4月</span></div>
+        <div class="mo" id="smo-may" onclick="selectMonth('may')"><span>5月</span></div>
+        <div class="mo" id="smo-jun" onclick="selectMonth('jun')"><span>6月</span></div>
+      </div>
+      <div class="m-stknav">
+        <span class="a l"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2b2f36" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></span>
+        <span id="m-stklabel">2026年6月</span>
+        <span class="a r"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c7ccd2" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
+    </div>
 
     <div class="m-txmenu">
       <span class="cv"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2b2f36" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>
@@ -1057,12 +1081,14 @@
     document.getElementById('m-monthlabel').textContent = cfg.label;
     document.getElementById('m-sum-in').textContent = cfg.in;
     document.getElementById('m-sum-out').textContent = cfg.out;
+    var sl = document.getElementById('m-stklabel'); if (sl) sl.textContent = cfg.label;
     // month label pill + chart highlight (green/white) move to selected month
     ['jan','feb','mar','apr','may','jun'].forEach(function(k){
       var sel = (k===m);
       document.getElementById('mo-'+k).classList.toggle('on', sel);
       document.getElementById('bar-'+k+'-up').classList.toggle('cur', sel);
       document.getElementById('bar-'+k+'-dn').classList.toggle('cur', sel);
+      var smo = document.getElementById('smo-'+k); if (smo) smo.classList.toggle('on', sel);
     });
   }
   // chart bar heights scaled to actual monthly totals (in=up, out=down)
@@ -1082,6 +1108,15 @@
   }
   setChartHeights();
   renderMonth('jun');
+  window.addEventListener('scroll', function(){
+    var sm = document.getElementById('screen-meisai');
+    var stk = document.getElementById('m-stickytabs');
+    if (!sm || !stk) return;
+    if (sm.style.display === 'none') { stk.classList.remove('show'); return; }
+    var anchor = sm.querySelector('.m-monthnav');
+    if (!anchor) return;
+    stk.classList.toggle('show', anchor.getBoundingClientRect().bottom <= 56);
+  }, { passive: true });
 
   function showScreen(id){
     ['screen-auth','screen-pin','screen-home','screen-meisai'].forEach(function(s){
