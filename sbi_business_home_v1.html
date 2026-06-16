@@ -700,20 +700,20 @@
       </div>
       <div class="chart">
         <div class="cline"></div>
-        <div class="bcol" onclick="renderMonth('jan')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-jan-up" style="height:54px"></div></div><div class="hb"><div class="bar dn" id="bar-jan-dn" style="height:70px"></div></div></div>
-        <div class="bcol" onclick="renderMonth('feb')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-feb-up" style="height:22px"></div></div><div class="hb"><div class="bar dn" id="bar-feb-dn" style="height:28px"></div></div></div>
-        <div class="bcol" onclick="renderMonth('mar')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-mar-up" style="height:41px"></div></div><div class="hb"><div class="bar dn" id="bar-mar-dn" style="height:37px"></div></div></div>
-        <div class="bcol" onclick="renderMonth('apr')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-apr-up" style="height:13px"></div></div><div class="hb"><div class="bar dn" id="bar-apr-dn" style="height:6px"></div></div></div>
-        <div class="bcol" onclick="renderMonth('may')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-may-up" style="height:16px"></div></div><div class="hb"><div class="bar dn" id="bar-may-dn" style="height:8px"></div></div></div>
-        <div class="bcol" onclick="renderMonth('jun')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-jun-up" style="height:40px"></div></div><div class="hb"><div class="bar dn" id="bar-jun-dn" style="height:30px"></div></div></div>
+        <div class="bcol" onclick="selectMonth('jan')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-jan-up" style="height:54px"></div></div><div class="hb"><div class="bar dn" id="bar-jan-dn" style="height:70px"></div></div></div>
+        <div class="bcol" onclick="selectMonth('feb')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-feb-up" style="height:22px"></div></div><div class="hb"><div class="bar dn" id="bar-feb-dn" style="height:28px"></div></div></div>
+        <div class="bcol" onclick="selectMonth('mar')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-mar-up" style="height:41px"></div></div><div class="hb"><div class="bar dn" id="bar-mar-dn" style="height:37px"></div></div></div>
+        <div class="bcol" onclick="selectMonth('apr')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-apr-up" style="height:13px"></div></div><div class="hb"><div class="bar dn" id="bar-apr-dn" style="height:6px"></div></div></div>
+        <div class="bcol" onclick="selectMonth('may')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-may-up" style="height:16px"></div></div><div class="hb"><div class="bar dn" id="bar-may-dn" style="height:8px"></div></div></div>
+        <div class="bcol" onclick="selectMonth('jun')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-jun-up" style="height:40px"></div></div><div class="hb"><div class="bar dn" id="bar-jun-dn" style="height:30px"></div></div></div>
       </div>
       <div class="m-months">
-        <div class="mo" id="mo-jan" onclick="renderMonth('jan')"><span>1月</span></div>
-        <div class="mo" id="mo-feb" onclick="renderMonth('feb')"><span>2月</span></div>
-        <div class="mo" id="mo-mar" onclick="renderMonth('mar')"><span>3月</span></div>
-        <div class="mo" id="mo-apr" onclick="renderMonth('apr')"><span>4月</span></div>
-        <div class="mo" id="mo-may" onclick="renderMonth('may')"><span>5月</span></div>
-        <div class="mo" id="mo-jun" onclick="renderMonth('jun')"><span>6月</span></div>
+        <div class="mo" id="mo-jan" onclick="selectMonth('jan')"><span>1月</span></div>
+        <div class="mo" id="mo-feb" onclick="selectMonth('feb')"><span>2月</span></div>
+        <div class="mo" id="mo-mar" onclick="selectMonth('mar')"><span>3月</span></div>
+        <div class="mo" id="mo-apr" onclick="selectMonth('apr')"><span>4月</span></div>
+        <div class="mo" id="mo-may" onclick="selectMonth('may')"><span>5月</span></div>
+        <div class="mo" id="mo-jun" onclick="selectMonth('jun')"><span>6月</span></div>
       </div>
     </div>
 
@@ -1090,6 +1090,11 @@
     var ov = document.getElementById('loading-ov');
     ov.classList.add('show');
     setTimeout(function(){ showScreen(id); ov.classList.remove('show'); }, ms || 850);
+  }
+  function selectMonth(m){
+    var ov = document.getElementById('loading-ov');
+    ov.classList.add('show');
+    setTimeout(function(){ renderMonth(m); ov.classList.remove('show'); }, 600);
   }
 
   // ---- PIN entry ----
