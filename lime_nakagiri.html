@@ -63,7 +63,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
 .messages-area{flex:1;overflow-y:auto;background:#8FB2DD/* この色は今後指示なく変更しない */;background-image:radial-gradient(ellipse 120px 80px at 18% 12%,rgba(255,255,255,0.15) 0%,transparent 70%),radial-gradient(ellipse 90px 55px at 72% 28%,rgba(255,255,255,0.12) 0%,transparent 70%),radial-gradient(ellipse 110px 70px at 45% 62%,rgba(255,255,255,0.14) 0%,transparent 70%),radial-gradient(ellipse 80px 50px at 88% 78%,rgba(255,255,255,0.10) 0%,transparent 70%)/* この色は今後指示なく変更しない */;padding:10px 4px 14px 10px;}
 .date-divider{display:flex;justify-content:center;margin:10px 0 14px;}
 .date-pill{background:rgba(86,112,145,0.65)/* この色は今後指示なく変更しない */;color:#fff;font-size:11px;padding:3px 14px;border-radius:20px;font-weight:500;}
-.msg-row{display:flex;align-items:flex-end;gap:5px;margin-bottom:4px;}
+.msg-row{display:flex;align-items:flex-end;gap:5px;margin-bottom:6px;}
 .row-me{flex-direction:row-reverse;}
 .row-them{flex-direction:row;align-items:flex-start;}
 .row-indent{padding-left:44px;}
@@ -75,6 +75,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
 .bubble{padding:9px 13px;border-radius:18px;font-size:14.5px;line-height:1.5;color:#111;white-space:pre-wrap;word-break:break-word;box-shadow:0 1px 2px rgba(0,0,0,0.10);}
 .bbl-me{background:#8FEA6E/* この色は今後指示なく変更しない */;border-top-right-radius:4px;}
 .bbl-them{background:#fff;border-top-left-radius:4px;}
+.bbl-call{white-space:normal;}
 .msg-meta{flex-shrink:0;padding-bottom:2px;display:flex;flex-direction:column;gap:1px;}
 .meta-me{align-items:flex-end;}
 .meta-them{align-items:flex-start;}
@@ -90,21 +91,22 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
 .ai-dot{width:22px;height:22px;border-radius:50%;background:#7B68EE;flex-shrink:0;}
 .ai-chip{font-size:12.5px;color:#555;cursor:pointer;user-select:none;}
 .ai-chip:active{opacity:0.7;}
-.call-card{display:flex;flex-direction:column;width:240px;box-sizing:border-box;}
+.call-card{display:flex;flex-direction:column;width:190px;box-sizing:border-box;}
+.call-card svg{display:block;}
 .call-missed{}
-.call-missed-main{display:flex;align-items:center;gap:10px;padding:2px 0 6px;}
-.call-phone-icon{font-size:20px;flex-shrink:0;}
-.call-title{font-size:14px;font-weight:700;color:#111;}
+.call-missed-main{display:flex;align-items:center;gap:8px;padding:0 0 4px;}
+.call-phone-icon{font-size:22px;flex-shrink:0;}
+.call-title{font-size:15px;font-weight:700;color:#111;line-height:1.0;}
 .call-ended{}
-.call-ended-main{display:flex;align-items:center;gap:10px;padding:2px 0 6px;}
-.call-phone-icon-lg{font-size:20px;flex-shrink:0;}
+.call-ended-main{display:flex;align-items:center;gap:8px;padding:0 0 4px;}
+.call-phone-icon-lg{font-size:22px;flex-shrink:0;}
 .call-ended-info{display:flex;flex-direction:column;gap:2px;}
-.call-title-lg{font-size:14px;font-weight:700;color:#111;line-height:1.3;}
-.call-duration{font-size:12px;color:rgba(0,0,0,0.5);line-height:1.3;}
-.call-ringtone-row{display:flex;align-items:center;gap:6px;border-top:1px solid rgba(0,0,0,0.10);padding-top:6px;}
-.call-music-icon{font-size:14px;}
-.call-ringtone-text{flex:1;font-size:12px;color:rgba(0,0,0,0.45);}
-.call-chevron{font-size:14px;color:rgba(0,0,0,0.35);}
+.call-title-lg{font-size:15px;font-weight:700;color:#111;line-height:1.0;}
+.call-duration{font-size:12px;color:rgba(0,0,0,0.5);line-height:1.2;}
+.call-ringtone-row{display:flex;align-items:center;gap:6px;border-top:1px solid rgba(0,0,0,0.10);padding-top:5px;}
+.call-music-icon{font-size:13px;}
+.call-ringtone-text{flex:1;font-size:11.5px;color:rgba(0,0,0,0.45);line-height:1.2;}
+.call-chevron{font-size:13px;color:rgba(0,0,0,0.35);}
 .bubble-img{padding:3px;overflow:hidden;}
 .msg-photo{width:190px;height:auto;border-radius:16px;display:block;}
 </style>
@@ -320,7 +322,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f0f0;di
     <div class="msg-row row-them">
       <div class="avatar-slot"><div class="msg-av">🏔️</div></div>
       <div class="msg-content content-them">
-        <div class="bubble bbl-them">
+        <div class="bubble bbl-them bbl-call">
           <div class="call-card call-missed">
             <div class="call-missed-main">
               <span class="call-phone-icon">📞</span>
@@ -395,7 +397,7 @@ Interakt様側では、まず実際の決算書PDFを入れて、数字が正し
           <span class="read-lbl">既読</span>
           <span class="time-lbl">12:20</span>
         </div>
-        <div class="bubble bbl-me">
+        <div class="bubble bbl-me bbl-call">
           <div class="call-card call-ended">
             <div class="call-ended-main">
               <span class="call-phone-icon-lg">📞</span>
@@ -501,7 +503,7 @@ Interakt様側では、まず実際の決算書PDFを入れて、数字が正し
     <div class="msg-row row-them">
       <div class="avatar-slot"><div class="msg-av">🏔️</div></div>
       <div class="msg-content content-them">
-        <div class="bubble bbl-them">
+        <div class="bubble bbl-them bbl-call">
           <div class="call-card call-missed">
             <div class="call-missed-main">
               <span class="call-phone-icon">📞</span>
@@ -563,7 +565,7 @@ Interakt様に見せる前に、預金と売掛金の読み取りはもう少し
           <span class="read-lbl">既読</span>
           <span class="time-lbl">14:55</span>
         </div>
-        <div class="bubble bbl-me">
+        <div class="bubble bbl-me bbl-call">
           <div class="call-card call-ended">
             <div class="call-ended-main">
               <span class="call-phone-icon-lg">📞</span>
@@ -648,8 +650,14 @@ Interakt様に見せる前に、預金と売掛金の読み取りはもう少し
 
 </div>
 <script>
+// SW登録を無効化（開発中キャッシュ対策）
+// if ('serviceWorker' in navigator) {
+//   navigator.serviceWorker.register('./sw_lime_nakagiri.js', { scope: './lime_nakagiri.html' });
+// }
+// 既存のService Workerとキャッシュを自動削除（古い版が居座らないように）
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw_lime_nakagiri.js', { scope: './lime_nakagiri.html' });
+  navigator.serviceWorker.getRegistrations().then(function(regs){ regs.forEach(function(r){ r.unregister(); }); });
+  if (window.caches) { caches.keys().then(function(keys){ keys.forEach(function(k){ caches.delete(k); }); }); }
 }
 
 const listView = document.getElementById('list-view');
