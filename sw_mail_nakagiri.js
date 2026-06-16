@@ -1,11 +1,13 @@
 const CACHE_PREFIX = 'mail-nakagiri-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v3';
+const CACHE_NAME = CACHE_PREFIX + 'v4';
 const PRECACHE_URLS = [
   './mail_nakagiri.html',
   './manifest_nakagiri.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
+  './quote_ARK-INT-202510.pdf',
+  './contract_interakt_202510.pdf',
 ];
 
 self.addEventListener('install', (event) => {
