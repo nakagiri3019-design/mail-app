@@ -437,10 +437,10 @@
   .keypad-header { padding:10px 16px 0; text-align:right; }
   .keypad-close { font-size:20px; color:#8a9ab0; cursor:pointer; padding:4px; }
   .keypad { padding:8px 0 36px; display:grid; grid-template-columns:repeat(3,1fr); width:100%; }
-  .key { padding:18px 0; text-align:center; font-size:26px; font-weight:600; color:#1f3a8a; cursor:pointer; user-select:none; }
+  .key { padding:18px 0; text-align:center; font-size:28px; font-weight:400; color:#1f5fc4; cursor:pointer; user-select:none; }
   .key:active { background:#eceef0; }
   .key.empty { visibility:hidden; cursor:default; }
-  .key.del { font-size:22px; color:#1f3a5f; }
+  .key.del { font-size:22px; color:#1f5fc4; }
 </style>
 </head>
 <body>
@@ -1255,10 +1255,11 @@
       var tmp = digits[i]; digits[i] = digits[j]; digits[j] = tmp;
     }
     var html = '';
-    for (var k = 0; k < 10; k++){
+    for (var k = 0; k < 9; k++){
       html += '<div class="key" onclick="pinPress(\'' + digits[k] + '\')">' + digits[k] + '</div>';
     }
     html += '<div class="key empty"></div>';
+    html += '<div class="key" onclick="pinPress(\'' + digits[9] + '\')">' + digits[9] + '</div>';
     html += '<div class="key del" onclick="pinDel()">⌫</div>';
     document.getElementById('keypad').innerHTML = html;
   }
