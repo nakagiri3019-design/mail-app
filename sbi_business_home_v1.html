@@ -146,6 +146,8 @@
     display:flex;align-items:center;justify-content:center; color:var(--navy);
   }
   .grid .ico svg { width:26px; height:26px; }
+  .grid .ico.imgico { background: transparent !important; border-radius: 0 !important; overflow: visible !important; }
+  .grid .ico.imgico img { width: 100%; height: 100%; object-fit: contain; display: block; }
   .grid .cell.alt .ico { background:#e8e9ec; }
   .grid .lbl { font-size:13px; font-weight:600; text-align:center; line-height:1.3; color:var(--text); }
   .camp-tag {
@@ -483,19 +485,19 @@
   <!-- action grid -->
   <div class="grid">
     <div class="cell">
-      <div class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1f3a5f" stroke-width="1.7"><path d="M8 3l-2 3M16 3l2 3"/><rect x="4" y="7" width="16" height="13" rx="2"/><path d="M9 12h6"/></svg></div>
+      <div class="ico imgico"><img src="icons/icon_atm.png" alt="ATM"></div>
       <div class="lbl">アプリでATM</div>
     </div>
     <div class="cell" onclick="openMeisai()" style="cursor:pointer">
-      <div class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1f3a5f" stroke-width="1.7"><path d="M8 3v4M8 3L6 5M8 3l2 2M16 21v-4M16 21l-2-2M16 21l2-2"/><path d="M4 10h16M4 14h16"/></svg></div>
+      <div class="ico imgico"><img src="icons/icon_meisai.png" alt="入出金明細"></div>
       <div class="lbl">入出金明細</div>
     </div>
     <div class="cell">
-      <div class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1f3a5f" stroke-width="1.7"><rect x="4" y="8" width="16" height="11" rx="2"/><path d="M12 8V4M12 4l-2 2M12 4l2 2"/></svg></div>
+      <div class="ico imgico"><img src="icons/icon_furikomi.png" alt="振込"></div>
       <div class="lbl">振込</div>
     </div>
     <div class="cell">
-      <div class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1f3a5f" stroke-width="1.7"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg></div>
+      <div class="ico imgico"><img src="icons/icon_zandaka.png" alt="残高照会"></div>
       <div class="lbl">残高照会</div>
     </div>
 
@@ -504,7 +506,7 @@
       <div class="lbl">お客さま情報</div>
     </div>
     <div class="cell">
-      <div class="ico"><svg width="34" height="20" viewBox="0 0 44 22"><text x="0" y="16" font-size="15" font-weight="800" fill="#1f6fe0" font-style="italic">Pay-easy</text></svg></div>
+      <div class="ico imgico"><img src="icons/icon_payeasy.png" alt="Pay-easy"></div>
       <div class="lbl">税金等支払</div>
     </div>
     <div class="cell">
@@ -513,12 +515,12 @@
       <div class="lbl">円定期預金</div>
     </div>
     <div class="cell">
-      <div class="ico"><svg width="40" height="22" viewBox="0 0 44 22"><rect x="1" y="3" width="42" height="16" rx="3" fill="none" stroke="#1f3a5f" stroke-width="1.5"/><text x="6" y="14.5" font-size="8" font-weight="800" fill="#1f3a5f">DEBIT</text></svg></div>
+      <div class="ico imgico"><img src="icons/icon_debit.png" alt="デビット"></div>
       <div class="lbl">デビット</div>
     </div>
 
     <div class="cell">
-      <div class="ico"><svg width="32" height="30" viewBox="0 0 28 26" fill="none" stroke="#1f3a5f" stroke-width="1.5"><circle cx="9" cy="7" r="3"/><circle cx="19" cy="9" r="2.5"/><path d="M3 17c0-3 3-5 6-5s6 2 6 5M14 18c0-2 2.5-3.5 5-3.5s5 1.5 5 3.5"/><rect x="9" y="19" width="10" height="5" rx="1"/><text x="10.5" y="23" font-size="4.5" fill="#1f3a5f" stroke="none">BIZ</text></svg></div>
+      <div class="ico imgico"><img src="icons/icon_member.png" alt="ビジネスメンバー管理"></div>
       <div class="lbl">ビジネスメンバー管理</div>
     </div>
     <div class="cell">
@@ -537,7 +539,7 @@
 
   <!-- loan banner -->
   <div class="loan">
-    <div class="robot">🤖</div>
+    <div class="robot"><img src="icons/loan_robot.png" alt="" style="width:64px;height:64px;object-fit:contain;"></div>
     <div class="txt">
       口座のご利用だけで借入条件をご案内。必要な時、最短当日ですぐにお借入いただけます！
       <div class="more">詳しくみる <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a73e8" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg></div>

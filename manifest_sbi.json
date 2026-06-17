@@ -1,7 +1,7 @@
 {
   "name": "法人口座",
   "short_name": "法人口座",
-  "start_url": "sbi_business_home_v1.html",
+  "start_url": "sbi_business_home_v2.html",
   "scope": ".",
   "display": "standalone",
   "orientation": "portrait",
