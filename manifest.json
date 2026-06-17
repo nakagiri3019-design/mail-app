@@ -1,13 +1,14 @@
 {
-  "name": "Mail",
-  "short_name": "Mail",
-  "description": "Mail - メールアプリ",
-  "start_url": "./mail.html",
+  "name": "Mail 中桐",
+  "short_name": "Mail 中桐",
+  "description": "Mail - 中桐由美子のメールアプリ",
+  "id": "./",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FEF7E0",
-  "theme_color": "#FFEBD0",
+  "background_color": "#FBE8D2",
+  "theme_color": "#FBE8D2",
   "lang": "ja",
   "icons": [
     {

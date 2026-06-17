@@ -1,14 +1,14 @@
 {
-  "name": "Mail 中桐",
-  "short_name": "Mail 中桐",
-  "description": "Mail - 中桐由美子のメールアプリ",
-  "id": "./mail_nakagiri.html",
-  "start_url": "./mail_nakagiri.html",
-  "scope": "./mail_nakagiri.html",
+  "name": "Mail",
+  "short_name": "Mail",
+  "description": "Mail - メールアプリ",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FBE8D2",
-  "theme_color": "#FBE8D2",
+  "background_color": "#FFF4E3",
+  "theme_color": "#FFF4E3",
   "lang": "ja",
   "icons": [
     {

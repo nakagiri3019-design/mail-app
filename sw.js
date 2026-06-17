@@ -1,8 +1,8 @@
 const CACHE_PREFIX = 'mail-nakagiri-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v5';
+const CACHE_NAME = CACHE_PREFIX + 'v6';
 const PRECACHE_URLS = [
-  './mail_nakagiri.html',
-  './manifest_nakagiri.json',
+  './index.html',
+  './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
