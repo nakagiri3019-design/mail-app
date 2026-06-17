@@ -412,10 +412,13 @@
   .pin-wrap { display:flex; flex-direction:column; min-height:100vh; min-height:100svh; padding-top:60px; text-align:center; }
   .pin-title { font-size:17px; font-weight:600; color:#2b2f36; margin-bottom:34px; }
   .pin-dots { display:flex; justify-content:center; gap:18px; margin-bottom:46px; }
-  .pin-dot { width:15px; height:15px; border-radius:50%; border:1.6px solid #1f3a5f; box-sizing:border-box; }
+  .pin-dot { width:15px; height:15px; border-radius:50%; background:#c8ccd4; box-sizing:border-box; }
   .pin-dot.filled { background:#1f3a5f; }
-  .keypad { margin-top:auto; background:#f7f8fa; border-top:1px solid #e5e7eb; padding:24px 0 36px; display:grid; grid-template-columns:repeat(3,1fr); width:100%; }
-  .key { padding:18px 0; text-align:center; font-size:26px; font-weight:600; color:#2b2f36; cursor:pointer; user-select:none; }
+  .keypad-panel { margin-top:auto; background:#f7f8fa; border-top:1px solid #e5e7eb; }
+  .keypad-header { padding:10px 16px 0; text-align:right; }
+  .keypad-close { font-size:20px; color:#8a9ab0; cursor:pointer; padding:4px; }
+  .keypad { padding:8px 0 36px; display:grid; grid-template-columns:repeat(3,1fr); width:100%; }
+  .key { padding:18px 0; text-align:center; font-size:26px; font-weight:600; color:#1f3a8a; cursor:pointer; user-select:none; }
   .key:active { background:#eceef0; }
   .key.empty { visibility:hidden; cursor:default; }
   .key.del { font-size:22px; color:#1f3a5f; }
@@ -875,19 +878,9 @@
         <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
         <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
       </div>
-      <div class="keypad">
-        <div class="key" onclick="pinPress('1')">1</div>
-        <div class="key" onclick="pinPress('2')">2</div>
-        <div class="key" onclick="pinPress('3')">3</div>
-        <div class="key" onclick="pinPress('4')">4</div>
-        <div class="key" onclick="pinPress('5')">5</div>
-        <div class="key" onclick="pinPress('6')">6</div>
-        <div class="key" onclick="pinPress('7')">7</div>
-        <div class="key" onclick="pinPress('8')">8</div>
-        <div class="key" onclick="pinPress('9')">9</div>
-        <div class="key empty"></div>
-        <div class="key" onclick="pinPress('0')">0</div>
-        <div class="key del" onclick="pinDel()">⌫</div>
+      <div class="keypad-panel">
+        <div class="keypad-header"><span class="keypad-close" onclick="showScreen('screen-auth')">✕</span></div>
+        <div class="keypad" id="keypad"></div>
       </div>
     </div>
   </div>
@@ -1216,6 +1209,7 @@
   var BLACK_OVERLAY = false;
   function pinLogin(){
     pin = ''; updateDots();
+    renderKeypad();
     showScreen('screen-pin');
   }
   var monthOrder = ['jan','feb','mar','apr','may','jun'];
@@ -1233,6 +1227,21 @@
       list.classList.add(dir);
       ov.classList.remove('show');
     }, 600);
+  }
+
+  function renderKeypad(){
+    var digits = [0,1,2,3,4,5,6,7,8,9];
+    for (var i = digits.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = digits[i]; digits[i] = digits[j]; digits[j] = tmp;
+    }
+    var html = '';
+    for (var k = 0; k < 10; k++){
+      html += '<div class="key" onclick="pinPress(\'' + digits[k] + '\')">' + digits[k] + '</div>';
+    }
+    html += '<div class="key empty"></div>';
+    html += '<div class="key del" onclick="pinDel()">⌫</div>';
+    document.getElementById('keypad').innerHTML = html;
   }
 
   // ---- PIN entry ----
