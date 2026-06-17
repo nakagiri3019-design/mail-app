@@ -428,14 +428,14 @@
   .auth-row.disabled { color:#b6bbc2; cursor:default; }
   .auth-cant { text-align:center; font-weight:700; font-size:13.5px; color:#2b2f36; padding:52px 0; cursor:pointer; }
 
-  .pin-wrap { padding-top:48px; text-align:center; }
+  .pin-wrap { display:flex; flex-direction:column; min-height:100vh; min-height:100svh; padding-top:60px; text-align:center; }
   .pin-title { font-size:17px; font-weight:600; color:#2b2f36; margin-bottom:34px; }
   .pin-dots { display:flex; justify-content:center; gap:18px; margin-bottom:46px; }
   .pin-dot { width:15px; height:15px; border-radius:50%; border:1.6px solid #1f3a5f; box-sizing:border-box; }
   .pin-dot.filled { background:#1f3a5f; }
-  .keypad { display:grid; grid-template-columns:repeat(3,1fr); max-width:360px; margin:0 auto; }
+  .keypad { margin-top:auto; background:#f7f8fa; border-top:1px solid #e5e7eb; padding:24px 0 36px; display:grid; grid-template-columns:repeat(3,1fr); width:100%; }
   .key { padding:18px 0; text-align:center; font-size:26px; font-weight:600; color:#2b2f36; cursor:pointer; user-select:none; }
-  .key:active { background:#f0f1f3; }
+  .key:active { background:#eceef0; }
   .key.empty { visibility:hidden; cursor:default; }
   .key.del { font-size:22px; color:#1f3a5f; }
 </style>
