@@ -1234,13 +1234,8 @@
   // ▼▼ 黒画面5秒演出のON/OFFスイッチ。動画撮影時だけ true にする ▼▼
   var BLACK_OVERLAY = false;
   function pinLogin(){
-    if (BLACK_OVERLAY) {
-      var ov = document.getElementById('black-ov');
-      ov.classList.add('show');
-      setTimeout(function(){ showScreen('screen-home'); ov.classList.remove('show'); }, 5000);
-    } else {
-      showScreen('screen-home');
-    }
+    pin = ''; updateDots();
+    showScreen('screen-pin');
   }
   var monthOrder = ['jan','feb','mar','apr','may','jun'];
   var curMonthKey = 'jun';
@@ -1272,7 +1267,16 @@
     pin += d;
     updateDots();
     if (pin.length === 6){
-      setTimeout(function(){ pin=''; updateDots(); transitionTo('screen-home', 1100); }, 250);
+      if (BLACK_OVERLAY) {
+        setTimeout(function(){
+          pin=''; updateDots();
+          var ov = document.getElementById('black-ov');
+          ov.classList.add('show');
+          setTimeout(function(){ showScreen('screen-home'); ov.classList.remove('show'); }, 5000);
+        }, 250);
+      } else {
+        setTimeout(function(){ pin=''; updateDots(); transitionTo('screen-home', 1100); }, 250);
+      }
     }
   }
   function pinDel(){ pin = pin.slice(0,-1); updateDots(); }
