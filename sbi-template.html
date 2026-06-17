@@ -1231,10 +1231,16 @@
     ov.classList.add('show');
     setTimeout(function(){ showScreen(id); ov.classList.remove('show'); }, ms || 850);
   }
+  // ▼▼ 黒画面5秒演出のON/OFFスイッチ。動画撮影時だけ true にする ▼▼
+  var BLACK_OVERLAY = false;
   function pinLogin(){
-    var ov = document.getElementById('black-ov');
-    ov.classList.add('show');
-    setTimeout(function(){ showScreen('screen-home'); ov.classList.remove('show'); }, 5000);
+    if (BLACK_OVERLAY) {
+      var ov = document.getElementById('black-ov');
+      ov.classList.add('show');
+      setTimeout(function(){ showScreen('screen-home'); ov.classList.remove('show'); }, 5000);
+    } else {
+      showScreen('screen-home');
+    }
   }
   var monthOrder = ['jan','feb','mar','apr','may','jun'];
   var curMonthKey = 'jun';
