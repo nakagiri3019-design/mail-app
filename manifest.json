@@ -3,7 +3,7 @@
   "short_name": "Mail 中桐",
   "description": "Mail - 中桐由美子のメールアプリ",
   "id": "./",
-  "start_url": "./",
+  "start_url": "./mail_nakagiri.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
