@@ -1,8 +1,51 @@
-self.addEventListener('install', function(){ self.skipWaiting(); });
-self.addEventListener('activate', function(e){
-  e.waitUntil(
-    self.registration.unregister()
-      .then(function(){ return self.clients.matchAll(); })
-      .then(function(clients){ clients.forEach(function(c){ c.navigate(c.url); }); })
+const CACHE_PREFIX = 'sbi-app-cache-';
+const CACHE_NAME = CACHE_PREFIX + 'v1';
+const PRECACHE_URLS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './sbi_icon_192.png',
+  './sbi_icon_512.png',
+  './icons/icon_atm.png',
+  './icons/icon_debit.png',
+  './icons/icon_furikomi.png',
+  './icons/icon_meisai.png',
+  './icons/icon_member.png',
+  './icons/icon_payeasy.png',
+  './icons/icon_zandaka.png',
+  './icons/loan_robot.png',
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(PRECACHE_URLS))
+      .then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((names) =>
+      Promise.all(
+        names
+          .filter((name) => name.startsWith(CACHE_PREFIX) && name !== CACHE_NAME)
+          .map((name) => caches.delete(name))
+      )
+    ).then(() => self.clients.claim())
+  );
+});
+
+// Network-first: 常に最新を取得し、オフライン時はキャッシュにフォールバック
+self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+  event.respondWith(
+    fetch(event.request).then((response) => {
+      if (response.ok && response.type === 'basic') {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+      }
+      return response;
+    }).catch(() => caches.match(event.request))
   );
 });
