@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'mail-nakagiri-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v10';
+const CACHE_NAME = CACHE_PREFIX + 'v12';
 const PRECACHE_URLS = [
   './index.html',
   './manifest.json',
