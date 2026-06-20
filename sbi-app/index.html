@@ -465,7 +465,7 @@
       <span class="shield"><svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l8 3v6c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V5z"/></svg></span>
       スマート認証NEO
     </div>
-    <div class="acct-name">第一ビジネス営業部（301）1000711</div>
+    <div class="acct-name" id="acct-branch">第一ビジネス営業部（301）1000711</div>
     <div class="acct-pill">代表口座 円普通
       <span class="chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f3a5f" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg></span>
     </div>
@@ -659,10 +659,10 @@
     <div class="infocard">
       <div class="inforow"><span class="k">銀行名</span><span class="v">住信SBIネット銀行</span></div>
       <div class="inforow"><span class="k">金融機関コード（銀行コード）</span><span class="v">0038</span></div>
-      <div class="inforow"><span class="k">支店番号-口座番号</span><span class="v">301-1000711</span></div>
-      <div class="inforow"><span class="k">漢字氏名</span><span class="v">株式会社アークラボ</span></div>
-      <div class="inforow"><span class="k">カナ氏名</span><span class="v">カ）ア-クラボ</span></div>
-      <div class="inforow"><span class="k">総預金残高</span><span class="v">288,604円</span></div>
+      <div class="inforow"><span class="k">支店番号-口座番号</span><span class="v" id="info-accountNo">301-1000711</span></div>
+      <div class="inforow"><span class="k">漢字氏名</span><span class="v" id="info-name">株式会社アークラボ</span></div>
+      <div class="inforow"><span class="k">カナ氏名</span><span class="v" id="info-kana">カ）ア-クラボ</span></div>
+      <div class="inforow"><span class="k">総預金残高</span><span class="v" id="info-balance">288,604円</span></div>
     </div>
   </div>
   <div class="copyright">© SBI Sumishin Net Bank, Ltd.</div>
@@ -1172,10 +1172,13 @@
     feb: { data:DATA_FEB, label:'2026年2月', in:'5,001,964', out:'5,004,814' },
     jan: { data:DATA_JAN, label:'2026年1月', in:'18,400,031', out:'18,397,055' },
   };
+  var _INFO_ARKLABO = { branch:'第一ビジネス営業部（301）1000711', accountNo:'301-1000711', name:'株式会社アークラボ', kana:'カ）ア-クラボ' };
   var ACCOUNTS = {
-    nakagiri: { months: Object.assign({ jun: { data:DATA_JUN,           label:'2026年6月', in:'1,101,058', out:'817,541'   } }, _MONTHS_BASE) },
-    avantia:  { months: Object.assign({ jun: { data:DATA_JUN_AVANTIA,   label:'2026年6月', in:'1,900,900', out:'1,504,581' } }, _MONTHS_BASE) },
-    efstyle:  { months: Object.assign({ jun: { data:DATA_JUN_EFSTYLE,   label:'2026年6月', in:'1,701,058', out:'1,358,286' } }, _MONTHS_BASE) },
+    nakagiri: { info: _INFO_ARKLABO, months: Object.assign({ jun: { data:DATA_JUN,           label:'2026年6月', in:'1,101,058', out:'817,541'   } }, _MONTHS_BASE) },
+    avantia:  { info: _INFO_ARKLABO, months: Object.assign({ jun: { data:DATA_JUN_AVANTIA,   label:'2026年6月', in:'1,900,900', out:'1,504,581' } }, _MONTHS_BASE) },
+    efstyle:  { info: _INFO_ARKLABO, months: Object.assign({ jun: { data:DATA_JUN_EFSTYLE,   label:'2026年6月', in:'1,701,058', out:'1,358,286' } }, _MONTHS_BASE) },
+    mentor:   { info: _INFO_ARKLABO, months: Object.assign({ jun: { data:DATA_JUN,           label:'2026年6月', in:'1,101,058', out:'817,541'   } }, _MONTHS_BASE) },
+    levanta:  { info: _INFO_ARKLABO, months: Object.assign({ jun: { data:DATA_JUN,           label:'2026年6月', in:'1,101,058', out:'817,541'   } }, _MONTHS_BASE) },
   };
   var _urlParams = new URLSearchParams(location.search);
   var _userKey = _urlParams.get('user') || 'nakagiri';
@@ -1193,6 +1196,23 @@
         var elM = document.getElementById('meisai-balance');
         if (elM) elM.innerHTML = bal + '<small>円</small>';
         break;
+      }
+    }
+  })();
+
+  // 口座情報を ?user= に応じて書き換え
+  (function(){
+    var info = _account.info;
+    var e;
+    e = document.getElementById('acct-branch');    if (e) e.textContent = info.branch;
+    e = document.getElementById('info-accountNo'); if (e) e.textContent = info.accountNo;
+    e = document.getElementById('info-name');      if (e) e.textContent = info.name;
+    e = document.getElementById('info-kana');      if (e) e.textContent = info.kana;
+    e = document.getElementById('info-balance');
+    if (e) {
+      var d = MONTHS.jun.data;
+      for (var i = 0; i < d.length; i++) {
+        if (d[i].t === 'tx') { e.textContent = d[i].bal + '円'; break; }
       }
     }
   })();
