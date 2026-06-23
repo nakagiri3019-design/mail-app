@@ -604,18 +604,7 @@
 
   <!-- transactions -->
   <div class="section" style="padding-bottom:6px"><h2>最近の入出金</h2></div>
-  <div class="txn">
-    <div><div class="date">6月10日</div><div class="name">振込＊ド）コマシヨウ</div></div>
-    <div class="val" style="color:#1a9b5f">+180,000 <small>円</small></div>
-  </div>
-  <div class="txn">
-    <div><div class="date">6月9日</div><div class="name">デビット　２８６０２３</div></div>
-    <div class="val">-280 <small>円</small></div>
-  </div>
-  <div class="txn">
-    <div><div class="date">6月9日</div><div class="name">デビット　２８５４３６</div></div>
-    <div class="val">-140 <small>円</small></div>
-  </div>
+  <div id="home-recent-txn"></div>
 
   <!-- promo banner -->
   <div class="promo-wrap">
@@ -1127,6 +1116,30 @@
       }
     }
   })();
+    // 最近の入出金を会社データで更新
+    (function(){
+      var el = document.getElementById('home-recent-txn');
+      if (!el) return;
+      var data = MONTHS.jun.data;
+      var monthPart = MONTHS.jun.label.replace(/^\d+年/, '');
+      var html = '';
+      var count = 0;
+      var curDay = '';
+      for (var i = 0; i < data.length && count < 3; i++) {
+        if (data[i].t === 'day') { curDay = data[i].v; continue; }
+        if (data[i].t !== 'tx')  continue;
+        var d = data[i];
+        var isPos = d.pos === true || (d.amt && d.amt.charAt(0) === '+');
+        var color = isPos ? ' style="color:#1a9b5f"' : '';
+        html += '<div class="txn">'
+              + '<div><div class="date">' + monthPart + curDay + '</div>'
+              + '<div class="name">' + d.name + '</div></div>'
+              + '<div class="val"' + color + '>' + d.amt + ' <small>円</small></div>'
+              + '</div>';
+        count++;
+      }
+      el.innerHTML = html;
+    })();
     setChartHeights();
     renderMonth('jun');
   }
