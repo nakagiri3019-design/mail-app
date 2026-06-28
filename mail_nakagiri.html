@@ -993,9 +993,21 @@ function formatListDate(datetimeStr) {
   }
 }
 
+function getLatestTimestamp(m) {
+  var lastMsg = (m.thread && m.thread.length > 0) ? m.thread[m.thread.length - 1] : m;
+  var str = lastMsg.datetime || lastMsg.date || m.date || '';
+  var r = str.match(/(\d+)年(\d+)月(\d+)日(?:\([^)]+\))?\s*(\d+):(\d+)/);
+  if (!r) return -1;
+  return parseInt(r[1])*100000000 + parseInt(r[2])*1000000 + parseInt(r[3])*10000
+       + parseInt(r[4])*100 + parseInt(r[5]);
+}
+
 function renderList() {
   const list = document.getElementById('mail-list');
-  list.innerHTML = MAILS.map((m) => {
+  var sorted = MAILS.slice().sort(function(a, b) {
+    return getLatestTimestamp(b) - getLatestTimestamp(a);
+  });
+  list.innerHTML = sorted.map((m) => {
     var lastMsg = (m.thread && m.thread.length > 0) ? m.thread[m.thread.length - 1] : m;
     var dispDate = formatListDate((lastMsg.datetime || lastMsg.date || m.date));
     return `
