@@ -1,5 +1,5 @@
 ﻿const CACHE_PREFIX = 'mail-nakagiri-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v30';
+const CACHE_NAME = CACHE_PREFIX + 'v31';
 const PRECACHE_URLS = [
   './mail_nakagiri.html',
   './mail_nakagiri2.html',
@@ -12,6 +12,7 @@ const PRECACHE_URLS = [
   './第2期追加業務覚書_Interakt様_AI決算書診断システム.pdf',
   './第2期開発計画書_Interakt様_AI決算書診断システム.pdf',
   './御見積書_Interakt様_AI決算書診断システム第2期.pdf',
+  './attachments/nakagiri/請求書_日本酵素開発株式会社_20260630.pdf',
 ];
 
 self.addEventListener('install', (event) => {
