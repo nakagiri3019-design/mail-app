@@ -1,5 +1,5 @@
 ﻿const CACHE_PREFIX = 'mail-nakagiri-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v25';
+const CACHE_NAME = CACHE_PREFIX + 'v26';
 const PRECACHE_URLS = [
   './mail_nakagiri.html',
   './mail_nakagiri2.html',
@@ -9,6 +9,9 @@ const PRECACHE_URLS = [
   './icons/apple-touch-icon.png',
   './quote_ARK-INT-202510.pdf',
   './contract_interakt_202510.pdf',
+  './第2期追加業務覚書_Interakt様_AI決算書診断システム.pdf',
+  './第2期開発計画書_Interakt様_AI決算書診断システム.pdf',
+  './御見積書_Interakt様_AI決算書診断システム第2期.pdf',
 ];
 
 self.addEventListener('install', (event) => {
