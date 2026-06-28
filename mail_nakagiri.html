@@ -978,7 +978,7 @@ function renderPdfThumbnails(area) {
 }
 
 function formatListDate(datetimeStr) {
-  var m = datetimeStr.match(/(\d+)年(\d+)月(\d+)日\s*(\d+):(\d+)/);
+  var m = datetimeStr.match(/(\d+)年(\d+)月(\d+)日[^0-9]*(\d+):(\d+)/);
   if (!m) return datetimeStr;
   var y = parseInt(m[1],10), mo = parseInt(m[2],10), d = parseInt(m[3],10);
   var hh = m[4], mm = m[5];
