@@ -966,21 +966,41 @@ function renderPdfThumbnails(area) {
   });
 }
 
+function formatListDate(datetimeStr) {
+  var m = datetimeStr.match(/(\d+)年(\d+)月(\d+)日\s*(\d+):(\d+)/);
+  if (!m) return datetimeStr;
+  var y = parseInt(m[1],10), mo = parseInt(m[2],10), d = parseInt(m[3],10);
+  var hh = m[4], mm = m[5];
+  var now = new Date();
+  var ty = now.getFullYear(), tmo = now.getMonth()+1, td = now.getDate();
+  if (y === ty && mo === tmo && d === td) {
+    return hh + ':' + mm;
+  } else if (y === ty) {
+    return mo + '月' + d + '日';
+  } else {
+    return y + '/' + mo + '/' + d;
+  }
+}
+
 function renderList() {
   const list = document.getElementById('mail-list');
-  list.innerHTML = MAILS.map((m) => `
+  list.innerHTML = MAILS.map((m) => {
+    var lastMsg = (m.thread && m.thread.length > 0) ? m.thread[m.thread.length - 1] : m;
+    var dispDate = formatListDate((lastMsg.datetime || lastMsg.date || m.date));
+    return `
     <div class="mail-row ${m.unread ? 'unread' : ''}" data-id="${m.id}">
       <div class="mail-avatar" style="background:${colorFor(m.name)};${(m.avatarLetter || initial(m.name)).length > 1 ? 'font-size:14px;' : ''}">${m.avatarLetter || initial(m.name)}</div>
       <div class="mail-body">
         <div class="mail-top-row">
           <span class="mail-sender">${m.name}</span>
-          <span class="mail-date">${m.date}</span>
+          <span class="mail-date">${dispDate}</span>
         </div>
         <div class="mail-subject-line"><span class="subj">${m.listSubject || m.subject}</span> <span class="mail-snippet">- ${m.snippet}</span></div>
       </div>
       <button class="star-btn" data-star="${m.id}">${starSVG(m.starred)}</button>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   list.querySelectorAll('.mail-row').forEach((row) => {
     row.addEventListener('click', (e) => {
