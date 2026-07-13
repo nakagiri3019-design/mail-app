@@ -331,6 +331,71 @@ function colorFor(name) {
 
 const MAILS = [
   {
+    id: 'm12', name: '武田直弥', email: 'takeda@yelljapan.co.jp', avatarLetter: '武田',
+    subject: '預り在庫報告および発注書送付の件',
+    snippet: '発注書を確認いたしました。内容問題ございません。ありがとうございました…',
+    date: '6月16日', unread: true, starred: false,
+    thread: [
+      {
+        from: '武田直弥', fromEmail: 'takeda@yelljapan.co.jp', to: '中桐由美子', toEmail: 'yumiyumi3019@gmail.com',
+        date: '5月25日', datetime: '2026年5月25日 午前9:15',
+        body: '株式会社アークラボ 中桐由美子様<br><br>お世話になっております。<br>エールジャパン株式会社の武田でございます。<br><br>今月分の預り在庫の発注内容につきまして、発注書を添付にてお送りいたします。<br>お手数ではございますが、ご確認のほどよろしくお願いいたします。<br>何卒よろしくお願いいたします。<br><br>-----------------------------------------------<br>エールジャパン株式会社<br>武田　直弥<br>Takeda naoya<br>〒160-0022<br>東京都新宿区新宿1-34-9ヒロビルⅡ 7F<br>TEL:03-3359-2552<br>携帯:080-9360-6569<br>FAX:03-3359-2556<br>E-mail:takeda@yelljapan.co.jp<br>Wechat ID:takeda7354<br>HP: http://yelljapan.jp/<br>-----------------------------------------------',
+        attachments: [
+          { name: '発注書_エールジャパン_20260525.pdf', url: './attachments/nakagiri/発注書_エールジャパン_20260525.pdf' },
+        ],
+      },
+      {
+        from: '中桐由美子', fromEmail: 'yumiyumi3019@gmail.com', to: '武田直弥', toEmail: 'takeda@yelljapan.co.jp',
+        date: '5月25日', datetime: '2026年5月25日 午後3:42',
+        body: '武田様<br><br>お世話になっております。<br>発注書を確認いたしました。<br>内容問題ございません。<br>ありがとうございました。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+      {
+        from: '武田直弥', fromEmail: 'takeda@yelljapan.co.jp', to: '中桐由美子', toEmail: 'yumiyumi3019@gmail.com',
+        date: '5月27日', datetime: '2026年5月27日 午前10:33',
+        body: '株式会社アークラボ 中桐由美子様<br><br>お世話になっております。<br>エールジャパン株式会社の武田でございます。<br><br>今月分の預り在庫の発注内容につきまして、発注書を添付にてお送りいたします。<br>お手数ではございますが、ご確認のほどよろしくお願いいたします。<br>何卒よろしくお願いいたします。<br><br>-----------------------------------------------<br>エールジャパン株式会社<br>武田　直弥<br>Takeda naoya<br>〒160-0022<br>東京都新宿区新宿1-34-9ヒロビルⅡ 7F<br>TEL:03-3359-2552<br>携帯:080-9360-6569<br>FAX:03-3359-2556<br>E-mail:takeda@yelljapan.co.jp<br>Wechat ID:takeda7354<br>HP: http://yelljapan.jp/<br>-----------------------------------------------',
+        attachments: [
+          { name: '発注書_エールジャパン_20260527.pdf', url: './attachments/nakagiri/発注書_エールジャパン_20260527.pdf' },
+        ],
+      },
+      {
+        from: '中桐由美子', fromEmail: 'yumiyumi3019@gmail.com', to: '武田直弥', toEmail: 'takeda@yelljapan.co.jp',
+        date: '5月27日', datetime: '2026年5月27日 午後1:18',
+        body: '武田様<br><br>お世話になっております。<br>発注書を確認いたしました。<br>内容問題ございません。<br>ありがとうございました。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+      {
+        from: '武田直弥', fromEmail: 'takeda@yelljapan.co.jp', to: '中桐由美子', toEmail: 'yumiyumi3019@gmail.com',
+        date: '6月5日', datetime: '2026年6月5日 午前11:43',
+        body: '株式会社アークラボ<br>中桐由美子様<br><br>お世話になっております。<br>エールジャパン株式会社の武田でございます。<br><br>今月分の預り在庫の状況につきまして、ご報告申し上げます。<br><br>つきましては、発注書を添付にてお送りいたしますので、ご確認のほどよろしくお願いいたします。<br><br>何卒よろしくお願いいたします。<br><br>-----------------------------------------------<br>エールジャパン株式会社<br>武田　直弥<br>Takeda naoya<br>〒160-0022<br>東京都新宿区新宿1-34-9ヒロビルⅡ 7F<br>TEL:03-3359-2552<br>携帯:080-9360-6569<br>FAX:03-3359-2556<br>E-mail:takeda@yelljapan.co.jp<br>Wechat ID:takeda7354<br>HP: http://yelljapan.jp/<br>-----------------------------------------------',
+      },
+      {
+        from: '武田直弥', fromEmail: 'takeda@yelljapan.co.jp', to: '中桐由美子', toEmail: 'yumiyumi3019@gmail.com',
+        date: '6月10日', datetime: '2026年6月10日 午前8:52',
+        body: '株式会社アークラボ 中桐由美子様<br><br>お世話になっております。<br>エールジャパン株式会社の武田でございます。<br><br>今月分の預り在庫の発注内容につきまして、発注書を添付にてお送りいたします。<br>お手数ではございますが、ご確認のほどよろしくお願いいたします。<br>何卒よろしくお願いいたします。<br><br>-----------------------------------------------<br>エールジャパン株式会社<br>武田　直弥<br>Takeda naoya<br>〒160-0022<br>東京都新宿区新宿1-34-9ヒロビルⅡ 7F<br>TEL:03-3359-2552<br>携帯:080-9360-6569<br>FAX:03-3359-2556<br>E-mail:takeda@yelljapan.co.jp<br>Wechat ID:takeda7354<br>HP: http://yelljapan.jp/<br>-----------------------------------------------',
+        attachments: [
+          { name: '発注書_エールジャパン_20260610.pdf', url: './attachments/nakagiri/発注書_エールジャパン_20260610.pdf' },
+        ],
+      },
+      {
+        from: '中桐由美子', fromEmail: 'yumiyumi3019@gmail.com', to: '武田直弥', toEmail: 'takeda@yelljapan.co.jp',
+        date: '6月10日', datetime: '2026年6月10日 午後4:05',
+        body: '武田様<br><br>お世話になっております。<br>発注書を確認いたしました。<br>内容問題ございません。<br>ありがとうございました。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+      {
+        from: '武田直弥', fromEmail: 'takeda@yelljapan.co.jp', to: '中桐由美子', toEmail: 'yumiyumi3019@gmail.com',
+        date: '6月16日', datetime: '2026年6月16日 午前11:07',
+        body: '株式会社アークラボ 中桐由美子様<br><br>お世話になっております。<br>エールジャパン株式会社の武田でございます。<br><br>今月分の預り在庫の発注内容につきまして、発注書を添付にてお送りいたします。<br>お手数ではございますが、ご確認のほどよろしくお願いいたします。<br>何卒よろしくお願いいたします。<br><br>-----------------------------------------------<br>エールジャパン株式会社<br>武田　直弥<br>Takeda naoya<br>〒160-0022<br>東京都新宿区新宿1-34-9ヒロビルⅡ 7F<br>TEL:03-3359-2552<br>携帯:080-9360-6569<br>FAX:03-3359-2556<br>E-mail:takeda@yelljapan.co.jp<br>Wechat ID:takeda7354<br>HP: http://yelljapan.jp/<br>-----------------------------------------------',
+        attachments: [
+          { name: '発注書_エールジャパン_20260616.pdf', url: './attachments/nakagiri/発注書_エールジャパン_20260616.pdf' },
+        ],
+      },
+      {
+        from: '中桐由美子', fromEmail: 'yumiyumi3019@gmail.com', to: '武田直弥', toEmail: 'takeda@yelljapan.co.jp',
+        date: '6月16日', datetime: '2026年6月16日 午後2:33',
+        body: '武田様<br><br>お世話になっております。<br>発注書を確認いたしました。<br>内容問題ございません。<br>ありがとうございました。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+    ],
+  },
+  {
     id: 'm15', name: '伊藤 優', email: 'itou@youmore.jp', avatarLetter: '伊藤',
     subject: 'ユリール商品企画の進行について',
     snippet: 'お世話になっております。伊藤です。6月分の請求書および月次作業報告書を確認いたしました。…',
