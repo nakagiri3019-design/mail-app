@@ -709,6 +709,7 @@
         <div class="mo" id="smo-apr" onclick="selectMonth('apr')"><span>4月</span></div>
         <div class="mo" id="smo-may" onclick="selectMonth('may')"><span>5月</span></div>
         <div class="mo" id="smo-jun" onclick="selectMonth('jun')"><span>6月</span></div>
+        <div class="mo" id="smo-jul" onclick="selectMonth('jul')"><span>7月</span></div>
       </div>
       <div class="m-stknav">
         <span class="a l"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2b2f36" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></span>
@@ -793,6 +794,7 @@
         <div class="bcol" onclick="selectMonth('apr')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-apr-up" style="height:13px"></div></div><div class="hb"><div class="bar dn" id="bar-apr-dn" style="height:6px"></div></div></div>
         <div class="bcol" onclick="selectMonth('may')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-may-up" style="height:16px"></div></div><div class="hb"><div class="bar dn" id="bar-may-dn" style="height:8px"></div></div></div>
         <div class="bcol" onclick="selectMonth('jun')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-jun-up" style="height:40px"></div></div><div class="hb"><div class="bar dn" id="bar-jun-dn" style="height:30px"></div></div></div>
+        <div class="bcol" id="bcol-jul" onclick="selectMonth('jul')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-jul-up" style="height:3px"></div></div><div class="hb"><div class="bar dn" id="bar-jul-dn" style="height:3px"></div></div></div>
       </div>
       <div class="m-months">
         <div class="mo" id="mo-jan" onclick="selectMonth('jan')"><span>1月</span></div>
@@ -801,6 +803,7 @@
         <div class="mo" id="mo-apr" onclick="selectMonth('apr')"><span>4月</span></div>
         <div class="mo" id="mo-may" onclick="selectMonth('may')"><span>5月</span></div>
         <div class="mo" id="mo-jun" onclick="selectMonth('jun')"><span>6月</span></div>
+        <div class="mo" id="mo-jul" onclick="selectMonth('jul')"><span>7月</span></div>
       </div>
     </div>
 
@@ -1087,7 +1090,7 @@
 
   // 残高表示を選択口座の最新値に更新
   (function(){
-    var data = MONTHS.jun.data;
+    var data = (MONTHS.jul || MONTHS.jun).data;
     for (var i = 0; i < data.length; i++) {
       if (data[i].t === 'tx') {
         var bal = data[i].bal;
@@ -1110,7 +1113,7 @@
     e = document.getElementById('info-kana');      if (e) e.textContent = info.kana;
     e = document.getElementById('info-balance');
     if (e) {
-      var d = MONTHS.jun.data;
+      var d = (MONTHS.jul || MONTHS.jun).data;
       for (var i = 0; i < d.length; i++) {
         if (d[i].t === 'tx') { e.textContent = d[i].bal + '円'; break; }
       }
@@ -1120,8 +1123,8 @@
     (function(){
       var el = document.getElementById('home-recent-txn');
       if (!el) return;
-      var data = MONTHS.jun.data;
-      var monthPart = MONTHS.jun.label.replace(/^\d+年/, '');
+      var data = (MONTHS.jul || MONTHS.jun).data;
+      var monthPart = (MONTHS.jul || MONTHS.jun).label.replace(/^\d+年/, '');
       var html = '';
       var count = 0;
       var curDay = '';
@@ -1140,8 +1143,18 @@
       }
       el.innerHTML = html;
     })();
+    // 7月タブ・チャート棒は jul データを持つ口座(efstyle)のみ表示
+    (function(){
+      var hasJul = !!MONTHS.jul;
+      ['mo-jul','smo-jul','bcol-jul'].forEach(function(id){
+        var e = document.getElementById(id);
+        if (e) e.style.display = hasJul ? '' : 'none';
+      });
+    })();
     setChartHeights();
-    renderMonth('jun');
+    var _latestKey = MONTHS.jul ? 'jul' : 'jun';
+    curMonthKey = _latestKey;
+    renderMonth(_latestKey);
   }
   function resolveIc(d) {
     if (d.ic) return d.ic;
@@ -1183,7 +1196,8 @@
     document.getElementById('m-sum-out').textContent = cfg.out;
     var sl = document.getElementById('m-stklabel'); if (sl) sl.textContent = cfg.label;
     // month label pill + chart highlight (green/white) move to selected month
-    ['jan','feb','mar','apr','may','jun'].forEach(function(k){
+    ['jan','feb','mar','apr','may','jun','jul'].forEach(function(k){
+      if (!document.getElementById('mo-'+k)) return;
       var sel = (k===m);
       document.getElementById('mo-'+k).classList.toggle('on', sel);
       document.getElementById('bar-'+k+'-up').classList.toggle('cur', sel);
@@ -1193,7 +1207,7 @@
   }
   // chart bar heights scaled to actual monthly totals (in=up, out=down)
   function setChartHeights(){
-    var keys = ['jan','feb','mar','apr','may','jun'];
+    var keys = ['jan','feb','mar','apr','may','jun','jul'].filter(function(k){ return MONTHS[k]; });
     var maxv = 1;
     function n(s){ return parseInt(String(s).replace(/,/g,''),10) || 0; }
     keys.forEach(function(k){
@@ -1250,7 +1264,7 @@
     renderKeypad();
     showScreen('screen-pin');
   }
-  var monthOrder = ['jan','feb','mar','apr','may','jun'];
+  var monthOrder = ['jan','feb','mar','apr','may','jun','jul'];
   var curMonthKey = 'jun';
   function selectMonth(m){
     var ov = document.getElementById('loading-ov');
@@ -1316,7 +1330,9 @@
     .then(function(r){ return r.json(); })
     .then(function(list){
       list.forEach(function(a){
-        ACCOUNTS[a.id] = { info: a.info, months: Object.assign({ jun: a.jun }, _MONTHS_BASE) };
+        var _mo = Object.assign({ jun: a.jun }, _MONTHS_BASE);
+        if (a.jul) _mo.jul = a.jul;
+        ACCOUNTS[a.id] = { info: a.info, months: _mo };
       });
       initPage();
     })
