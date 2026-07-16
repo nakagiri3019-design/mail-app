@@ -1361,34 +1361,60 @@
 
       var cfg = MONTHS[curMonthKey];
 
-      // ---- 明細データを組み立て（cfg.data をループ） ----
-      const rows = [];
-      let currentDate = '';
-      cfg.data.forEach(function (row) {
-        if (row.t === 'day') {
-          currentDate = cfg.label + row.v;
-          return;
-        }
-        if (row.t !== 'tx') return;
-
-        const isIn = row.pos === true;
-        rows.push({
-          date: currentDate,
-          desc: row.name,
-          out:  isIn  ? '0' : cleanAmt(row.amt),
-          in:   isIn  ? cleanAmt(row.amt) : '0',
-          bal:  row.bal,
-        });
-      });
-
-      // 対象期間（cfg.label から当月1日〜今日）
+      // ---- 対象期間（表示中の月の1日 〜 今日） ----
       const today = new Date();
       const m = (cfg.label || '').match(/(\d{4})年(\d{1,2})月/);
       const ymd = (y, mo, d) => `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-      const periodStart = m ? ymd(m[1], m[2], 1)
-                            : ymd(today.getFullYear(), today.getMonth()+1, 1);
+      const startY = m ? Number(m[1]) : today.getFullYear();
+      const startM = m ? Number(m[2]) : today.getMonth() + 1;
+      const periodStart = ymd(startY, startM, 1);
       const periodEnd   = ymd(today.getFullYear(), today.getMonth()+1, today.getDate());
       const created     = periodEnd;
+
+      // 比較は文字列ではなく Date で行う（月をまたいでも壊れないように）
+      const startDate = new Date(startY, startM - 1, 1);
+      const endDate   = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+      // ---- 期間に重なる月を新しい順に並べる ----
+      const monthsInRange = Object.keys(MONTHS)
+        .map(function (k) {
+          const mc = MONTHS[k];
+          const lm = ((mc && mc.label) || '').match(/(\d{4})年(\d{1,2})月/);
+          return lm ? { cfg: mc, y: Number(lm[1]), m: Number(lm[2]) } : null;
+        })
+        .filter(function (e) {
+          if (!e) return false;
+          const firstDay = new Date(e.y, e.m - 1, 1);
+          const lastDay  = new Date(e.y, e.m, 0);
+          return lastDay >= startDate && firstDay <= endDate;
+        })
+        .sort(function (a, b) { return (b.y - a.y) || (b.m - a.m); });
+
+      // ---- 明細データを組み立て（期間内の全月・新しい順） ----
+      const rows = [];
+      monthsInRange.forEach(function (e) {
+        let curDay = null;
+        (e.cfg.data || []).forEach(function (row) {
+          if (row.t === 'day') {
+            const dm = String(row.v).match(/(\d{1,2})日/);
+            curDay = dm ? Number(dm[1]) : null;
+            return;
+          }
+          if (row.t !== 'tx' || curDay === null) return;
+
+          const txDate = new Date(e.y, e.m - 1, curDay);
+          if (txDate < startDate || txDate > endDate) return;
+
+          const isIn = row.pos === true;
+          rows.push({
+            date: e.y + '年' + e.m + '月' + curDay + '日',
+            desc: row.name,
+            out:  isIn  ? '0' : cleanAmt(row.amt),
+            in:   isIn  ? cleanAmt(row.amt) : '0',
+            bal:  row.bal,
+          });
+        });
+      });
 
       // ---- サーバーにPOST ----
       const resp = await fetch(SERVER_URL + '/generate', {
