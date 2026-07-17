@@ -333,8 +333,8 @@ const MAILS = [
   {
     id: 'm12', name: '武田直弥', email: 'takeda@yelljapan.co.jp', avatarLetter: '武田',
     subject: '預り在庫報告および発注書送付の件',
-    snippet: '発注書を確認いたしました。内容問題ございません。ありがとうございました…',
-    date: '7月13日', unread: true, starred: false,
+    snippet: '7月分のNMNセフィロト商品代につきまして、請求書を添付にてお送りいたします。内容をご確認のほど…',
+    date: '7月17日', unread: false, starred: false,
     thread: [
       {
         from: '武田直弥', fromEmail: 'takeda@yelljapan.co.jp', to: '中桐由美子', toEmail: 'yumiyumi3019@gmail.com',
@@ -444,6 +444,14 @@ const MAILS = [
         from: '中桐由美子', fromEmail: 'yumiyumi3019@gmail.com', to: '武田直弥', toEmail: 'takeda@yelljapan.co.jp',
         date: '7月13日', datetime: '2026年7月13日 午後2:56',
         body: '武田様<br><br>お世話になっております。<br>発注書を確認いたしました。<br>内容問題ございません。<br>ありがとうございました。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+      {
+        from: '中桐由美子', fromEmail: 'yumiyumi3019@gmail.com', to: '武田直弥', toEmail: 'takeda@yelljapan.co.jp',
+        date: '7月17日', datetime: '2026年7月17日 午前9:28',
+        body: '武田様<br><br>お世話になっております。<br>7月分のNMNセフィロト商品代につきまして、請求書を添付にてお送りいたします。<br>内容をご確認のほど、よろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+        attachments: [
+          { name: '請求書_エールジャパン_20260717.pdf', url: './attachments/nakagiri/請求書_エールジャパン_20260717.pdf' },
+        ],
       },
     ],
   },
