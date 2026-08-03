@@ -284,8 +284,15 @@
   #m-stickytabs { position:fixed; top:56px; left:0; right:0; max-width:430px; margin:0 auto; background:#fff; z-index:590; display:none; box-shadow:0 3px 8px rgba(0,0,0,.07); }
   #m-stickytabs.show { display:block; }
   #m-stickytabs .m-stktools { display:flex; justify-content:flex-end; gap:30px; padding:13px 22px; background:#fff; }
-  #m-stickytabs .m-stkmonths { display:flex; background:#2f8be8; padding:10px 4px; }
-  #m-stickytabs .mo { flex:1; text-align:center; font-size:14px; color:#fff; padding:5px 0; cursor:pointer; white-space:nowrap; }
+  /* 固定ヘッダーの月タブも月次グラフと同じ 6ヶ月表示＋横スワイプにする。
+     縦paddingは据え置き（高さ不変）、横paddingはグラフ側と桁を揃えるため0にする。 */
+  #m-stickytabs .m-stkmonths { display:block; background:#2f8be8; padding:10px 0;
+                               overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch;
+                               scroll-snap-type:x mandatory; touch-action:pan-x pan-y;
+                               scrollbar-width:none; -ms-overflow-style:none; }
+  #m-stickytabs .m-stkmonths::-webkit-scrollbar { display:none; }
+  #m-stickytabs .m-stktrack { display:flex; min-width:100%; }
+  #m-stickytabs .mo { flex:0 0 var(--stkcolw,16.6667%); width:var(--stkcolw,16.6667%); scroll-snap-align:start; text-align:center; font-size:14px; color:#fff; padding:5px 0; cursor:pointer; white-space:nowrap; }
   #m-stickytabs .mo.on span { background:#fff; color:var(--navy); border-radius:14px; padding:5px 12px; font-weight:700; }
   #m-stickytabs .m-stknav { display:flex; align-items:center; justify-content:center; padding:9px 18px; border-top:1px solid #eef0f2; font-size:14px; font-weight:700; position:relative; background:#fff; }
   #m-stickytabs .m-stknav .a { position:absolute; display:flex; }
@@ -709,7 +716,8 @@
         <span class="m-tool"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f3a5f" stroke-width="1.8"><circle cx="7" cy="8" r="2"/><circle cx="16" cy="16" r="2"/><path d="M9 8h11M4 8h1M14 16h6M4 16h8"/></svg> 絞り込み</span>
         <span class="m-tool"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f3a5f" stroke-width="1.8"><path d="M12 3v12M12 15l-4-4M12 15l4-4M4 19h16"/></svg> ダウンロード</span>
       </div>
-      <div class="m-stkmonths">
+      <div class="m-stkmonths" id="m-stkmonths">
+       <div class="m-stktrack" id="m-stktrack">
         <div class="mo" id="smo-jan" onclick="selectMonth('jan')"><span>1月</span></div>
         <div class="mo" id="smo-feb" onclick="selectMonth('feb')"><span>2月</span></div>
         <div class="mo" id="smo-mar" onclick="selectMonth('mar')"><span>3月</span></div>
@@ -718,6 +726,7 @@
         <div class="mo" id="smo-jun" onclick="selectMonth('jun')"><span>6月</span></div>
         <div class="mo" id="smo-jul" onclick="selectMonth('jul')"><span>7月</span></div>
         <div class="mo" id="smo-aug" onclick="selectMonth('aug')"><span>8月</span></div>
+       </div>
       </div>
       <div class="m-stknav">
         <span class="a l" onclick="stepMonth(-1)" style="cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2b2f36" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></span>
@@ -1111,14 +1120,35 @@
     tr.style.setProperty('--colw', (w / MONTHS_PER_VIEW) + 'px');
     return true;
   }
+  // 固定ヘッダーの月タブ（表示されるまで clientWidth が 0 なので都度採寸する）
+  function _sizeStk(){
+    var sc = document.getElementById('m-stkmonths');
+    var tr = document.getElementById('m-stktrack');
+    if (!sc || !tr) return false;
+    var w = sc.clientWidth;
+    if (!w) return false;
+    tr.style.setProperty('--stkcolw', (w / MONTHS_PER_VIEW) + 'px');
+    return true;
+  }
+  function _maxScroll(el){ return Math.max(0, el.scrollWidth - el.clientWidth); }
+  // 2つのスクロール領域は列幅が違う（グラフはカード内padding分だけ狭い）ので、
+  // 絶対値ではなくスクロール量の比率で位置を合わせる。列数と表示数は同じなので一致する。
+  function _mirror(from, to){
+    if (!from || !to || !to.clientWidth) return;
+    var mf = _maxScroll(from), mt = _maxScroll(to);
+    var v = mf > 0 ? Math.round((from.scrollLeft / mf) * mt) : 0;
+    if (Math.abs(to.scrollLeft - v) < 1) return;  // 既に一致：跳ね返りの連鎖をここで止める
+    to.scrollLeft = v;
+  }
+  function _syncStkFromChart(){
+    _mirror(document.getElementById('m-chartscroll'), document.getElementById('m-stkmonths'));
+  }
   // スクロール位置は scrollLeft を直接代入して確実に確定させる。
   // （scroll-behavior:smooth や scrollTo の behavior に頼ると、アニメーションが
   //   走らない環境で位置がずれたままになるため。スワイプ時の慣性は OS 側に任せる）
   function _setScroll(sc, to){ sc.scrollLeft = to; }
-  // 指定月のバーがビューポート内に入るようスクロールする
-  function _scrollMonthIntoView(k){
-    var sc = document.getElementById('m-chartscroll');
-    var el = document.getElementById('bcol-' + k);
+  // 対象要素がスクロール領域内に入るまでスクロールする
+  function _intoView(sc, el){
     if (!sc || !el || el.style.display === 'none' || !sc.clientWidth) return;
     var l = el.getBoundingClientRect().left - sc.getBoundingClientRect().left + sc.scrollLeft;
     var r = l + el.offsetWidth;
@@ -1126,13 +1156,35 @@
     if (l < sc.scrollLeft) to = l;
     else if (r > sc.scrollLeft + sc.clientWidth) to = r - sc.clientWidth;
     if (to === null) return;
-    _setScroll(sc, Math.max(0, Math.min(to, sc.scrollWidth - sc.clientWidth)));
+    _setScroll(sc, Math.max(0, Math.min(to, _maxScroll(sc))));
+  }
+  // 指定月をグラフで見える位置に送り、固定タブはその位置にそのまま追従させる
+  // （個別に intoView すると両者で見えている6ヶ月がずれ得るため、必ず比率で合わせる）
+  function _scrollMonthIntoView(k){
+    var ch = document.getElementById('m-chartscroll');
+    _intoView(ch, document.getElementById('bcol-' + k));
+    _mirror(ch, document.getElementById('m-stkmonths'));
   }
   // 最新月が右端に来る位置
   function _scrollChartToEnd(){
-    var sc = document.getElementById('m-chartscroll');
-    if (!sc || !sc.clientWidth) return;
-    _setScroll(sc, sc.scrollWidth - sc.clientWidth);
+    [['m-chartscroll'], ['m-stkmonths']].forEach(function(p){
+      var sc = document.getElementById(p[0]);
+      if (sc && sc.clientWidth) _setScroll(sc, _maxScroll(sc));
+    });
+  }
+  // グラフをスワイプしたらタブが、タブをスワイプしたらグラフが追従する。
+  // 相互に scrollLeft を書き換えるので、次フレームまで再入をロックする。
+  // 解除は setTimeout(0) で行う。requestAnimationFrame はフレームが生成されない状況
+  // （非表示タブ等）で発火せず、フラグが立ちっぱなしになって同期が止まるため。
+  // 加えて _mirror() が一致時に何もしないので、フラグが外れていても連鎖は1往復で収束する。
+  var _syncing = false;
+  function _linkScroll(a, b){
+    if (!a || !b) return;
+    a.addEventListener('scroll', function(){
+      if (_syncing) return;
+      _syncing = true;
+      try { _mirror(a, b); } finally { setTimeout(function(){ _syncing = false; }, 0); }
+    }, { passive: true });
   }
   // 画面に出ている月キーを古い順に返す
   function _shownMonths(){
@@ -1162,8 +1214,12 @@
     });
   }
   window.addEventListener('resize', function(){
-    if (_sizeChart()) _scrollMonthIntoView(curMonthKey);
+    var ok = _sizeChart(); _sizeStk();
+    if (ok) _scrollMonthIntoView(curMonthKey);
   });
+  // このスクリプトは対象マークアップより後ろにあるので、その場で結線してよい
+  _linkScroll(document.getElementById('m-chartscroll'), document.getElementById('m-stkmonths'));
+  _linkScroll(document.getElementById('m-stkmonths'),   document.getElementById('m-chartscroll'));
 
   // 最新月のキー。取引が1件以上ある月を新しい順に探す。
   // （空の月ブロックだけを持つ口座でも残高・最近の入出金が空にならないようにする）
@@ -1326,7 +1382,14 @@
     if (sm.style.display === 'none') { stk.classList.remove('show'); return; }
     var anchor = sm.querySelector('.m-monthnav');
     if (!anchor) return;
-    stk.classList.toggle('show', anchor.getBoundingClientRect().bottom <= 56);
+    var wasShown = stk.classList.contains('show');
+    var show = anchor.getBoundingClientRect().bottom <= 56;
+    stk.classList.toggle('show', show);
+    // 出現した瞬間に採寸し、グラフ側のスクロール位置と選択月に合わせる
+    if (show && !wasShown && _sizeStk()) {
+      _syncStkFromChart();
+      _intoView(document.getElementById('m-stkmonths'), document.getElementById('smo-' + curMonthKey));
+    }
   }, { passive: true });
 
   var _chartInit = false;
@@ -1338,6 +1401,7 @@
     // 明細画面は初期 display:none で採寸できないため、表示された時点で列幅を確定させる。
     // 初回だけ最新月が右端に来る位置(scrollWidth - clientWidth)、以降は選択月を見せる。
     if (id === 'screen-meisai' && _sizeChart()) {
+      _sizeStk();
       if (_chartInit) _scrollMonthIntoView(curMonthKey);
       else { _chartInit = true; _scrollChartToEnd(); }
       _updateArrows();
