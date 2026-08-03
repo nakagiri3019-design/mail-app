@@ -386,9 +386,16 @@
   .m-balline .lab { font-size:15px; font-weight:600; }
   .m-balline .big { font-size:30px; font-weight:700; }
   .m-balline .big small { font-size:14px; font-weight:600; margin-left:4px; }
-  .chart { display:flex; height:112px; position:relative; padding:0 4px; }
-  .chart .cline { position:absolute; left:4px; right:4px; top:50%; height:2px; background:rgba(255,255,255,.45); }
-  .bcol { flex:1; display:flex; flex-direction:column; }
+  /* 月次グラフ: 常に6ヶ月ぶんがビューポート幅いっぱいに並び、それ以前は横スワイプで参照する。
+     バー高さの正規化基準は全期間の最大値のままなので、スクロールしても高さは変わらない。 */
+  .m-chartscroll { overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch;
+                   scroll-snap-type:x mandatory; touch-action:pan-x pan-y;
+                   scrollbar-width:none; -ms-overflow-style:none; }
+  .m-chartscroll::-webkit-scrollbar { display:none; }
+  .m-charttrack { display:inline-block; min-width:100%; }
+  .chart { display:flex; height:112px; position:relative; }
+  .chart .cline { position:absolute; left:0; right:0; top:50%; height:2px; background:rgba(255,255,255,.45); }
+  .bcol { flex:0 0 var(--colw,16.6667%); width:var(--colw,16.6667%); display:flex; flex-direction:column; scroll-snap-align:start; }
   .bcol .ht { flex:1; display:flex; align-items:flex-end; justify-content:center; }
   .bcol .hb { flex:1; display:flex; align-items:flex-start; justify-content:center; }
   .bar { width:32px; }
@@ -397,7 +404,7 @@
   .bar.up.cur { background:#5ccf8a; }
   .bar.dn.cur { background:#ffffff; }
   .m-months { display:flex; padding:10px 0 16px; }
-  .m-months .mo { flex:1; text-align:center; color:#fff; font-size:14px; white-space:nowrap; padding:6px 0; cursor:pointer; }
+  .m-months .mo { flex:0 0 var(--colw,16.6667%); width:var(--colw,16.6667%); text-align:center; color:#fff; font-size:14px; white-space:nowrap; padding:6px 0; cursor:pointer; }
   .m-months .mo.on span { background:#fff; color:var(--navy); border-radius:14px; padding:5px 13px; font-weight:700; }
 
   /* ===== auth selection + PIN screens ===== */
@@ -713,9 +720,9 @@
         <div class="mo" id="smo-aug" onclick="selectMonth('aug')"><span>8月</span></div>
       </div>
       <div class="m-stknav">
-        <span class="a l"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2b2f36" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></span>
+        <span class="a l" onclick="stepMonth(-1)" style="cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2b2f36" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></span>
         <span id="m-stklabel">2026年6月</span>
-        <span class="a r"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c7ccd2" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="a r" onclick="stepMonth(1)" style="cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c7ccd2" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
       </div>
     </div>
 
@@ -787,33 +794,37 @@
         <span class="lab">現在残高</span>
         <span class="big" id="meisai-balance">288,329<small>円</small></span>
       </div>
-      <div class="chart">
-        <div class="cline"></div>
-        <div class="bcol" onclick="selectMonth('jan')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-jan-up" style="height:54px"></div></div><div class="hb"><div class="bar dn" id="bar-jan-dn" style="height:70px"></div></div></div>
-        <div class="bcol" onclick="selectMonth('feb')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-feb-up" style="height:22px"></div></div><div class="hb"><div class="bar dn" id="bar-feb-dn" style="height:28px"></div></div></div>
-        <div class="bcol" onclick="selectMonth('mar')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-mar-up" style="height:41px"></div></div><div class="hb"><div class="bar dn" id="bar-mar-dn" style="height:37px"></div></div></div>
-        <div class="bcol" onclick="selectMonth('apr')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-apr-up" style="height:13px"></div></div><div class="hb"><div class="bar dn" id="bar-apr-dn" style="height:6px"></div></div></div>
-        <div class="bcol" onclick="selectMonth('may')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-may-up" style="height:16px"></div></div><div class="hb"><div class="bar dn" id="bar-may-dn" style="height:8px"></div></div></div>
-        <div class="bcol" onclick="selectMonth('jun')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-jun-up" style="height:40px"></div></div><div class="hb"><div class="bar dn" id="bar-jun-dn" style="height:30px"></div></div></div>
-        <div class="bcol" id="bcol-jul" onclick="selectMonth('jul')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-jul-up" style="height:3px"></div></div><div class="hb"><div class="bar dn" id="bar-jul-dn" style="height:3px"></div></div></div>
-        <div class="bcol" id="bcol-aug" onclick="selectMonth('aug')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-aug-up" style="height:3px"></div></div><div class="hb"><div class="bar dn" id="bar-aug-dn" style="height:3px"></div></div></div>
-      </div>
-      <div class="m-months">
-        <div class="mo" id="mo-jan" onclick="selectMonth('jan')"><span>1月</span></div>
-        <div class="mo" id="mo-feb" onclick="selectMonth('feb')"><span>2月</span></div>
-        <div class="mo" id="mo-mar" onclick="selectMonth('mar')"><span>3月</span></div>
-        <div class="mo" id="mo-apr" onclick="selectMonth('apr')"><span>4月</span></div>
-        <div class="mo" id="mo-may" onclick="selectMonth('may')"><span>5月</span></div>
-        <div class="mo" id="mo-jun" onclick="selectMonth('jun')"><span>6月</span></div>
-        <div class="mo" id="mo-jul" onclick="selectMonth('jul')"><span>7月</span></div>
-        <div class="mo" id="mo-aug" onclick="selectMonth('aug')"><span>8月</span></div>
+      <div class="m-chartscroll" id="m-chartscroll">
+       <div class="m-charttrack" id="m-charttrack">
+        <div class="chart">
+          <div class="cline"></div>
+          <div class="bcol" id="bcol-jan" onclick="selectMonth('jan')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-jan-up" style="height:54px"></div></div><div class="hb"><div class="bar dn" id="bar-jan-dn" style="height:70px"></div></div></div>
+          <div class="bcol" id="bcol-feb" onclick="selectMonth('feb')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-feb-up" style="height:22px"></div></div><div class="hb"><div class="bar dn" id="bar-feb-dn" style="height:28px"></div></div></div>
+          <div class="bcol" id="bcol-mar" onclick="selectMonth('mar')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-mar-up" style="height:41px"></div></div><div class="hb"><div class="bar dn" id="bar-mar-dn" style="height:37px"></div></div></div>
+          <div class="bcol" id="bcol-apr" onclick="selectMonth('apr')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-apr-up" style="height:13px"></div></div><div class="hb"><div class="bar dn" id="bar-apr-dn" style="height:6px"></div></div></div>
+          <div class="bcol" id="bcol-may" onclick="selectMonth('may')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-may-up" style="height:16px"></div></div><div class="hb"><div class="bar dn" id="bar-may-dn" style="height:8px"></div></div></div>
+          <div class="bcol" id="bcol-jun" onclick="selectMonth('jun')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-jun-up" style="height:40px"></div></div><div class="hb"><div class="bar dn" id="bar-jun-dn" style="height:30px"></div></div></div>
+          <div class="bcol" id="bcol-jul" onclick="selectMonth('jul')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-jul-up" style="height:3px"></div></div><div class="hb"><div class="bar dn" id="bar-jul-dn" style="height:3px"></div></div></div>
+          <div class="bcol" id="bcol-aug" onclick="selectMonth('aug')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-aug-up" style="height:3px"></div></div><div class="hb"><div class="bar dn" id="bar-aug-dn" style="height:3px"></div></div></div>
+        </div>
+        <div class="m-months">
+          <div class="mo" id="mo-jan" onclick="selectMonth('jan')"><span>1月</span></div>
+          <div class="mo" id="mo-feb" onclick="selectMonth('feb')"><span>2月</span></div>
+          <div class="mo" id="mo-mar" onclick="selectMonth('mar')"><span>3月</span></div>
+          <div class="mo" id="mo-apr" onclick="selectMonth('apr')"><span>4月</span></div>
+          <div class="mo" id="mo-may" onclick="selectMonth('may')"><span>5月</span></div>
+          <div class="mo" id="mo-jun" onclick="selectMonth('jun')"><span>6月</span></div>
+          <div class="mo" id="mo-jul" onclick="selectMonth('jul')"><span>7月</span></div>
+          <div class="mo" id="mo-aug" onclick="selectMonth('aug')"><span>8月</span></div>
+        </div>
+       </div>
       </div>
     </div>
 
     <div class="m-monthnav">
-      <span class="arw l"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2b2f36" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></span>
+      <span class="arw l" onclick="stepMonth(-1)" style="cursor:pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2b2f36" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></span>
       <span class="lbl" id="m-monthlabel">2026年6月</span>
-      <span class="arw r"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c7ccd2" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+      <span class="arw r" onclick="stepMonth(1)" style="cursor:pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c7ccd2" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
     </div>
 
     <div class="m-summary">
@@ -1086,6 +1097,74 @@
     feb: { data:DATA_FEB, label:'2026年2月', in:'5,001,964', out:'5,004,814' },
     jan: { data:DATA_JAN, label:'2026年1月', in:'18,400,031', out:'18,397,055' },
   };
+  // ---- 月次グラフ 横スクロール ----
+  // 1列 = コンテナ幅 / 6。列数は減らさず、6ヶ月ぶんで画面幅がちょうど埋まるようにして
+  // それ以前の月はスクロール領域に置く。バー高さの正規化は setChartHeights() 側で
+  // 全期間の最大値を基準にしているため、スクロールしても高さは変わらない。
+  var MONTHS_PER_VIEW = 6;
+  function _sizeChart(){
+    var sc = document.getElementById('m-chartscroll');
+    var tr = document.getElementById('m-charttrack');
+    if (!sc || !tr) return false;
+    var w = sc.clientWidth;
+    if (!w) return false;                 // 明細画面が非表示のうちは採寸できない
+    tr.style.setProperty('--colw', (w / MONTHS_PER_VIEW) + 'px');
+    return true;
+  }
+  // スクロール位置は scrollLeft を直接代入して確実に確定させる。
+  // （scroll-behavior:smooth や scrollTo の behavior に頼ると、アニメーションが
+  //   走らない環境で位置がずれたままになるため。スワイプ時の慣性は OS 側に任せる）
+  function _setScroll(sc, to){ sc.scrollLeft = to; }
+  // 指定月のバーがビューポート内に入るようスクロールする
+  function _scrollMonthIntoView(k){
+    var sc = document.getElementById('m-chartscroll');
+    var el = document.getElementById('bcol-' + k);
+    if (!sc || !el || el.style.display === 'none' || !sc.clientWidth) return;
+    var l = el.getBoundingClientRect().left - sc.getBoundingClientRect().left + sc.scrollLeft;
+    var r = l + el.offsetWidth;
+    var to = null;
+    if (l < sc.scrollLeft) to = l;
+    else if (r > sc.scrollLeft + sc.clientWidth) to = r - sc.clientWidth;
+    if (to === null) return;
+    _setScroll(sc, Math.max(0, Math.min(to, sc.scrollWidth - sc.clientWidth)));
+  }
+  // 最新月が右端に来る位置
+  function _scrollChartToEnd(){
+    var sc = document.getElementById('m-chartscroll');
+    if (!sc || !sc.clientWidth) return;
+    _setScroll(sc, sc.scrollWidth - sc.clientWidth);
+  }
+  // 画面に出ている月キーを古い順に返す
+  function _shownMonths(){
+    return monthOrder.filter(function(k){
+      var e = document.getElementById('bcol-' + k);
+      return MONTHS && MONTHS[k] && e && e.style.display !== 'none';
+    });
+  }
+  // ＜ ＞ での月移動（-1=過去 / +1=未来）
+  function stepMonth(dir){
+    var ks = _shownMonths();
+    var i = ks.indexOf(curMonthKey);
+    if (i < 0) return;
+    var j = i + dir;
+    if (j < 0 || j >= ks.length) return;
+    selectMonth(ks[j]);
+  }
+  // 端に来た矢印はグレーアウト（既存の配色をそのまま使う）
+  function _updateArrows(key){
+    var ks = _shownMonths(), i = ks.indexOf(key || curMonthKey);
+    [['.m-monthnav .arw.l', i > 0], ['#m-stickytabs .m-stknav .a.l', i > 0],
+     ['.m-monthnav .arw.r', i >= 0 && i < ks.length - 1],
+     ['#m-stickytabs .m-stknav .a.r', i >= 0 && i < ks.length - 1]].forEach(function(p){
+      var e = document.querySelector(p[0]); if (!e) return;
+      var svg = e.querySelector('svg'); if (svg) svg.setAttribute('stroke', p[1] ? '#2b2f36' : '#c7ccd2');
+      e.style.cursor = p[1] ? 'pointer' : 'default';
+    });
+  }
+  window.addEventListener('resize', function(){
+    if (_sizeChart()) _scrollMonthIntoView(curMonthKey);
+  });
+
   // 最新月のキー。取引が1件以上ある月を新しい順に探す。
   // （空の月ブロックだけを持つ口座でも残高・最近の入出金が空にならないようにする）
   function _latestMonthKey(M){
@@ -1221,6 +1300,9 @@
       document.getElementById('bar-'+k+'-dn').classList.toggle('cur', sel);
       var smo = document.getElementById('smo-'+k); if (smo) smo.classList.toggle('on', sel);
     });
+    // 選択月がスクロール域の外にいれば見える位置まで送る（＜＞での移動時もここを通る）
+    _scrollMonthIntoView(m);
+    _updateArrows(m);
   }
   // chart bar heights scaled to actual monthly totals (in=up, out=down)
   function setChartHeights(){
@@ -1247,11 +1329,19 @@
     stk.classList.toggle('show', anchor.getBoundingClientRect().bottom <= 56);
   }, { passive: true });
 
+  var _chartInit = false;
   function showScreen(id){
     ['screen-auth','screen-pin','screen-home','screen-meisai'].forEach(function(s){
       document.getElementById(s).style.display = (s===id) ? 'block' : 'none';
     });
     window.scrollTo(0,0);
+    // 明細画面は初期 display:none で採寸できないため、表示された時点で列幅を確定させる。
+    // 初回だけ最新月が右端に来る位置(scrollWidth - clientWidth)、以降は選択月を見せる。
+    if (id === 'screen-meisai' && _sizeChart()) {
+      if (_chartInit) _scrollMonthIntoView(curMonthKey);
+      else { _chartInit = true; _scrollChartToEnd(); }
+      _updateArrows();
+    }
   }
   function openMeisai(){ closePanels(); transitionTo('screen-meisai', 850); }
   function closeMeisai(){ closePanels(); showScreen('screen-home'); }
@@ -1284,6 +1374,7 @@
   var monthOrder = ['jan','feb','mar','apr','may','jun','jul','aug'];
   var curMonthKey = 'jun';
   function selectMonth(m){
+    if (!MONTHS || !MONTHS[m]) return;   // その口座に無い月は無視する
     var ov = document.getElementById('loading-ov');
     ov.classList.add('show');
     var dir = (monthOrder.indexOf(m) >= monthOrder.indexOf(curMonthKey)) ? 'slide-r' : 'slide-l';
