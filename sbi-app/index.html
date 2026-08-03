@@ -98,6 +98,9 @@
     display:inline-block; background: var(--green); color:#fff;
     font-size: 13px; font-weight: 600; padding: 5px 13px; border-radius: 6px; margin-bottom: 10px;
   }
+  /* 本文は通常テキスト（下線なし）。リンクは「詳細はこちら」だけ。
+     文字サイズ・太さは従来どおりなので、下線の有無以外の見た目は変わらない。 */
+  .notice > div { color: var(--text); font-size: 14px; font-weight: 600; }
   .notice a { color: var(--text); font-size: 14px; text-decoration: underline; font-weight: 600; }
   #screen-meisai .notice { background:#fff; border-top:2px solid #2074d4; margin-top:10px; }
 
@@ -470,7 +473,7 @@
   <!-- bank notice -->
   <div class="notice">
     <span class="tag">銀行からのお知らせ</span>
-    <div><a href="#">【重要】銀行名が「住信SBIネット銀行」から「ドコモSMTBネット銀行」に変わりました 詳細はこちら</a></div>
+    <div>【重要】銀行名が「住信SBIネット銀行」から「ドコモSMTBネット銀行」に変わりました <a href="#">詳細はこちら</a></div>
   </div>
 
   <!-- balance hero -->
@@ -743,7 +746,7 @@
 
     <div class="notice">
       <span class="tag">銀行からのお知らせ</span>
-      <div><a href="#">【重要】銀行名が「住信SBIネット銀行」から「ドコモSMTBネット銀行」に変わりました 詳細はこちら</a></div>
+      <div>【重要】銀行名が「住信SBIネット銀行」から「ドコモSMTBネット銀行」に変わりました <a href="#">詳細はこちら</a></div>
     </div>
 
     <div class="m-bighead">入出金明細</div>
