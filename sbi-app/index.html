@@ -1086,6 +1086,18 @@
     feb: { data:DATA_FEB, label:'2026年2月', in:'5,001,964', out:'5,004,814' },
     jan: { data:DATA_JAN, label:'2026年1月', in:'18,400,031', out:'18,397,055' },
   };
+  // 最新月のキー。取引が1件以上ある月を新しい順に探す。
+  // （空の月ブロックだけを持つ口座でも残高・最近の入出金が空にならないようにする）
+  function _latestMonthKey(M){
+    var order = ['aug','jul','jun'];
+    var i, c;
+    for (i = 0; i < order.length; i++){
+      c = M[order[i]];
+      if (c && c.data && c.data.some(function(r){ return r.t === 'tx'; })) return order[i];
+    }
+    for (i = 0; i < order.length; i++){ if (M[order[i]]) return order[i]; }
+    return 'jun';
+  }
   function initPage() {  var _urlParams = new URLSearchParams(location.search);
   var _userKey = _urlParams.get('user') || 'nakagiri';
   var _account = ACCOUNTS[_userKey] || ACCOUNTS['nakagiri'];
@@ -1093,7 +1105,7 @@
 
   // 残高表示を選択口座の最新値に更新
   (function(){
-    var data = (MONTHS.aug || MONTHS.jul || MONTHS.jun).data;
+    var data = MONTHS[_latestMonthKey(MONTHS)].data;
     for (var i = 0; i < data.length; i++) {
       if (data[i].t === 'tx') {
         var bal = data[i].bal;
@@ -1116,7 +1128,7 @@
     e = document.getElementById('info-kana');      if (e) e.textContent = info.kana;
     e = document.getElementById('info-balance');
     if (e) {
-      var d = (MONTHS.aug || MONTHS.jul || MONTHS.jun).data;
+      var d = MONTHS[_latestMonthKey(MONTHS)].data;
       for (var i = 0; i < d.length; i++) {
         if (d[i].t === 'tx') { e.textContent = d[i].bal + '円'; break; }
       }
@@ -1126,8 +1138,8 @@
     (function(){
       var el = document.getElementById('home-recent-txn');
       if (!el) return;
-      var data = (MONTHS.aug || MONTHS.jul || MONTHS.jun).data;
-      var monthPart = (MONTHS.aug || MONTHS.jul || MONTHS.jun).label.replace(/^\d+年/, '');
+      var data = MONTHS[_latestMonthKey(MONTHS)].data;
+      var monthPart = MONTHS[_latestMonthKey(MONTHS)].label.replace(/^\d+年/, '');
       var html = '';
       var count = 0;
       var curDay = '';
@@ -1157,7 +1169,7 @@
       });
     })();
     setChartHeights();
-    var _latestKey = MONTHS.aug ? 'aug' : (MONTHS.jul ? 'jul' : 'jun');
+    var _latestKey = _latestMonthKey(MONTHS);
     curMonthKey = _latestKey;
     renderMonth(_latestKey);
   }
