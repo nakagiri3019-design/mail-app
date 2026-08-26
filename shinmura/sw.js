@@ -1,6 +1,6 @@
 // 新村版 専用キャッシュ。ルート版 / noguchi 版とは独立させること。
 const CACHE_PREFIX = 'mail-shinmura-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v6';
+const CACHE_NAME = CACHE_PREFIX + 'v7';
 const PRECACHE_URLS = [
   './',
   './index.html',
