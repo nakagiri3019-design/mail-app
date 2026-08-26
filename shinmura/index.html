@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  Mail（Gmail風）新村版
+  ============================================================
+  ■ ベース: mail-app のルート（中桐版）。デザイン(CSS)・画面構造(HTML)は共通のまま、
+    テンプレートの指示どおり (A)MAILS (B)MY_EMAIL (C)account-avatar を差し替えた。
+    加えて受信トレイの「まとめ行」（プロモーション / 新着）に対応している。
+  ■ 自分: 新村 諒 <niimura@wisdom-hd.co.jp>
+  ■ 添付PDFは ./files/ に置き、表示名は元の日本語ファイル名を使う。
+  ■ URL: https://nakagiri3019-design.github.io/mail-app/shinmura/（新村）
+  ============================================================
+-->
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mail 新村</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FBE8D2">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mail 新村">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FBE8D2; display: flex; justify-content: center; }
+#app { width: 100%; max-width: 100%; height: 100vh; height: 100dvh; background: #FBE8D2; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+
+/* INBOX VIEW */
+#inbox-view { display: flex; flex-direction: column; height: 100%; position: relative; }
+.inbox-header { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; background: #FBE8D2; }
+.menu-btn, .icon-btn-plain { background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; }
+.search-pill { flex: 1; background: #fff; border-radius: 26px; padding: 10px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.search-pill span { color: #6B5A45; font-size: 15px; flex: 1; }
+.account-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; font-size: 14px; flex-shrink: 0; }
+
+.tabs-row { display: flex; gap: 10px; padding: 6px 16px 12px; }
+.current-tab-label { font-size: 14px; font-weight: 700; color: #1a73e8; }
+
+.mail-list { flex: 1; overflow-y: auto; background: #FBE8D2; padding: 8px 12px 72px; display: flex; flex-direction: column; gap: 8px; }
+.mail-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: #FFFCF5; border-radius: 16px; box-shadow: none; cursor: pointer; transition: background 0.1s; }
+.mail-row:active { background: #f5f5f5; }
+.mail-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 20px; flex-shrink: 0; }
+.mail-body { flex: 1; min-width: 0; }
+.mail-top-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.mail-sender { font-size: 14.5px; font-weight: 700; color: #3B2A12; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mail-row.unread .mail-sender { color: #3B2A12; font-weight: 700; }
+.mail-date { font-size: 12px; color: #6B5A45; flex-shrink: 0; }
+.mail-row.unread .mail-date { color: #3B2A12; font-weight: 700; }
+.mail-subject-line { font-size: 13.5px; color: #6B5A45; margin-top: 2px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.4; }
+.mail-row.unread .mail-subject-line { color: #3B2A12; }
+.mail-subject-line .subj { font-weight: 600; }
+.mail-row.unread .mail-subject-line .subj { font-weight: 700; }
+.mail-snippet { color: #6B5A45; font-weight: 400; }
+.star-btn { background: none; border: none; cursor: pointer; padding: 4px; flex-shrink: 0; align-self: center; }
+
+.compose-fab { position: absolute; right: 18px; bottom: 80px; background: #FF7A00; color: #fff; border: none; border-radius: 28px; padding: 16px 24px 16px 18px; display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(255,122,0,0.4); }
+
+.bottom-tabs { position: fixed; left: 0; right: 0; bottom: 0; height: 56px; padding: 4px 0 2px; background: #FBE8D2; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; justify-content: space-around; box-sizing: border-box; z-index: 20; }
+.tab-btn { flex: 1; height: 100%; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.tab-icon-circle { width: 64px; height: 32px; border-radius: 16px; background: #EDD5A8; display: flex; align-items: center; justify-content: center; }
+
+/* DETAIL VIEW */
+#detail-view { display: none; flex-direction: column; height: 100%; background: #FBE8D2; }
+.detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #FBE8D2; position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
+.detail-header .spacer { flex: 1; }
+.detail-subject-block { padding: 12px 0 4px; text-align: left; }
+.detail-subject-text { font-size: 21px; font-weight: 400; color: #3B2A12; line-height: 1.6; }
+.inbox-badge { display: inline-block; vertical-align: middle; background: #EDCA7A; color: #5C3210; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 10px; white-space: nowrap; margin-left: 10px; }
+.detail-title-star { background: none; border: none; cursor: pointer; padding: 2px; display: inline-flex; vertical-align: middle; margin-left: 10px; }
+.detail-meta-row { display: flex; align-items: flex-start; gap: 12px; padding: 4px 16px 8px; }
+.detail-to-line { font-size: 12px; color: #6B5A45; margin-top: 2px; }
+.sender-card-icons { display: flex; gap: 2px; margin-left: auto; flex-shrink: 0; }
+.mini-icon-btn { background: none; border: none; cursor: pointer; font-size: 16px; line-height: 1; padding: 6px; border-radius: 8px; color: #6B5A45; }
+.mini-icon-btn:active { background: rgba(0,0,0,0.06); }
+.to-line-toggle { cursor: pointer; display: inline-flex; align-items: center; gap: 4px; user-select: none; }
+.to-arrow { font-size: 9px; }
+.sender-detail-panel { display: none; margin: 12px 8px; background: #FAE8CC; border-radius: 10px; padding: 14px 20px; font-size: 15px; line-height: 1.6; color: #6B5A45; }
+.sender-detail-panel.open { display: block; }
+.sender-detail-panel .panel-row { display: flex; gap: 8px; padding: 4px 0; line-height: 1.6; overflow: hidden; }
+.sender-detail-panel .panel-row > span:last-child { font-size: 15px; color: #3B2A12; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.sender-detail-panel .panel-label { font-size: 14px; color: #6B5A45; flex-shrink: 0; min-width: 48px; }
+.security-notice { display: flex; align-items: flex-start; gap: 8px; margin-top: 2px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.08); font-size: 15px; line-height: 1.6; }
+.security-link { color: #C07820; font-size: 15px; font-weight: 600; cursor: pointer; }
+.detail-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+.detail-sender-info { flex: 1; min-width: 0; }
+.detail-sender-name { font-size: 14px; font-weight: 600; color: #3B2A12; line-height: 1.3; }
+.detail-body-area { flex: 1; overflow-y: auto; padding: 60px 16px 160px; }
+.detail-body-text { font-size: 16px; line-height: 1.6; color: #3B2A12; white-space: pre-wrap; padding-left: 16px; }
+.thread-date-inline { font-weight: 400; color: #6B5A45; font-size: 12px; margin-left: 6px; }
+.thread-card { background: #FFFCF5; border-radius: 6px; margin: 0 4px 2px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: none; }
+.thread-card.collapsed { min-height: 92px; padding: 16px 12px; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
+.thread-card .detail-avatar { width: 40px; height: 40px; font-size: 15px; }
+.thread-card-collapsed-info { flex: 1; min-width: 0; }
+.thread-card-name { font-size: 15px; font-weight: 600; color: #3B2A12; }
+.thread-card-date { font-size: 11.5px; color: #6B5A45; margin-left: 6px; }
+.thread-card-preview { font-size: 13px; font-weight: 400; color: #7A6A55; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; white-space: normal; margin-top: 4px; line-height: 1.45; }
+.thread-card.expanded { padding: 14px 16px 18px; }
+.thread-card.expanded .detail-meta-row { padding: 12px 0 4px; cursor: pointer; }
+.thread-card.expanded .detail-body-text { margin-top: 12px; }
+.thread-card.expanded .sender-detail-panel { margin: 12px 8px; }
+.quote-block { margin-top: 18px; padding-top: 14px; padding-left: 16px; border-top: 1px solid rgba(0,0,0,0.07); font-size: 13px; color: #6B5A45; line-height: 1.6; }
+.quote-meta { margin-bottom: 6px; }
+.quote-link { color: #1a73e8; cursor: pointer; }
+.attachment-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; margin-right: 16px; white-space: normal; }
+.attachment-card { width: 100%; background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.attachment-preview { background: #fff; height: 220px; display: flex; align-items: flex-start; justify-content: center; overflow: hidden; }
+.attachment-preview canvas { max-width: 100%; height: auto; object-fit: contain; display: block; }
+.attachment-info-bar { background: #FFE4AE; display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
+.attachment-icon-pdf { flex-shrink: 0; }
+.attachment-file-name { flex: 1; min-width: 0; font-size: 13px; color: #3B2A12; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.attachment-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.attachment-action-icon { flex-shrink: 0; color: #6B5A45; }
+.detail-actions { position: fixed; left: 0; right: 0; bottom: 56px; padding: 12px 16px; background: #FBE8D2; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; gap: 4px; z-index: 15; }
+.detail-action-btn { flex: 1; background: #475A6E; border: none; height: 44px; border-radius: 22px; margin: 0 4px; font-size: 15px; font-weight: 600; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+.detail-emoji-btn { width: 48px; height: 48px; flex-shrink: 0; background: #475A6E; border: none; border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+/* まとめ行（プロモーション / 新着）。中桐版の .mail-row をそのまま使い、
+   右端の日付の代わりに新着件数を出す。 */
+.summary-count { font-size: 12px; font-weight: 700; color: #1B7A3E; white-space: nowrap; flex-shrink: 0; align-self: center; padding-left: 6px; }
+.mail-row.summary-row { cursor: default; }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- INBOX VIEW -->
+<div id="inbox-view">
+  <div class="inbox-header">
+    <button class="menu-btn" aria-label="メニュー">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6" stroke-linecap="round"/><line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round"/><line x1="3" y1="18" x2="21" y2="18" stroke-linecap="round"/></svg>
+    </button>
+    <div class="search-pill">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke-linecap="round"/></svg>
+      <span>メールを検索</span>
+    </div>
+    <div class="account-avatar" style="background:#4A7FB5;font-size:11px;">新村</div>
+  </div>
+
+  <div class="tabs-row">
+    <span class="current-tab-label">メイン</span>
+  </div>
+
+  <div class="mail-list" id="mail-list"></div>
+
+  <button class="compose-fab" onclick="alert('新規メールの作成（デモ）')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3"><path d="M12 20h9" stroke-linecap="round"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>作成</span>
+  </button>
+</div>
+
+<!-- DETAIL VIEW -->
+<div id="detail-view">
+  <div class="detail-header">
+    <button class="icon-btn-plain" onclick="closeDetail()" aria-label="戻る">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2.2"><path d="M19 12H5" stroke-linecap="round"/><path d="M11 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="spacer"></div>
+    <button class="icon-btn-plain" aria-label="アーカイブ">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a2 2 0 002 2h10a2 2 0 002-2V9"/><line x1="10" y1="13" x2="14" y2="13" stroke-linecap="round"/></svg>
+    </button>
+    <button class="icon-btn-plain" aria-label="削除">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+    </button>
+    <button class="icon-btn-plain" aria-label="既読にする">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2"><path d="M21 8l-9 6-9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+    </button>
+    <button class="icon-btn-plain" aria-label="その他">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#5C4030"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+    </button>
+  </div>
+
+  <div class="detail-body-area" id="detail-body-area">
+    <!-- filled by JS -->
+  </div>
+
+  <div class="detail-actions">
+    <button class="detail-action-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 00-4-4H4"/></svg>
+      返信
+    </button>
+    <button class="detail-action-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 014-4h12"/></svg>
+      転送
+    </button>
+    <button class="detail-emoji-btn" aria-label="リアクション" onclick="alert('リアクションを送信（デモ）')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button>
+  </div>
+</div>
+
+<div class="bottom-tabs">
+  <button class="tab-btn active" aria-label="メール">
+    <span class="tab-icon-circle">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3949AB" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+    </span>
+  </button>
+  <button class="tab-btn" aria-label="Meet">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="1.5"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+if (typeof pdfjsLib !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+const AVATAR_COLORS = ['#6B8E9F','#A05C5C','#5C7A5C','#7A6E9F','#9F7A4D','#4D7A7A','#9F5C7A','#5C6B9F'];
+const MY_EMAIL = 'niimura@wisdom-hd.co.jp';
+const MY_NAME = '新村 諒';
+
+const COLOR_OVERRIDES = {
+  'プロモーション': '#3C8C5A',
+  'アーバンビルド不動産 酒井': '#4A7FB5',
+  'お名前.com': '#E0913C',
+  '三井住友銀行': '#3C7A3C',
+  '新着': '#4A7FB5',
+  'Amazon.co.jp': '#E8912D',
+  'メルカリ': '#D9534F',
+  'STORES カスタマーサポート': '#5C6B9F',
+  'freee会社設立': '#4F9F7C',
+  'YAMAP STORE': '#5FA85D',
+  'note運営事務局': '#4D9F9F',
+  'Google Play': '#7A6E9F',
+  '新村 諒': '#4A7FB5',
+  '新村': '#4A7FB5',
+  '酒井 健一': '#4A7FB5',
+  '酒井': '#4A7FB5',
+};
+
+function colorFor(name) {
+  if (COLOR_OVERRIDES[name]) return COLOR_OVERRIDES[name];
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+
+const MAILS = [
+  {
+    id: 'promo', summary: true, name: 'プロモーション', icon: 'tag', color: '#3C8C5A',
+    newCount: 12, senders: 'Google Play、YAMAP STORE、note運営事務局 他', datetime: '2026年8月26日(水) 午後8:40',
+  },
+  {
+    id: 'm-sakai', name: 'アーバンビルド不動産 酒井', email: 'sakai@urbanbuild.co.jp', avatarLetter: '酒井',
+    subject: 'Re:【ご請求】8月分 金子様邸リフォーム工事',
+    snippet: 'お世話になっております。アーバンビルド不動産の酒井です。8月分のご請求内容を確認させていただきたく…',
+    date: '8月26日', unread: true, starred: false,
+    thread: [
+      {
+        from: '新村 諒', fromEmail: 'niimura@wisdom-hd.co.jp', to: '酒井 健一', toEmail: 'sakai@urbanbuild.co.jp', date: '6月24日', datetime: '2026年6月24日(水) 14:15',
+        body: '株式会社アーバンビルド不動産<br>酒井様<br><br>いつもお世話になっております。<br>ウィズダムホールディングスの新村です。<br><br>先日ご相談いただきました武井様マンションのリノベーション工事につきまして、<br>お見積りと工程表をお送りいたします。<br><br>お見積金額：4,852,980円（消費税10%込）<br>工期：2026年7月3日 着工 〜 7月23日 完了予定<br>稼働日数：18日（日曜休工）<br><br>内訳は添付のお見積書をご確認ください。<br>現場状況により追加工事が発生した場合は、別途お見積りいたします。<br><br>ご不明な点がございましたら、お気軽にご連絡ください。<br>ご検討のほど、よろしくお願いいたします。<br><br>──────────────────<br>ウィズダムホールディングス株式会社<br>代表取締役　新村 諒<br>〒359-1144 埼玉県所沢市西所沢1丁目3-8<br>──────────────────',
+        attachments: [
+          { name: '見積書_アーバンビルド_武井様.pdf', url: './files/takei_estimate.pdf' },
+          { name: '工程表_アーバンビルド_武井様.pdf', url: './files/takei_schedule.pdf' },
+        ],
+      },
+      {
+        from: 'アーバンビルド不動産 酒井', fromEmail: 'sakai@urbanbuild.co.jp', to: '新村 諒', toEmail: 'niimura@wisdom-hd.co.jp', date: '6月24日', datetime: '2026年6月24日(水) 午後3:52',
+        body: 'ウィズダムホールディングス<br>新村様<br><br>お世話になっております。<br>アーバンビルド不動産の酒井です。<br><br>お見積りと工程表を拝受いたしました。<br>金額、工期とも問題ございません。<br><br>この内容で進めてください。<br>7月3日着工でお願いいたします。<br><br>株式会社アーバンビルド不動産<br>酒井 健一<br>〒359-1111 埼玉県所沢市緑町2-14-6<br>sakai@urbanbuild.co.jp',
+      },
+      {
+        from: '新村 諒', fromEmail: 'niimura@wisdom-hd.co.jp', to: '酒井 健一', toEmail: 'sakai@urbanbuild.co.jp', date: '7月23日', datetime: '2026年7月23日(木) 16:28',
+        body: '株式会社アーバンビルド不動産<br>酒井様<br><br>お世話になっております。<br>ウィズダムホールディングスの新村です。<br><br>武井様マンションのリノベーション工事につきまして、<br>本日をもちまして全工程が完了いたしましたのでご報告申し上げます。<br><br>工期：2026年7月3日 〜 7月23日<br>実稼働日数：18日（日曜休工）<br>関連見積：見積No. 20260624-01<br><br>全工程を工期内に完了し、引き渡しまで済んでおります。<br>追加工事の発生はございませんでした。<br><br>詳細は添付の作業完了報告書をご確認ください。<br>ご確認のうえ、ご確認印をいただけますと幸いです。<br><br>このたびはありがとうございました。<br>引き続きよろしくお願いいたします。<br><br>──────────────────<br>ウィズダムホールディングス株式会社<br>代表取締役　新村 諒<br>〒359-1144 埼玉県所沢市西所沢1丁目3-8<br>──────────────────',
+        attachments: [
+          { name: '作業完了報告書_アーバンビルド_武井様.pdf', url: './files/takei_completion.pdf' },
+        ],
+      },
+      {
+        from: 'アーバンビルド不動産 酒井', fromEmail: 'sakai@urbanbuild.co.jp', to: '新村 諒', toEmail: 'niimura@wisdom-hd.co.jp', date: '7月23日', datetime: '2026年7月23日(木) 午後5:25',
+        body: 'ウィズダムホールディングス<br>新村様<br><br>お世話になっております。<br>アーバンビルド不動産の酒井です。<br><br>作業完了報告書を確認いたしました。<br>工期内に完了いただき、ありがとうございました。<br><br>確認印を押印のうえ、後日お戻しいたします。<br><br>つきましては、金子様邸のほうもお見積りをお願いできますでしょうか。<br><br>株式会社アーバンビルド不動産<br>酒井 健一<br>〒359-1111 埼玉県所沢市緑町2-14-6<br>sakai@urbanbuild.co.jp',
+      },
+      {
+        from: '新村 諒', fromEmail: 'niimura@wisdom-hd.co.jp', to: '酒井 健一', toEmail: 'sakai@urbanbuild.co.jp', date: '7月25日', datetime: '2026年7月25日(土) 15:35',
+        body: '株式会社アーバンビルド不動産<br>酒井様<br><br>お世話になっております。<br>ウィズダムホールディングスの新村です。<br><br>金子様邸のリフォーム工事につきまして、<br>現地確認のうえ、お見積りと工程表をお送りいたします。<br><br>お見積金額：5,893,580円（消費税10%込）<br>工期：2026年8月4日 着工 〜 8月28日 完了予定<br>稼働日数：22日（日曜休工）<br><br>今回はオーダーカーテンの設置と配管清掃が加わるため、<br>武井様の案件と比較して工期が長めとなっております。<br><br>内訳は添付のお見積書をご確認ください。<br>ご検討のほど、よろしくお願いいたします。<br><br>──────────────────<br>ウィズダムホールディングス株式会社<br>代表取締役　新村 諒<br>〒359-1144 埼玉県所沢市西所沢1丁目3-8<br>──────────────────',
+        attachments: [
+          { name: '見積書_アーバンビルド_金子様.pdf', url: './files/kaneko_estimate.pdf' },
+          { name: '工程表_アーバンビルド_金子様.pdf', url: './files/kaneko_schedule.pdf' },
+        ],
+      },
+      {
+        from: 'アーバンビルド不動産 酒井', fromEmail: 'sakai@urbanbuild.co.jp', to: '新村 諒', toEmail: 'niimura@wisdom-hd.co.jp', date: '7月25日', datetime: '2026年7月25日(土) 午後4:55',
+        body: 'ウィズダムホールディングス<br>新村様<br><br>お世話になっております。<br>アーバンビルド不動産の酒井です。<br><br>お見積りを確認いたしました。<br>オーダーカーテンと配管清掃の件、承知しております。<br><br>この内容で進めてください。<br>8月4日着工でお願いいたします。<br><br>株式会社アーバンビルド不動産<br>酒井 健一<br>〒359-1111 埼玉県所沢市緑町2-14-6<br>sakai@urbanbuild.co.jp',
+      },
+      {
+        from: '新村 諒', fromEmail: 'niimura@wisdom-hd.co.jp', to: '酒井 健一', toEmail: 'sakai@urbanbuild.co.jp', date: '7月31日', datetime: '2026年7月31日(金) 11:15',
+        body: '株式会社アーバンビルド不動産<br>経理ご担当者様<br>酒井様<br><br>お世話になっております。<br>ウィズダムホールディングスの新村です。<br><br>7月1日〜7月31日締め分の請求書をお送りいたします。<br><br>請求No：20260731-01<br>件名：武井様マンション リノベーション工事<br>ご請求金額：4,852,980円（消費税10%込）<br>お支払期限：2026年9月20日<br><br>お振込先は請求書に記載のとおりです。<br>恐れ入りますが、振込手数料は御社ご負担にてお願いいたします。<br><br>ご確認のほど、よろしくお願いいたします。<br><br>──────────────────<br>ウィズダムホールディングス株式会社<br>代表取締役　新村 諒<br>〒359-1144 埼玉県所沢市西所沢1丁目3-8<br>──────────────────',
+        attachments: [
+          { name: '【請求書】_アーバンビルド_武井様.pdf', url: './files/takei_invoice.pdf' },
+        ],
+      },
+      {
+        from: 'アーバンビルド不動産 酒井', fromEmail: 'sakai@urbanbuild.co.jp', to: '新村 諒', toEmail: 'niimura@wisdom-hd.co.jp', date: '7月31日', datetime: '2026年7月31日(金) 午後1:20',
+        body: 'ウィズダムホールディングス<br>新村様<br><br>お世話になっております。<br>アーバンビルド不動産の酒井です。<br><br>請求書を拝受いたしました。<br>内容に相違ございません。<br><br>経理に回し、9月20日までにお振込みいたします。<br><br>株式会社アーバンビルド不動産<br>酒井 健一<br>〒359-1111 埼玉県所沢市緑町2-14-6<br>sakai@urbanbuild.co.jp',
+      },
+      {
+        from: 'アーバンビルド不動産 酒井', fromEmail: 'sakai@urbanbuild.co.jp', to: '新村 諒', toEmail: 'niimura@wisdom-hd.co.jp', date: '8月26日', datetime: '2026年8月26日(水) 午後8:14',
+        body: 'ウィズダムホールディングス<br>新村様<br><br>お世話になっております。<br>アーバンビルド不動産の酒井です。<br><br>金子様邸のリフォーム工事につきまして、<br>8月分のご請求内容を確認させていただきたくご連絡いたしました。<br><br>8月28日完了予定とのことですので、<br>締めは8月末、ご請求は9月に入ってからという理解でよろしいでしょうか。<br><br>また、オーダーカーテン分が別建てになるかどうかもあわせてご教示ください。<br><br>お手数をおかけしますが、よろしくお願いいたします。<br><br>株式会社アーバンビルド不動産<br>酒井 健一<br>〒359-1111 埼玉県所沢市緑町2-14-6<br>sakai@urbanbuild.co.jp',
+      },
+    ],
+  },
+  {
+    id: 'm-onamae', name: 'お名前.com', email: 'info@onamae.com', avatarLetter: 'お',
+    subject: '【重要】ドメイン自動更新のお知らせ',
+    snippet: 'お客様がご登録のドメインについて、自動更新の期限が近づいております。お支払い方法をご確認ください…',
+    date: '8月26日', unread: true, starred: false,
+    datetime: '2026年8月26日(水) 午後7:22',
+    body: 'お名前.comをご利用いただきありがとうございます。<br><br>お客様がご登録中の下記ドメインにつきまして、自動更新の期限が近づいておりますのでお知らせいたします。<br><br>・wisdom-hd.co.jp<br>更新期限：2026年9月18日<br>更新料金：3,839円（税込）<br><br>お支払い方法が未登録の場合、自動更新が行われません。<br>会員ページよりお支払い方法をご確認ください。<br><br>お名前.com カスタマーサポート',
+  },
+  {
+    id: 'm-smbc', name: '三井住友銀行', email: 'info@smbc.co.jp', avatarLetter: '三井',
+    subject: '【重要】口座振替のご案内',
+    snippet: 'いつもお取引いただきありがとうございます。口座振替の登録内容について、ご確認のお願いです…',
+    date: '8月26日', unread: false, starred: false,
+    datetime: '2026年8月26日(水) 午後6:03',
+    body: 'いつも三井住友銀行をご利用いただきありがとうございます。<br><br>お客様の口座振替の登録内容につきまして、ご確認のお願いがございます。<br><br>振替日：毎月27日<br>振替口座：普通 ****3019<br><br>残高不足により振替ができなかった場合、翌月にまとめて請求となります。<br>ご確認のほど、よろしくお願いいたします。<br><br>株式会社三井住友銀行',
+  },
+  {
+    id: 'newarr', summary: true, name: '新着', icon: 'bell', color: '#4A7FB5',
+    newCount: 1, senders: 'STORES カスタマーサポート', datetime: '2026年8月26日(水) 午後5:10',
+  },
+  {
+    id: 'm-amazon', name: 'Amazon.co.jp', email: 'ship-confirm@amazon.co.jp', avatarLetter: 'a',
+    subject: 'ご注文の発送について',
+    snippet: 'ご注文いただいた商品を発送いたしました。お届け予定日は8月27日（木）です…',
+    date: '8月26日', unread: false, starred: false,
+    datetime: '2026年8月26日(水) 午後4:09',
+    body: 'Amazon.co.jpをご利用いただきありがとうございます。<br><br>ご注文いただいた商品を発送いたしました。<br><br>注文番号：503-8821974-2260315<br>お届け予定日：2026年8月27日（木）<br><br>配送状況は注文履歴からご確認いただけます。<br><br>Amazon.co.jp',
+  },
+  {
+    id: 'm-mercari', name: 'メルカリ', email: 'no-reply@mercari.jp', avatarLetter: 'メ',
+    subject: '出品した商品が購入されました',
+    snippet: '出品中の商品が購入されました。3日以内に発送手続きをお願いします…',
+    date: '8月26日', unread: true, starred: false,
+    datetime: '2026年8月26日(水) 午後3:23',
+    body: '出品中の商品が購入されました。<br><br>商品名：makita 充電式インパクトドライバ<br>販売価格：18,500円<br>販売手数料：1,850円<br>販売利益：14,940円<br><br>3日以内に発送手続きをお願いします。<br><br>メルカリ',
+  },
+  {
+    id: 'm-stores', name: 'STORES カスタマーサポート', email: 'support@stores.jp', avatarLetter: 'ST',
+    subject: '決済連携の設定について',
+    snippet: 'お問い合わせいただいた決済連携の設定につきまして、下記の手順をご案内いたします…',
+    date: '8月26日', unread: false, starred: false,
+    datetime: '2026年8月26日(水) 午後2:03',
+    body: 'お問い合わせいただきありがとうございます。<br>STORES カスタマーサポートです。<br><br>ご質問いただいた決済連携の設定につきまして、下記の手順をご案内いたします。<br><br>1. ダッシュボードから「決済方法」を開く<br>2. 「銀行振込」を有効にする<br>3. 振込先口座を登録する<br><br>設定反映までに1〜2営業日いただいております。<br><br>STORES カスタマーサポート',
+  },
+  {
+    id: 'm-freee', name: 'freee会社設立', email: 'info@freee.co.jp', avatarLetter: 'fr',
+    subject: '10月設立をお考えの方へ',
+    snippet: '10月の会社設立をお考えの方に向けて、スケジュールと必要書類をまとめました…',
+    date: '8月26日', unread: false, starred: false,
+    datetime: '2026年8月26日(水) 午後0:23',
+    body: '10月の会社設立をお考えの方へ。<br><br>設立日から逆算したスケジュールと、準備が必要な書類をまとめました。<br><br>・定款の作成と認証：設立日の3週間前まで<br>・資本金の払い込み：設立日の2週間前まで<br>・登記申請：設立希望日当日<br><br>freee会社設立なら、必要書類を無料で作成できます。<br><br>freee株式会社',
+  },
+  {
+    id: 'm-yamap', name: 'YAMAP STORE', email: 'store@yamap.com', avatarLetter: 'YA',
+    subject: '秋の新作ザック入荷',
+    snippet: '秋の新作ザックが入荷しました。日帰りから小屋泊まで対応する30Lモデルが登場…',
+    date: '8月26日', unread: false, starred: false,
+    datetime: '2026年8月26日(水) 午前8:58',
+    body: '秋の新作ザックが入荷しました。<br><br>日帰りから小屋泊まで対応する30Lモデルが登場。<br>背面長の調整機構を備え、体格に合わせたフィッティングが可能です。<br><br>・容量：30L／重量：1,180g<br>・価格：27,500円（税込）<br><br>YAMAP STORE',
+  },
+  {
+    id: 'm-note', name: 'note運営事務局', email: 'info@note.com', avatarLetter: 'no',
+    subject: '今月の注目記事',
+    snippet: '今月よく読まれた記事をお届けします。建築・不動産分野の記事が上位に入りました…',
+    date: '8月26日', unread: false, starred: false,
+    datetime: '2026年8月26日(水) 午前5:58',
+    body: '今月よく読まれた記事をお届けします。<br><br>・「小規模リノベーションの原価管理をどうするか」<br>・「職人不足の現場で工期を守る方法」<br>・「インボイス制度、建設業の実務はこう変わった」<br><br>続きはnoteでお読みいただけます。<br><br>note運営事務局',
+  },
+  {
+    id: 'm-gplay', name: 'Google Play', email: 'googleplay-noreply@google.com', avatarLetter: 'GP',
+    subject: 'ご注文明細',
+    snippet: 'Google Play でのご購入ありがとうございます。ご注文明細をお送りします…',
+    date: '8月26日', unread: false, starred: false,
+    datetime: '2026年8月26日(水) 午前2:50',
+    body: 'Google Play でのご購入ありがとうございます。<br><br>注文番号：GPA.3372-9084-1155-63042<br>商品：Google One ベーシック（100GB）月額<br>金額：250円<br>お支払い日：2026年8月26日<br><br>Google LLC',
+  },
+];
+
+function initial(name) {
+  return name.trim().charAt(0);
+}
+
+const AVATAR_LABEL_OVERRIDES = {
+  'アーバンビルド不動産 酒井': '酒井',
+  'お名前.com': 'お',
+  '三井住友銀行': '三井',
+  'Amazon.co.jp': 'a',
+  'メルカリ': 'メ',
+  'STORES カスタマーサポート': 'ST',
+  'freee会社設立': 'fr',
+  'YAMAP STORE': 'YA',
+  'note運営事務局': 'no',
+  'Google Play': 'GP',
+  '新村 諒': '新村',
+  '酒井 健一': '酒井',
+};
+
+function avatarLabel(name) {
+  return AVATAR_LABEL_OVERRIDES[name] || initial(name);
+}
+
+function formatDatetime(dt) {
+  if (!dt || dt.includes('午前') || dt.includes('午後')) return dt;
+  const m = dt.match(/(\d{4}年\d+月\d+日)[^0-9]*(\d+):(\d+)/);
+  if (!m) return dt;
+  const h = parseInt(m[2], 10);
+  const min = m[3];
+  const ampm = h < 12 ? '午前' : '午後';
+  const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${m[1]} ${ampm}${h12}:${min}`;
+}
+
+function renderDetailAvatar(name) {
+  const label = avatarLabel(name);
+  const fontSize = label.length > 1 ? 'font-size:11px;' : '';
+  return `<div class="detail-avatar" style="background:${colorFor(name)};${fontSize}">${label}</div>`;
+}
+
+function starSVG(filled) {
+  return filled
+    ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="#F4B400" stroke="#F4B400" stroke-width="1.5"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`
+    : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B6D55" stroke-width="1.8"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`;
+}
+
+function renderToLine(uid) {
+  return `
+    <div class="detail-to-line to-line-toggle" data-to-toggle="${uid}">
+      <span>To: 自分</span><span class="to-arrow">▼</span>
+    </div>
+  `;
+}
+
+function renderToPanel(uid, from, fromEmail, toName, toEmail, datetime) {
+  return `
+    <div class="sender-detail-panel" data-to-panel="${uid}">
+      <div class="panel-row"><span class="panel-label">From:</span><span>${from}・${fromEmail}</span></div>
+      <div class="panel-row"><span class="panel-label">宛先:</span><span>${toName}・${toEmail}</span></div>
+      <div class="panel-row"><span class="panel-label">日付:</span><span>${formatDatetime(datetime)}</span></div>
+      <div class="security-notice">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#8B6D55" style="flex-shrink:0;margin-top:3px"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        <span>標準的な暗号化（TLS）が適用されています。<br><span class="security-link">セキュリティの詳細を表示</span></span>
+      </div>
+    </div>
+  `;
+}
+
+function renderSenderCardIcons() {
+  return `
+    <div class="sender-card-icons">
+      <button class="mini-icon-btn" aria-label="リアクション" onclick="alert('リアクションを送信（デモ）')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B5A45" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button>
+      <button class="mini-icon-btn" aria-label="返信" onclick="alert('返信（デモ）')">↩</button>
+      <button class="mini-icon-btn" aria-label="その他" onclick="alert('その他のオプション（デモ）')">⋮</button>
+    </div>
+  `;
+}
+
+function bindToPanelToggles(area) {
+  area.querySelectorAll('[data-to-toggle]').forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+      const id = toggle.getAttribute('data-to-toggle');
+      const panel = area.querySelector(`[data-to-panel="${id}"]`);
+      const arrow = toggle.querySelector('.to-arrow');
+      const isOpen = panel.classList.toggle('open');
+      arrow.textContent = isOpen ? '▲' : '▼';
+    });
+  });
+}
+
+function renderAttachment(att) {
+  const action = att.url ? `window.open('${encodeURI(att.url)}', '_blank')` : `alert('添付ファイルを開く（デモ）')`;
+  const previewHTML = att.noPreview ? '' : (() => {
+    const preview = att.url
+      ? `<canvas class="pdf-thumb-canvas" data-pdf-url="${att.url}"></canvas>`
+      : `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D93025" stroke-width="1.5"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z" stroke-linejoin="round"/><path d="M14 3v5h5" stroke-linejoin="round"/></svg>`;
+    return `<div class="attachment-preview">${preview}</div>`;
+  })();
+  return `
+    <div class="attachment-card" onclick="${action}">
+      ${previewHTML}
+      <div class="attachment-info-bar">
+        <svg class="attachment-icon-pdf" width="26" height="26" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3" fill="#D93025"/><text x="12" y="16" font-size="8.5" font-weight="700" fill="#fff" text-anchor="middle" font-family="Arial, sans-serif">PDF</text></svg>
+        <span class="attachment-file-name">${att.name}</span>
+        <span class="attachment-actions">
+          <svg class="attachment-action-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+          <svg class="attachment-action-icon" width="18" height="18" viewBox="0 0 24 24"><path d="M8.5 2L1 14.5h6l7.5-12.5z" fill="currentColor"/><path d="M7 15.5l-3.5 6h14l3.5-6z" fill="currentColor"/><path d="M15.5 2L23 14.5h-7L9.5 2z" fill="currentColor"/></svg>
+        </span>
+      </div>
+    </div>
+  `;
+}
+
+function renderPdfThumbnails(area) {
+  if (typeof pdfjsLib === 'undefined') return;
+  area.querySelectorAll('canvas.pdf-thumb-canvas[data-pdf-url]').forEach((canvas) => {
+    if (canvas.dataset.rendered) return;
+    canvas.dataset.rendered = '1';
+    const url = canvas.getAttribute('data-pdf-url');
+    pdfjsLib.getDocument({
+      url: url,
+      cMapUrl: './attachments/cmaps/',
+      cMapPacked: true,
+    }).promise
+      .then((pdf) => pdf.getPage(1))
+      .then((page) => {
+        const containerWidth = canvas.parentElement.clientWidth;
+        const baseViewport = page.getViewport({ scale: 1 });
+        const scale = containerWidth / baseViewport.width;
+        const viewport = page.getViewport({ scale });
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        return page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+      })
+      .catch((err) => {
+        console.error('PDF preview render failed:', err);
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#f5f5f5';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#999';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('プレビュー不可', canvas.width / 2, canvas.height / 2);
+      });
+  });
+}
+
+function formatListDate(datetimeStr) {
+  var ampm = datetimeStr.match(/(午前|午後)/);
+  var m = datetimeStr.match(/(\d+)年(\d+)月(\d+)日[^0-9]*(\d+):(\d+)/);
+  if (!m) return datetimeStr;
+  var y = parseInt(m[1],10), mo = parseInt(m[2],10), d = parseInt(m[3],10);
+  var hour = parseInt(m[4], 10), mm = m[5];
+  if (ampm && ampm[1] === '午後' && hour < 12) hour += 12;
+  if (ampm && ampm[1] === '午前' && hour === 12) hour = 0;
+  var now = new Date();
+  var ty = now.getFullYear(), tmo = now.getMonth()+1, td = now.getDate();
+  if (y === ty && mo === tmo && d === td) {
+    return hour + ':' + mm;
+  } else if (y === ty) {
+    return mo + '月' + d + '日';
+  } else {
+    return y + '/' + mo + '/' + d;
+  }
+}
+
+function getLatestTimestamp(m) {
+  var lastMsg = (m.thread && m.thread.length > 0) ? m.thread[m.thread.length - 1] : m;
+  var str = lastMsg.datetime || lastMsg.date || m.date || '';
+  var ampm = str.match(/(午前|午後)/);
+  var r = str.match(/(\d+)年(\d+)月(\d+)日(?:\([^)]+\))?\s*(?:午前|午後)?\s*(\d+):(\d+)/);
+  if (!r) return -1;
+  var hour = parseInt(r[4], 10);
+  if (ampm && ampm[1] === '午後' && hour < 12) hour += 12;
+  if (ampm && ampm[1] === '午前' && hour === 12) hour = 0;
+  return parseInt(r[1])*100000000 + parseInt(r[2])*1000000 + parseInt(r[3])*10000
+       + hour*100 + parseInt(r[5]);
+}
+
+function summaryIcon(kind) {
+  if (kind === 'bell') {
+    return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>`;
+  }
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 12 22l-9-9V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.2" fill="#fff" stroke="none"/></svg>`;
+}
+
+// まとめ行。開くスレッドは持たないので、タップしてもデモの通知だけ出す。
+function renderSummaryRow(m) {
+  return `
+    <div class="mail-row summary-row" data-summary="${m.id}">
+      <div class="mail-avatar" style="background:${m.color};">${summaryIcon(m.icon)}</div>
+      <div class="mail-body">
+        <div class="mail-top-row">
+          <span class="mail-sender">${m.name}</span>
+        </div>
+        <div class="mail-subject-line"><span class="mail-snippet">${m.senders}</span></div>
+      </div>
+      <span class="summary-count">新着 ${m.newCount} 件</span>
+    </div>
+  `;
+}
+
+function renderList() {
+  const list = document.getElementById('mail-list');
+  var sorted = MAILS.slice().sort(function(a, b) {
+    return getLatestTimestamp(b) - getLatestTimestamp(a);
+  });
+  list.innerHTML = sorted.map((m) => {
+    if (m.summary) return renderSummaryRow(m);
+    var lastMsg = (m.thread && m.thread.length > 0) ? m.thread[m.thread.length - 1] : m;
+    var dispDate = formatListDate((lastMsg.datetime || lastMsg.date || m.date));
+    return `
+    <div class="mail-row ${m.unread ? 'unread' : ''}" data-id="${m.id}">
+      <div class="mail-avatar" style="background:${colorFor(m.name)};${(m.avatarLetter || initial(m.name)).length > 1 ? 'font-size:14px;' : ''}">${m.avatarLetter || initial(m.name)}</div>
+      <div class="mail-body">
+        <div class="mail-top-row">
+          <span class="mail-sender">${m.name}</span>
+          <span class="mail-date">${dispDate}</span>
+        </div>
+        <div class="mail-subject-line"><span class="subj">${m.listSubject || m.subject}</span> <span class="mail-snippet">- ${m.snippet}</span></div>
+      </div>
+      <button class="star-btn" data-star="${m.id}">${starSVG(m.starred)}</button>
+    </div>
+  `;
+  }).join('');
+
+  list.querySelectorAll('.mail-row').forEach((row) => {
+    row.addEventListener('click', (e) => {
+      if (e.target.closest('.star-btn')) return;
+      const sid = row.getAttribute('data-summary');
+      if (sid) {
+        const s = MAILS.find((x) => x.id === sid);
+        alert(s.name + ' を開く（デモ・新着 ' + s.newCount + ' 件）');
+        return;
+      }
+      openDetail(row.getAttribute('data-id'));
+    });
+  });
+  list.querySelectorAll('.star-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute('data-star');
+      const mail = MAILS.find((x) => x.id === id);
+      if (!mail) return;
+      mail.starred = !mail.starred;
+      btn.innerHTML = starSVG(mail.starred);
+    });
+  });
+}
+
+function previewText(body) {
+  return body.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 60);
+}
+
+function renderQuoteBlock(prevMsg) {
+  return `
+    <div class="quote-block">
+      <div class="quote-meta">On ${formatDatetime(prevMsg.datetime)}, ${prevMsg.from} wrote:</div>
+      <span class="quote-link">元のメッセージを表示</span>
+    </div>
+  `;
+}
+
+function renderThreadCard(mail, msg, idx, expanded) {
+  const uid = `${mail.id}-${idx}`;
+  if (!expanded) {
+    return `
+      <div class="thread-card collapsed" data-card-toggle="${idx}">
+        ${renderDetailAvatar(msg.from)}
+        <div class="thread-card-collapsed-info">
+          <span class="thread-card-name">${msg.from}</span>
+          <span class="thread-card-date">${msg.date}</span>
+          <div class="thread-card-preview">${previewText(msg.body)}</div>
+        </div>
+      </div>
+    `;
+  }
+  const messages = mail._messages;
+  const quoteHTML = idx > 0 ? renderQuoteBlock(messages[idx - 1]) : '';
+  return `
+    <div class="thread-card expanded">
+      <div class="detail-meta-row" data-card-toggle="${idx}">
+        ${renderDetailAvatar(msg.from)}
+        <div class="detail-sender-info">
+          <div class="detail-sender-name">${msg.from} <span class="thread-date-inline">${msg.date}</span></div>
+          ${renderToLine(uid)}
+        </div>
+        ${renderSenderCardIcons()}
+      </div>
+      ${renderToPanel(uid, msg.from, msg.fromEmail, msg.to, msg.toEmail, msg.datetime)}
+      <div class="detail-body-text">${msg.body}${(msg.attachments && msg.attachments.length) ? `<div class="attachment-grid">${msg.attachments.map(renderAttachment).join('')}</div>` : ''}</div>
+      ${quoteHTML}
+    </div>
+  `;
+}
+
+function bindThreadCardToggles(area, mail) {
+  area.querySelectorAll('[data-card-toggle]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('[data-to-toggle]') || e.target.closest('.sender-card-icons') || e.target.closest('.detail-title-star')) return;
+      const idx = Number(el.getAttribute('data-card-toggle'));
+      const scrollPos = area.scrollTop;
+      mail._expanded[idx] = !mail._expanded[idx];
+      renderDetailBody(mail);
+      area.scrollTop = scrollPos;
+    });
+  });
+}
+
+function renderDetailBody(mail) {
+  const area = document.getElementById('detail-body-area');
+  const messages = mail._messages;
+
+  const subjectRowHTML = `
+    <div class="detail-subject-block">
+      <span class="detail-subject-text">${mail.subject}</span>
+      <span class="inbox-badge">受信トレイ</span>
+      <button class="detail-title-star" data-star="${mail.id}">${starSVG(mail.starred)}</button>
+    </div>
+  `;
+
+  const cardsHTML = messages.map((msg, i) => renderThreadCard(mail, msg, i, mail._expanded[i])).join('');
+
+  area.innerHTML = `${subjectRowHTML}${cardsHTML}`;
+
+  bindToPanelToggles(area);
+  bindThreadCardToggles(area, mail);
+  renderPdfThumbnails(area);
+
+  const titleStarBtn = area.querySelector('.detail-title-star');
+  if (titleStarBtn) {
+    titleStarBtn.addEventListener('click', () => {
+      mail.starred = !mail.starred;
+      titleStarBtn.innerHTML = starSVG(mail.starred);
+    });
+  }
+}
+
+function openDetail(id) {
+  const mail = MAILS.find((x) => x.id === id);
+  if (!mail) return;
+  mail.unread = false;
+
+  if (!mail._messages) {
+    mail._messages = mail.thread || [{
+      from: mail.name, fromEmail: mail.email, to: MY_NAME, toEmail: MY_EMAIL,
+      date: mail.date, datetime: mail.datetime || mail.date, body: mail.body,
+    }];
+  }
+  if (!mail._expanded) {
+    mail._expanded = mail._messages.map((_, i) => i === mail._messages.length - 1);
+  }
+
+  renderDetailBody(mail);
+  document.getElementById('detail-body-area').scrollTop = 0;
+
+  document.getElementById('inbox-view').style.display = 'none';
+  document.getElementById('detail-view').style.display = 'flex';
+  renderList();
+}
+
+function closeDetail() {
+  document.getElementById('detail-view').style.display = 'none';
+  document.getElementById('inbox-view').style.display = 'flex';
+  renderList();
+}
+
+renderList();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', { scope: './' }).then((reg) => {
+      reg.update();
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'activated') {
+            window.location.reload();
+          }
+        });
+      });
+    }).catch((err) => {
+      console.error('Service worker registration failed:', err);
+    });
+
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
+  });
+}
+</script>
+</body>
+</html>
