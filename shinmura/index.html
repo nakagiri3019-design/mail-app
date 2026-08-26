@@ -291,7 +291,7 @@ const MAILS = [
     ],
   },
   {
-    id: 'promo', summary: true, name: 'プロモーション', icon: 'tag', color: '#3C8C5A',
+    id: 'promo', summary: true, pinTop: true, name: 'プロモーション', icon: 'tag', color: '#3C8C5A',
     newCount: 12, senders: 'Google Play、YAMAP STORE、note運営事務局 他', datetime: '2026年8月26日(水) 午後8:40',
   },
   {
@@ -632,6 +632,7 @@ function renderSummaryRow(m) {
 function renderList() {
   const list = document.getElementById('mail-list');
   var sorted = MAILS.slice().sort(function(a, b) {
+    if (!!a.pinTop !== !!b.pinTop) return a.pinTop ? -1 : 1;
     return getLatestTimestamp(b) - getLatestTimestamp(a);
   });
   list.innerHTML = sorted.map((m) => {
