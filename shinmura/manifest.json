@@ -2,7 +2,7 @@
   "name": "Mail 新村",
   "short_name": "Mail 新村",
   "description": "Mail - 新村諒のメールアプリ",
-  "id": "./",
+  "id": "/mail-app/shinmura/",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
