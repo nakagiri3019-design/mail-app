@@ -729,6 +729,7 @@
         <div class="mo" id="smo-jun" onclick="selectMonth('jun')"><span>6月</span></div>
         <div class="mo" id="smo-jul" onclick="selectMonth('jul')"><span>7月</span></div>
         <div class="mo" id="smo-aug" onclick="selectMonth('aug')"><span>8月</span></div>
+        <div class="mo" id="smo-sep" onclick="selectMonth('sep')"><span>9月</span></div>
        </div>
       </div>
       <div class="m-stknav">
@@ -818,6 +819,7 @@
           <div class="bcol" id="bcol-jun" onclick="selectMonth('jun')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-jun-up" style="height:40px"></div></div><div class="hb"><div class="bar dn" id="bar-jun-dn" style="height:30px"></div></div></div>
           <div class="bcol" id="bcol-jul" onclick="selectMonth('jul')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-jul-up" style="height:3px"></div></div><div class="hb"><div class="bar dn" id="bar-jul-dn" style="height:3px"></div></div></div>
           <div class="bcol" id="bcol-aug" onclick="selectMonth('aug')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-aug-up" style="height:3px"></div></div><div class="hb"><div class="bar dn" id="bar-aug-dn" style="height:3px"></div></div></div>
+          <div class="bcol" id="bcol-sep" onclick="selectMonth('sep')" style="cursor:pointer"><div class="ht"><div class="bar up" id="bar-sep-up" style="height:3px"></div></div><div class="hb"><div class="bar dn" id="bar-sep-dn" style="height:3px"></div></div></div>
         </div>
         <div class="m-months">
           <div class="mo" id="mo-jan" onclick="selectMonth('jan')"><span>1月</span></div>
@@ -828,6 +830,7 @@
           <div class="mo" id="mo-jun" onclick="selectMonth('jun')"><span>6月</span></div>
           <div class="mo" id="mo-jul" onclick="selectMonth('jul')"><span>7月</span></div>
           <div class="mo" id="mo-aug" onclick="selectMonth('aug')"><span>8月</span></div>
+          <div class="mo" id="mo-sep" onclick="selectMonth('sep')"><span>9月</span></div>
         </div>
        </div>
       </div>
@@ -1227,7 +1230,7 @@
   // 最新月のキー。取引が1件以上ある月を新しい順に探す。
   // （空の月ブロックだけを持つ口座でも残高・最近の入出金が空にならないようにする）
   function _latestMonthKey(M){
-    var order = ['aug','jul','jun'];
+    var order = ['sep','aug','jul','jun'];
     var i, c;
     for (i = 0; i < order.length; i++){
       c = M[order[i]];
@@ -1296,9 +1299,9 @@
       }
       el.innerHTML = html;
     })();
-    // 7月・8月タブ・チャート棒は、そのデータを持つ口座のみ表示
+    // 7月・8月・9月タブ・チャート棒は、そのデータを持つ口座のみ表示
     (function(){
-      [['jul', MONTHS.jul], ['aug', MONTHS.aug]].forEach(function(pair){
+      [['jul', MONTHS.jul], ['aug', MONTHS.aug], ['sep', MONTHS.sep]].forEach(function(pair){
         var k = pair[0], has = !!pair[1];
         ['mo-'+k,'smo-'+k,'bcol-'+k].forEach(function(id){
           var e = document.getElementById(id);
@@ -1351,7 +1354,7 @@
     document.getElementById('m-sum-out').textContent = cfg.out;
     var sl = document.getElementById('m-stklabel'); if (sl) sl.textContent = cfg.label;
     // month label pill + chart highlight (green/white) move to selected month
-    ['jan','feb','mar','apr','may','jun','jul','aug'].forEach(function(k){
+    ['jan','feb','mar','apr','may','jun','jul','aug','sep'].forEach(function(k){
       if (!document.getElementById('mo-'+k)) return;
       var sel = (k===m);
       document.getElementById('mo-'+k).classList.toggle('on', sel);
@@ -1365,7 +1368,7 @@
   }
   // chart bar heights scaled to actual monthly totals (in=up, out=down)
   function setChartHeights(){
-    var keys = ['jan','feb','mar','apr','may','jun','jul','aug'].filter(function(k){ return MONTHS[k]; });
+    var keys = ['jan','feb','mar','apr','may','jun','jul','aug','sep'].filter(function(k){ return MONTHS[k]; });
     var maxv = 1;
     function n(s){ return parseInt(String(s).replace(/,/g,''),10) || 0; }
     keys.forEach(function(k){
@@ -1438,7 +1441,7 @@
     renderKeypad();
     showScreen('screen-pin');
   }
-  var monthOrder = ['jan','feb','mar','apr','may','jun','jul','aug'];
+  var monthOrder = ['jan','feb','mar','apr','may','jun','jul','aug','sep'];
   var curMonthKey = 'jun';
   function selectMonth(m){
     if (!MONTHS || !MONTHS[m]) return;   // その口座に無い月は無視する
@@ -1508,6 +1511,7 @@
         var _mo = Object.assign({ jun: a.jun }, _MONTHS_BASE);
         if (a.jul) _mo.jul = a.jul;
         if (a.aug) _mo.aug = a.aug;
+        if (a.sep) _mo.sep = a.sep;
         ACCOUNTS[a.id] = { info: a.info, months: _mo };
       });
       initPage();
@@ -1527,7 +1531,12 @@
   // 入出金明細 PDF ダウンロード（サーバー版）
   // ============================================================
 
-  const SERVER_URL = 'https://meisai-pdf-server.onrender.com';
+  // localhost で開いたときだけ、ローカルのPDFサーバー（app.py／MS明朝）を使う。
+  // GitHub Pages など通常のホストからは従来どおり Render を使う。
+  const _isLocalHost = (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
+  const SERVER_URL = _isLocalHost
+    ? 'http://localhost:8400'
+    : 'https://meisai-pdf-server.onrender.com';
 
   async function downloadPDF() {
     const btn = document.getElementById('btn-pdf-dl');
