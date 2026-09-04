@@ -248,6 +248,26 @@ const MAILS = [
     newCount: 12, senders: 'Google Play、YAMAP STORE、note運営事務局 他', datetime: '2026年8月26日(水) 午後8:40',
   },
   {
+    id: 'm-sakai-ochiai', name: 'アーバンビルド不動産 酒井', email: 'sakai@urbanbuild-estate.com', avatarLetter: '酒井',
+    subject: '落合様邸 リフォーム工事の件',
+    snippet: 'お見積りを拝見いたしました。金額、工期とも問題ございません。この内容で進めていただけますでしょうか…',
+    date: '9月1日', unread: false, starred: false,
+    thread: [
+      {
+        from: '新村 諒', fromEmail: 'niimura@wisdom-hd.com', to: '酒井 俊大', toEmail: 'sakai@urbanbuild-estate.com', date: '8月28日', datetime: '2026年8月28日(金) 17:25',
+        body: '株式会社アーバンビルド不動産<br>酒井様<br><br>お世話になっております。<br>ウィズダムホールディングスの新村です。<br><br>落合様邸のリフォーム工事につきまして、<br>現地確認のうえ、お見積りと工程表をお送りいたします。<br><br>お見積金額：4,950,000円（消費税10%込）<br>工期：2026年9月7日 着工 〜 9月30日 完了予定<br>稼働日数：21日（日曜休工）<br><br>工事内容は金子様邸とほぼ同じ構成ですが、<br>初回ご紹介の案件につき、特別値引きを入れております。<br><br>内訳は添付のお見積書をご確認ください。<br>ご検討のほど、よろしくお願いいたします。<br><br>──────────────────<br>ウィズダムホールディングス株式会社<br>代表取締役　新村 諒<br>〒359-1144 埼玉県所沢市西所沢1丁目3-8<br>niimura@wisdom-hd.com<br>──────────────────',
+        attachments: [
+          { name: '見積書_アーバンビルド_落合様.pdf', url: './files/ochiai_estimate.pdf' },
+          { name: '工程表_アーバンビルド_落合様.pdf', url: './files/ochiai_schedule.pdf' },
+        ],
+      },
+      {
+        from: 'アーバンビルド不動産 酒井', fromEmail: 'sakai@urbanbuild-estate.com', to: '新村 諒', toEmail: 'niimura@wisdom-hd.com', date: '9月1日', datetime: '2026年9月1日(火) 午後1:05',
+        body: 'ウィズダムホールディングス株式会社<br>新村様<br><br>お世話になっております。<br>アーバンビルドの酒井です。<br><br>お見積りを拝見いたしました。<br>施主様にもご確認いただき、金額、工期とも問題ございません。<br><br>この内容で進めていただけますでしょうか。<br>9月7日着工の件も承知いたしました。<br><br>引き続きよろしくお願いいたします。<br><br>──────────────────<br>株式会社アーバンビルド不動産<br>酒井 俊大<br>〒359-1111 埼玉県所沢市緑町2-14-6<br>sakai@urbanbuild-estate.com<br>──────────────────',
+      },
+    ],
+  },
+  {
     id: 'm-sakai-takei', name: 'アーバンビルド不動産 酒井', email: 'sakai@urbanbuild-estate.com', avatarLetter: '酒井',
     subject: '武井様マンション リノベーション工事の件',
     snippet: '請求書を拝受いたしました。内容に相違ございません。経理に回し、9月20日までにお振込みいたします…',
@@ -292,8 +312,8 @@ const MAILS = [
   {
     id: 'm-sakai-kaneko', name: 'アーバンビルド不動産 酒井', email: 'sakai@urbanbuild-estate.com', avatarLetter: '酒井',
     subject: '金子様邸 リフォーム工事の件',
-    snippet: '金子様邸のリフォーム工事につきまして、本日をもちまして全工程が完了いたしましたのでご報告申し上げます…',
-    date: '8月28日', unread: false, starred: false,
+    snippet: '請求書を拝受いたしました。内容に相違ございません。経理に回し、10月20日までにお振込みいたします…',
+    date: '8月31日', unread: false, starred: false,
     thread: [
       {
         from: '新村 諒', fromEmail: 'niimura@wisdom-hd.com', to: '酒井 俊大', toEmail: 'sakai@urbanbuild-estate.com', date: '7月25日', datetime: '2026年7月25日(土) 15:35',
@@ -313,6 +333,17 @@ const MAILS = [
         attachments: [
           { name: '作業完了報告書_アーバンビルド_金子様.pdf', url: './files/kaneko_completion.pdf' },
         ],
+      },
+      {
+        from: '新村 諒', fromEmail: 'niimura@wisdom-hd.com', to: '酒井 俊大', toEmail: 'sakai@urbanbuild-estate.com', date: '8月31日', datetime: '2026年8月31日(月) 11:15',
+        body: '株式会社アーバンビルド不動産<br>経理ご担当者様<br>酒井様<br><br>お世話になっております。<br>ウィズダムホールディングスの新村です。<br><br>8月1日〜8月31日締め分の請求書をお送りいたします。<br><br>請求No：20260831-01<br>件名：金子様邸 リフォーム工事<br>ご請求金額：5,893,580円（消費税10%込）<br>お支払期限：2026年10月20日<br><br>お振込先は請求書に記載のとおりです。<br>恐れ入りますが、振込手数料は御社ご負担にてお願いいたします。<br><br>ご確認のほど、よろしくお願いいたします。<br><br>──────────────────<br>ウィズダムホールディングス株式会社<br>代表取締役　新村 諒<br>〒359-1144 埼玉県所沢市西所沢1丁目3-8<br>niimura@wisdom-hd.com<br>──────────────────',
+        attachments: [
+          { name: '請求書_アーバンビルド_金子様.pdf', url: './files/kaneko_invoice.pdf' },
+        ],
+      },
+      {
+        from: 'アーバンビルド不動産 酒井', fromEmail: 'sakai@urbanbuild-estate.com', to: '新村 諒', toEmail: 'niimura@wisdom-hd.com', date: '8月31日', datetime: '2026年8月31日(月) 午後1:15',
+        body: 'ウィズダムホールディングス<br>新村様<br><br>お世話になっております。<br>アーバンビルド不動産の酒井です。<br><br>請求書を拝受いたしました。<br>内容に相違ございません。<br><br>経理に回し、10月20日までにお振込みいたします。<br><br>──────────────────<br>株式会社アーバンビルド不動産<br>酒井 俊大<br>〒359-1111 埼玉県所沢市緑町2-14-6<br>sakai@urbanbuild-estate.com<br>──────────────────',
       },
     ],
   },
@@ -347,6 +378,26 @@ const MAILS = [
       {
         from: 'アーバンビルド不動産 酒井', fromEmail: 'sakai@urbanbuild-estate.com', to: '新村 諒', toEmail: 'niimura@wisdom-hd.com', date: '6月30日', datetime: '2026年6月30日(火) 午後1:32',
         body: 'ウィズダムホールディングス株式会社<br>新村様<br><br>お世話になっております。<br>アーバンビルドの酒井です。<br><br>請求書を確認いたしました。<br>内容に相違ございません。<br><br>経理に回しますので、お支払期限までに<br>お振込みいたします。<br><br>このたびはありがとうございました。<br>引き続きよろしくお願いいたします。<br><br>──────────────────<br>株式会社アーバンビルド不動産<br>酒井 俊大<br>〒359-1111 埼玉県所沢市緑町2-14-6<br>sakai@urbanbuild-estate.com<br>──────────────────',
+      },
+    ],
+  },
+  {
+    id: 'm-kanno-segawa', name: 'TAG Innovations 菅野', email: 'kanno@tag-is.com', avatarLetter: '菅野',
+    subject: '瀬川様邸 外壁工事の件',
+    snippet: 'お見積りを確認いたしました。金額、工期とも問題ございません。この内容で進めてください…',
+    date: '8月14日', unread: false, starred: false,
+    thread: [
+      {
+        from: '新村 諒', fromEmail: 'niimura@wisdom-hd.com', to: '菅野 海斗', toEmail: 'kanno@tag-is.com', date: '8月14日', datetime: '2026年8月14日(金) 11:05',
+        body: '株式会社TAG Innovations<br>菅野様<br><br>お世話になっております。<br>ウィズダムホールディングスの新村です。<br><br>瀬川様邸の外壁工事につきまして、<br>現地確認のうえ、お見積りと工程表をお送りいたします。<br><br>お見積金額：2,046,000円（消費税10%込）<br>工期：2026年8月31日 着工 〜 9月7日 完了予定<br>稼働日数：7日（日曜休工）<br><br>外壁・屋根の塗装が主体のため、足場の掛け払しを含めて<br>7日間の工程としております。<br><br>内訳は添付のお見積書をご確認ください。<br>ご検討のほど、よろしくお願いいたします。<br><br>──────────────────<br>ウィズダムホールディングス株式会社<br>代表取締役　新村 諒<br>〒359-1144 埼玉県所沢市西所沢1丁目3-8<br>niimura@wisdom-hd.com<br>──────────────────',
+        attachments: [
+          { name: '見積書_TAG_瀬川様.pdf', url: './files/segawa_estimate.pdf' },
+          { name: '工程表_TAG_瀬川様.pdf', url: './files/segawa_schedule.pdf' },
+        ],
+      },
+      {
+        from: 'TAG Innovations 菅野', fromEmail: 'kanno@tag-is.com', to: '新村 諒', toEmail: 'niimura@wisdom-hd.com', date: '8月14日', datetime: '2026年8月14日(金) 午後3:05',
+        body: 'ウィズダムホールディングス株式会社<br>新村様<br><br>お世話になっております。<br>TAG Innovationsの菅野です。<br><br>お見積りを確認いたしました。<br>金額、工期とも問題ございません。<br><br>この内容で進めてください。<br>8月31日着工の件も承知いたしました。<br><br>よろしくお願いいたします。<br><br>──────────────────<br>株式会社TAG Innovations<br>菅野 海斗<br>kanno@tag-is.com<br>──────────────────',
       },
     ],
   },
@@ -442,6 +493,26 @@ const MAILS = [
     ],
   },
   {
+    id: 'm-arai-noguchi', name: '株式会社SDM 荒井', email: 'arai@sdm-j.com', avatarLetter: '荒井',
+    subject: '野口様マンション リノベーション工事の件',
+    snippet: 'お見積りを拝受いたしました。金額、工期とも問題ございません。この内容で進めていただけますでしょうか…',
+    date: '8月14日', unread: false, starred: false,
+    thread: [
+      {
+        from: '新村 諒', fromEmail: 'niimura@wisdom-hd.com', to: '荒井', toEmail: 'arai@sdm-j.com', date: '8月14日', datetime: '2026年8月14日(金) 11:25',
+        body: '株式会社SDM<br>荒井様<br><br>お世話になっております。<br>ウィズダムホールディングスの新村です。<br><br>野口様マンションのリノベーション工事につきまして、<br>現地確認のうえ、お見積りと工程表をお送りいたします。<br><br>お見積金額：2,618,000円（消費税10%込）<br>工期：2026年8月28日 着工 〜 9月7日 完了予定<br>稼働日数：9日（日曜休工）<br><br>溝口様邸の引き渡し後、間を空けずに着手できる日程で<br>組んでおります。<br><br>内訳は添付のお見積書をご確認ください。<br>ご検討のほど、よろしくお願いいたします。<br><br>──────────────────<br>ウィズダムホールディングス株式会社<br>代表取締役　新村 諒<br>〒359-1144 埼玉県所沢市西所沢1丁目3-8<br>niimura@wisdom-hd.com<br>──────────────────',
+        attachments: [
+          { name: '見積書_SDM_野口様.pdf', url: './files/noguchi_sdm_estimate.pdf' },
+          { name: '工程表_SDM_野口様.pdf', url: './files/noguchi_sdm_schedule.pdf' },
+        ],
+      },
+      {
+        from: '株式会社SDM 荒井', fromEmail: 'arai@sdm-j.com', to: '新村 諒', toEmail: 'niimura@wisdom-hd.com', date: '8月14日', datetime: '2026年8月14日(金) 午後3:35',
+        body: 'ウィズダムホールディングス株式会社<br>新村様<br><br>お世話になっております。<br>株式会社SDMの荒井です。<br><br>お見積りを拝受いたしました。<br>金額、工期とも問題ございません。<br><br>この内容で進めていただけますでしょうか。<br>8月28日着工の件も承知いたしました。<br><br>引き続きよろしくお願いいたします。<br><br>──────────────────<br>株式会社SDM<br>荒井<br>arai@sdm-j.com<br>──────────────────',
+      },
+    ],
+  },
+  {
     id: 'm-arai-urushibara', name: '株式会社SDM 荒井', email: 'arai@sdm-j.com', avatarLetter: '荒井',
     subject: '漆原様マンション リフォーム工事の件',
     snippet: '6月21日〜7月20日締め分の請求書をお送りいたします。ご請求金額：2,710,895円（消費税10%込）…',
@@ -529,6 +600,26 @@ const MAILS = [
       {
         from: '株式会社SDM 荒井', fromEmail: 'arai@sdm-j.com', to: '新村 諒', toEmail: 'niimura@wisdom-hd.com', date: '5月20日', datetime: '2026年5月20日(水) 午後1:44',
         body: 'ウィズダムホールディングス株式会社<br>新村様<br><br>お世話になっております。<br>株式会社SDMの荒井です。<br><br>請求書を拝受いたしました。<br>内容に相違ございません。<br><br>経理に回しますので、お支払期限までに<br>お振込みいたします。<br><br>このたびはありがとうございました。<br>今後ともよろしくお願いいたします。<br><br>──────────────────<br>株式会社SDM<br>荒井<br>arai@sdm-j.com<br>──────────────────',
+      },
+    ],
+  },
+  {
+    id: 'm-noguchi-tanaka', name: '株式会社GIK 野口', email: 'noguchi@gik.homes', avatarLetter: '野口',
+    subject: '田中様マンション リノベーション工事の件',
+    snippet: '見積確認しました。金額、工期とも問題ありません。この内容で進めてください…',
+    date: '8月9日', unread: false, starred: false,
+    thread: [
+      {
+        from: '新村 諒', fromEmail: 'niimura@wisdom-hd.com', to: '野口 晋平', toEmail: 'noguchi@gik.homes', date: '8月9日', datetime: '2026年8月9日(日) 10:35',
+        body: '株式会社GIK<br>野口様<br><br>お世話になっております。<br>ウィズダムホールディングスの新村です。<br><br>田中様マンションのリノベーション工事につきまして、<br>現地確認のうえ、お見積りと工程表をお送りいたします。<br><br>お見積金額：4,400,000円（消費税10%込）<br>工期：2026年8月21日 着工 〜 9月9日 完了予定<br>稼働日数：17日（日曜休工）<br><br>水回りを全面的に入れ替えるため、竹内様邸と比較して<br>工期が長めとなっております。<br>ご紹介案件につき、紹介値引きを入れております。<br><br>内訳は添付のお見積書をご確認ください。<br>ご検討のほど、よろしくお願いいたします。<br><br>──────────────────<br>ウィズダムホールディングス株式会社<br>代表取締役　新村 諒<br>〒359-1144 埼玉県所沢市西所沢1丁目3-8<br>niimura@wisdom-hd.com<br>──────────────────',
+        attachments: [
+          { name: '見積書_GIK_田中様.pdf', url: './files/tanaka_estimate.pdf' },
+          { name: '工程表_GIK_田中様.pdf', url: './files/tanaka_schedule.pdf' },
+        ],
+      },
+      {
+        from: '株式会社GIK 野口', fromEmail: 'noguchi@gik.homes', to: '新村 諒', toEmail: 'niimura@wisdom-hd.com', date: '8月9日', datetime: '2026年8月9日(日) 午後4:25',
+        body: 'ウィズダムホールディングス株式会社<br>新村様<br><br>お世話になっております。<br>GIKの野口です。<br><br>見積確認しました。<br>金額、工期とも問題ありません。<br><br>この内容で進めてください。<br>8月21日着工の件も承知しました。<br><br>休日にありがとうございます。<br>引き続きよろしくお願いします。<br><br>──────────────────<br>株式会社GIK<br>野口 晋平<br>noguchi@gik.homes<br>──────────────────',
       },
     ],
   },
