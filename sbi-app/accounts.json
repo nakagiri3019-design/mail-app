@@ -1583,9 +1583,84 @@
     },
     "sep": {
       "label": "2026年9月",
-      "in": "799,970",
-      "out": "2,610,650",
+      "in": "801,020",
+      "out": "2,651,828",
       "data": [
+        {
+          "t": "day",
+          "v": "23日"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット",
+          "blue": true,
+          "amt": "-9,643",
+          "pos": false,
+          "bal": "382,657"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット",
+          "blue": true,
+          "amt": "-23,045",
+          "pos": false,
+          "bal": "392,300"
+        },
+        {
+          "t": "day",
+          "v": "22日"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット　９１６４２９",
+          "blue": true,
+          "amt": "-2,200",
+          "pos": false,
+          "bal": "415,345"
+        },
+        {
+          "t": "day",
+          "v": "21日"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット　７４５６９０",
+          "blue": true,
+          "amt": "-3,040",
+          "pos": false,
+          "bal": "417,545"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "取消＊デビット　６５２７７６",
+          "blue": true,
+          "amt": "+1,050",
+          "pos": true,
+          "bal": "420,585"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット　６６２３６０",
+          "blue": true,
+          "amt": "-2,200",
+          "pos": false,
+          "bal": "419,535"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット　６５２７７６",
+          "blue": true,
+          "amt": "-1,050",
+          "pos": false,
+          "bal": "421,735"
+        },
         {
           "t": "day",
           "v": "18日"
