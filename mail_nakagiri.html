@@ -216,7 +216,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
 
 /* ===== 作成画面（返信・全員に返信・転送・新規作成）=====
    寸法は幅360pxの Gmail 実機スクショ基準。右側のアイコンは右端からの距離で置くので幅が変わっても右寄せのまま。 */
-#cmp { position: fixed; top: 0; left: 0; right: 0; height: 100%; z-index: 100; background: #FBE8D2; color: #3B2A12; display: none; flex-direction: column; }
+#cmp { position: fixed; top: 0; left: 0; right: 0; height: 100%; z-index: 100; background: #FFFFFF; color: #3B2A12; display: none; flex-direction: column; }
 #cmp.open { display: flex; }
 .cmp-bar { position: relative; flex: 0 0 auto; height: 54px; }
 .cmp-bar-btn { position: absolute; top: 7px; width: 40px; height: 40px; padding: 0; background: none; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -260,10 +260,10 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
 .cmp-quote-wrap { font-size: 15px; line-height: 1.55; color: #6B5A45; overflow-wrap: anywhere; }
 .cmp-quote { margin: 8px 0 0; padding-left: 10px; border-left: 1px solid #C9BFB3; }
 .cmp-atts { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
-.cmp-att { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 4px 0 12px; border: 1px solid #D8CFC4; border-radius: 8px; background: #FFFCF5; }
+.cmp-att { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 4px 0 12px; border: 1px solid #D8CFC4; border-radius: 8px; background: #FFFFFF; }
 .cmp-att-name { flex: 1; min-width: 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cmp-att-x { flex: 0 0 36px; width: 36px; height: 36px; padding: 0; background: none; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.cmp-menu { position: fixed; z-index: 110; display: none; min-width: 176px; padding: 6px 0; background: #FFFCF5; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
+.cmp-menu { position: fixed; z-index: 110; display: none; min-width: 176px; padding: 6px 0; background: #FFFFFF; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
 .cmp-menu.open { display: block; }
 .cmp-menu button { display: flex; align-items: center; gap: 16px; width: 100%; height: 48px; padding: 0 20px 0 16px; background: none; border: none; font-family: inherit; font-size: 16px; color: #3B2A12; text-align: left; cursor: pointer; }
 .cmp-menu button:active { background: rgba(0,0,0,0.06); }
@@ -2030,6 +2030,7 @@ if ('serviceWorker' in navigator) {
   let st = null;        // { mode: 'new'|'reply'|'replyAll'|'forward', mail, msg, to, cc, subject, attachments, ccOpen, quoteOpen }
   let menuOwner = null;
   let snackTimer = null;
+  let prevThemeColor = null;  // 作成画面を開いている間だけステータスバーを白にし、閉じたら戻す
 
   const ICON = {
     reply: '<svg width="22" height="22" viewBox="0 0 24 24" fill="#452E00"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>',
@@ -2216,6 +2217,8 @@ if ('serviceWorker' in navigator) {
     if (!root.classList.contains('open')) {
       root.classList.add('open');
       root.setAttribute('aria-hidden', 'false');
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) { prevThemeColor = meta.getAttribute('content'); meta.setAttribute('content', '#FFFFFF'); }
       history.pushState({ cmp: true }, '');   // Android の戻る操作で閉じる
     }
     grow(subjectEl);
@@ -2225,6 +2228,9 @@ if ('serviceWorker' in navigator) {
   function hide() {
     root.classList.remove('open');
     root.setAttribute('aria-hidden', 'true');
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta && prevThemeColor !== null) meta.setAttribute('content', prevThemeColor);
+    prevThemeColor = null;
     root.style.top = '';
     root.style.height = '';
     closeMenu();
