@@ -126,6 +126,65 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
    右端の日付の代わりに新着件数を出す。 */
 .summary-count { font-size: 12px; font-weight: 700; color: #1B7A3E; white-space: nowrap; flex-shrink: 0; align-self: center; padding-left: 6px; }
 .mail-row.summary-row { cursor: default; }
+
+/* ===== 作成画面（返信・全員に返信・転送・新規作成）=====
+   寸法は幅360pxの Gmail 実機スクショ基準。右側のアイコンは右端からの距離で置くので幅が変わっても右寄せのまま。 */
+#cmp { position: fixed; top: 0; left: 0; right: 0; height: 100%; z-index: 100; background: #FBE8D2; color: #3B2A12; display: none; flex-direction: column; }
+#cmp.open { display: flex; }
+.cmp-bar { position: relative; flex: 0 0 auto; height: 54px; }
+.cmp-bar-btn { position: absolute; top: 7px; width: 40px; height: 40px; padding: 0; background: none; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.cmp-bar-btn:active, .cmp-mode:active, .cmp-drop:active, .cmp-caret:active, .cmp-att-x:active { background: rgba(0,0,0,0.06); }
+.cmp-back { left: 4px; }    /* 中心 24px */
+.cmp-clip { right: 86px; }  /* 中心 右端から106px（360pxで254px） */
+.cmp-send { right: 44px; }  /* 中心 右端から64px（296px） */
+.cmp-more { right: 3px; }   /* 中心 右端から23px（337px） */
+.cmp-scroll { flex: 1 1 auto; overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.cmp-row { position: relative; border-bottom: 1px solid rgba(0,0,0,0.08); }
+.cmp-row[hidden] { display: none; }
+.cmp-label { position: absolute; left: 14px; font-size: 16px; line-height: 22px; color: #9A8574; }
+.cmp-caret { position: absolute; right: 5px; width: 40px; height: 40px; padding: 0; background: none; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; } /* 中心 右端から25px（335px） */
+.cmp-from { height: 48px; }
+.cmp-from .cmp-label { top: 13px; }
+.cmp-from .cmp-caret { top: 4px; }
+.cmp-from-value { position: absolute; left: 63px; right: 50px; top: 13px; font-size: 16px; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* 宛先・Cc・Bcc 行（高さは区切り線込み）。チップ(31px)がある時は上下9pxで50px、空の時は上下7pxで46px */
+.cmp-recip { --cmp-pad: 7px; }
+.cmp-recip.has-chips { --cmp-pad: 9px; }
+.cmp-recip .cmp-label { top: calc(var(--cmp-pad) + 4.5px); }
+.cmp-recip .cmp-caret, .cmp-mode, .cmp-drop { top: calc(var(--cmp-pad) - 4.5px); }
+.cmp-mode { position: absolute; left: 4px; width: 40px; height: 40px; padding: 0; background: none; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; } /* 中心 24px */
+.cmp-drop { position: absolute; left: 36px; width: 20px; height: 40px; padding: 0; background: none; border: none; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; } /* 中心 46px */
+.cmp-chips { margin: 0 50px 0 63px; padding: var(--cmp-pad) 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
+.cmp-chip { display: inline-flex; align-items: center; gap: 8px; height: 31px; max-width: 100%; padding: 0 12px 0 0.5px; border: 1px solid #C9BFB3; border-radius: 16px; }
+.cmp-chip-av { flex: 0 0 28px; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 600; }
+.cmp-chip-name { min-width: 0; font-size: 16px; line-height: 29px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* 入力欄は長い名前のチップの後ろでも改行させない（入力中だけ幅を確保） */
+.cmp-input { flex: 1 1 0; min-width: 0; height: 31px; padding: 0; border: none; outline: none; background: transparent; font-family: inherit; font-size: 16px; color: #3B2A12; }
+.cmp-subject textarea, .cmp-body textarea { display: block; width: 100%; border: none; outline: none; background: transparent; resize: none; overflow: hidden; font-family: inherit; font-size: 16px; line-height: 22px; color: #3B2A12; }
+.cmp-subject textarea { padding: 15.5px 14px; } /* 1行で区切り線込み54px */
+.cmp-input:focus { min-width: 60px; }
+#cmp textarea, #cmp input { caret-color: #875400; }
+.cmp-recip.has-chips .cmp-input:not(:focus) { margin-left: -6px; } /* チップが列幅いっぱいでも gap 分で改行しない */
+#cmp textarea::placeholder, #cmp input::placeholder { color: #ACA39A; opacity: 1; }
+.cmp-body { padding: 16px 14px 32px; }
+.cmp-body textarea { min-height: 22px; padding: 0; }
+.cmp-body textarea.has-dots { margin-bottom: 22px; } /* 「•••」は本文欄の上端から約60px下 */
+.cmp-dots { display: block; padding: 0; background: none; border: none; font-family: inherit; font-size: 16px; line-height: 20px; letter-spacing: 1px; color: #8E8780; cursor: pointer; }
+.cmp-quote-wrap { font-size: 15px; line-height: 1.55; color: #6B5A45; overflow-wrap: anywhere; }
+.cmp-quote { margin: 8px 0 0; padding-left: 10px; border-left: 1px solid #C9BFB3; }
+.cmp-atts { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+.cmp-att { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 4px 0 12px; border: 1px solid #D8CFC4; border-radius: 8px; background: #FFFCF5; }
+.cmp-att-name { flex: 1; min-width: 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmp-att-x { flex: 0 0 36px; width: 36px; height: 36px; padding: 0; background: none; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.cmp-menu { position: fixed; z-index: 110; display: none; min-width: 176px; padding: 6px 0; background: #FFFCF5; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
+.cmp-menu.open { display: block; }
+.cmp-menu button { display: flex; align-items: center; gap: 16px; width: 100%; height: 48px; padding: 0 20px 0 16px; background: none; border: none; font-family: inherit; font-size: 16px; color: #3B2A12; text-align: left; cursor: pointer; }
+.cmp-menu button:active { background: rgba(0,0,0,0.06); }
+.cmp-snackbar { position: fixed; left: 12px; right: 12px; bottom: 16px; z-index: 120; padding: 14px 16px; background: #323232; color: #fff; font-size: 14px; border-radius: 6px; box-shadow: 0 3px 10px rgba(0,0,0,0.25); opacity: 0; transform: translateY(12px); transition: opacity .2s, transform .2s; pointer-events: none; }
+.cmp-snackbar.show { opacity: 1; transform: none; }
+/* 詳細ボックスのアドレス：押したときだけ薄く反応（レイアウトは変えない） */
+.sender-detail-panel .dt-addr { cursor: pointer; border-radius: 3px; transition: background-color .12s; }
+.sender-detail-panel .dt-addr:active { background: rgba(0,0,0,0.08); }
 </style>
 </head>
 <body>
@@ -172,7 +231,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
 
   <div class="mail-list" id="mail-list"></div>
 
-  <button class="compose-fab" onclick="alert('新規メールの作成（デモ）')">
+  <button class="compose-fab" onclick="cmpNew()">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3"><path d="M12 20h9" stroke-linecap="round"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span>作成</span>
   </button>
@@ -204,11 +263,11 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
   </div>
 
   <div class="detail-actions">
-    <button class="detail-action-btn">
+    <button class="detail-action-btn" onclick="cmpLatest('reply')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 00-4-4H4"/></svg>
       返信
     </button>
-    <button class="detail-action-btn">
+    <button class="detail-action-btn" onclick="cmpLatest('forward')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 014-4h12"/></svg>
       転送
     </button>
@@ -228,6 +287,43 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
 </div>
 
 </div>
+
+<!-- 作成画面（返信・全員に返信・転送・新規作成）。送信はデモで、どこにも保存しない -->
+<div id="cmp" aria-hidden="true">
+  <div class="cmp-bar">
+    <button class="cmp-bar-btn cmp-back" onclick="cmpClose()" aria-label="戻る">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#452E00" stroke-width="2.2"><path d="M19 12H5" stroke-linecap="round"/><path d="M11 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="cmp-bar-btn cmp-clip" aria-label="ファイルを添付">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#452E00"><path transform="rotate(45 12 12)" d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg>
+    </button>
+    <button class="cmp-bar-btn cmp-send" onclick="cmpSend()" aria-label="送信">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="#785A24"><path d="M4.01 6.03l7.51 3.22-7.52-1 .01-2.22m7.5 8.72L4 17.97v-2.22l7.51-1M2.01 3L2 10l15 2-15 2 .01 7L23 12 2.01 3z"/></svg>
+    </button>
+    <button class="cmp-bar-btn cmp-more" aria-label="その他">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#452E00"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+    </button>
+  </div>
+  <div class="cmp-scroll" id="cmp-scroll">
+    <div class="cmp-row cmp-from">
+      <span class="cmp-label">From</span>
+      <span class="cmp-from-value" id="cmp-from"></span>
+      <button class="cmp-caret" aria-label="差出人">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="#452E00"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>
+      </button>
+    </div>
+    <div class="cmp-row cmp-recip" id="cmp-to-row"></div>
+    <div class="cmp-row cmp-recip" id="cmp-cc-row" hidden></div>
+    <div class="cmp-row cmp-recip" id="cmp-bcc-row" hidden></div>
+    <div class="cmp-row cmp-subject"><textarea id="cmp-subject" rows="1" placeholder="件名" aria-label="件名"></textarea></div>
+    <div class="cmp-body">
+      <textarea id="cmp-body" rows="1" placeholder="メールを作成" aria-label="本文"></textarea>
+      <div id="cmp-extra"></div>
+    </div>
+  </div>
+</div>
+<div class="cmp-menu" id="cmp-menu" role="menu"></div>
+<div class="cmp-snackbar" id="cmp-snackbar" role="status"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
@@ -877,7 +973,7 @@ function renderToLine(uid) {
 
 // 詳細ボックスの「名前・アドレス」。名前がない（またはアドレスと同じ）ときはアドレスだけ出す
 function renderPanelAddress(name, email) {
-  const addr = email ? `<span class="dt-addr">${email}</span>` : '';
+  const addr = email ? `<span class="dt-addr" data-addr="${email}" data-name="${String(name || '').replace(/"/g, '&quot;')}">${email}</span>` : '';
   if (!name || name === email) return addr;
   if (!addr) return `<span class="dt-name">${name}</span>`;
   return `<span class="dt-name">${name}</span>・${addr}`;
@@ -897,12 +993,12 @@ function renderToPanel(uid, from, fromEmail, toName, toEmail, datetime) {
   `;
 }
 
-function renderSenderCardIcons() {
+function renderSenderCardIcons(idx) {
   return `
     <div class="sender-card-icons">
       <button class="mini-icon-btn" aria-label="リアクション" onclick="alert('リアクションを送信（デモ）')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B5A45" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button>
-      <button class="mini-icon-btn" aria-label="返信" onclick="alert('返信（デモ）')">↩</button>
-      <button class="mini-icon-btn" aria-label="その他" onclick="alert('その他のオプション（デモ）')">⋮</button>
+      <button class="mini-icon-btn" aria-label="返信" onclick="cmpReply(${idx})">↩</button>
+      <button class="mini-icon-btn" aria-label="その他" onclick="cmpMsgMenu(event, ${idx})">⋮</button>
     </div>
   `;
 }
@@ -1119,7 +1215,7 @@ function renderThreadCard(mail, msg, idx, expanded) {
           <div class="detail-sender-name">${msg.from} <span class="thread-date-inline">${msg.date}</span></div>
           ${renderToLine(uid)}
         </div>
-        ${renderSenderCardIcons()}
+        ${renderSenderCardIcons(idx)}
       </div>
       ${renderToPanel(uid, msg.from, msg.fromEmail, msg.to, msg.toEmail, msg.datetime)}
       <div class="detail-body-text">${msg.body}${(msg.attachments && msg.attachments.length) ? `<div class="attachment-grid">${msg.attachments.map(renderAttachment).join('')}</div>` : ''}</div>
@@ -1173,6 +1269,7 @@ function renderDetailBody(mail) {
 function openDetail(id) {
   const mail = MAILS.find((x) => x.id === id);
   if (!mail) return;
+  window.currentDetailMail = mail;  // 作成画面（返信・転送）の対象
   mail.unread = false;
 
   if (!mail._messages) {
@@ -1226,6 +1323,331 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+</script>
+<script>
+// ===== 作成画面（返信・全員に返信・転送・新規作成）=====
+// 送信はデモ。画面を閉じて「送信しました」を出すだけで、どこにも保存しない。
+// MAILS 等のデータは読むだけで書き換えない。対象メールは openDetail が window.currentDetailMail に残す。
+(function () {
+  const root = document.getElementById('cmp');
+  const scrollEl = document.getElementById('cmp-scroll');
+  const subjectEl = document.getElementById('cmp-subject');
+  const bodyEl = document.getElementById('cmp-body');
+  const extraEl = document.getElementById('cmp-extra');
+  const menu = document.getElementById('cmp-menu');
+  const snackbar = document.getElementById('cmp-snackbar');
+  let st = null;        // { mode: 'new'|'reply'|'replyAll'|'forward', mail, msg, to, cc, subject, attachments, ccOpen, quoteOpen }
+  let menuOwner = null;
+  let snackTimer = null;
+
+  const ICON = {
+    reply: '<svg width="22" height="22" viewBox="0 0 24 24" fill="#452E00"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>',
+    replyAll: '<svg width="22" height="22" viewBox="0 0 24 24" fill="#452E00"><path d="M7 8V5l-7 7 7 7v-3l-4-4 4-4zm6 1V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>',
+    forward: '<svg width="22" height="22" viewBox="0 0 24 24" fill="#452E00"><path transform="translate(24 0) scale(-1 1)" d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>',
+    drop: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#452E00"><path d="M7 10l5 5 5-5z"/></svg>',
+    caret: '<svg width="24" height="24" viewBox="0 0 24 24" fill="#452E00"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>',
+    x: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#452E00"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',
+    pdf: '<svg width="22" height="22" viewBox="0 0 24 24" style="flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="3" fill="#D93025"/><text x="12" y="16" font-size="8.5" font-weight="700" fill="#fff" text-anchor="middle" font-family="Arial, sans-serif">PDF</text></svg>',
+  };
+  const MODE_LABEL = { reply: '返信', replyAll: '全員に返信', forward: '転送' };
+
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const same = (a, b) => String(a || '').trim().toLowerCase() === String(b || '').trim().toLowerCase();
+  const isMe = (r) => same(r.email, MY_EMAIL);
+  const person = (r) => (r.name ? `${r.name} <${r.email}>` : r.email);
+
+  // 宛先は「名前 + アドレス」1件が基本。カンマ区切りの複数や {name,email} 配列、cc / replyTo 項目にも対応しておく
+  function parseList(names, emails) {
+    if (Array.isArray(names)) {
+      return names.map((x) => (typeof x === 'string' ? { name: '', email: x } : { name: x.name || '', email: x.email || '' })).filter((r) => r.email);
+    }
+    if (emails == null && /@/.test(names || '')) { emails = names; names = ''; }
+    const es = String(emails || '').split(/[,;]/).map((s) => s.trim()).filter(Boolean);
+    const ns = es.length > 1 ? String(names || '').split(/[,、]/).map((s) => s.trim()) : [String(names || '').trim()];
+    return es.map((email, i) => ({ name: ns[i] || '', email }));
+  }
+  function uniq(list) {
+    const seen = new Set();
+    return list.filter((r) => {
+      const k = String(r.email || '').toLowerCase();
+      if (!k || seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  }
+  const senderOf = (m) => ({ name: m.from || '', email: m.fromEmail || '' });
+  const toOf = (m) => parseList(m.toList || m.to, m.toEmail);
+  const ccOf = (m) => (m.cc || m.ccEmail ? parseList(m.cc, m.ccEmail) : []);
+
+  // 返信先：返信先(replyTo)があればそこ、自分が送ったメールなら元の宛先、それ以外は差出人
+  function replyTargets(m) {
+    if (m.replyTo || m.replyToEmail) return parseList(m.replyTo, m.replyToEmail);
+    if (isMe(senderOf(m))) return toOf(m).filter((r) => !isMe(r));
+    return [senderOf(m)];
+  }
+  // 全員に返信の CC：差出人・宛先・CC から自分と返信先を除いた人
+  function replyAllCc(m) {
+    const t = replyTargets(m);
+    return uniq([senderOf(m), ...toOf(m), ...ccOf(m)]).filter((r) => !isMe(r) && !t.some((x) => same(x.email, r.email)));
+  }
+  // 自分以外の相手が2人以上いるメールだけ「全員に返信」を出す
+  const canReplyAll = (m) => uniq([...replyTargets(m), ...replyAllCc(m)]).length > 1;
+
+  function prefixed(prefix, subject) {
+    const s = String(subject || '');
+    const re = prefix === 'Re' ? /^\s*re\s*[:：]/i : /^\s*(fwd|fw)\s*[:：]/i;
+    return re.test(s) ? s : `${prefix}: ${s}`;
+  }
+  // 引用ヘッダーの日時は「2026年9月14日(月) 16:33」の形にそろえる
+  function gmailDate(dt) {
+    const m = String(dt || '').match(/(\d{4})年(\d+)月(\d+)日(?:\([^)]*\))?\s*(午前|午後)?\s*(\d+):(\d+)/);
+    if (!m) return String(dt || '');
+    let h = parseInt(m[5], 10);
+    if (m[4] === '午後' && h < 12) h += 12;
+    if (m[4] === '午前' && h === 12) h = 0;
+    const wd = '日月火水木金土'[new Date(+m[1], +m[2] - 1, +m[3]).getDay()];
+    return `${m[1]}年${+m[2]}月${+m[3]}日(${wd}) ${h}:${m[6]}`;
+  }
+
+  // 返信・転送の中身を作り直す（本文に入力した文字は残す）
+  function build(mode) {
+    const m = st.msg;
+    st.mode = mode;
+    if (mode === 'forward') {
+      st.to = [];
+      st.cc = [];
+      st.subject = prefixed('Fwd', st.mail.subject);
+      st.attachments = (m.attachments || []).map((a) => a.name);
+    } else {
+      st.to = replyTargets(m);
+      st.cc = mode === 'replyAll' ? replyAllCc(m) : [];
+      st.subject = prefixed('Re', st.mail.subject);
+      st.attachments = [];
+    }
+    st.ccOpen = st.cc.length > 0;
+    st.quoteOpen = false;
+  }
+
+  function chip(r) {
+    const label = r.name || String(r.email).split('@')[0];
+    return `<span class="cmp-chip" title="${esc(r.email)}"><span class="cmp-chip-av" style="background:${colorFor(label)}">${esc(label.trim().charAt(0))}</span><span class="cmp-chip-name">${esc(label)}</span></span>`;
+  }
+  function recipRow(kind, list) {
+    let lead;
+    if (kind !== 'to') lead = `<span class="cmp-label">${kind === 'cc' ? 'Cc' : 'Bcc'}</span>`;
+    else if (st.mode === 'new') lead = '<span class="cmp-label">宛先</span>';
+    else lead = `<button class="cmp-mode" data-cmp="mode" aria-label="${MODE_LABEL[st.mode]}">${ICON[st.mode]}</button><button class="cmp-drop" data-cmp="mode" aria-label="返信の種類を切り替え">${ICON.drop}</button>`;
+    const caret = kind === 'to' ? `<button class="cmp-caret" data-cmp="ccbcc" aria-label="Cc / Bcc">${ICON.caret}</button>` : '';
+    const aria = kind === 'to' ? '宛先' : kind === 'cc' ? 'Cc' : 'Bcc';
+    return `${lead}<div class="cmp-chips">${list.map(chip).join('')}<input class="cmp-input" type="email" inputmode="email" autocomplete="off" aria-label="${aria}"></div>${caret}`;
+  }
+
+  function render() {
+    document.getElementById('cmp-from').textContent = MY_EMAIL;
+    const lists = { to: st.to, cc: st.cc, bcc: [] };
+    ['to', 'cc', 'bcc'].forEach((k) => {
+      const row = document.getElementById(`cmp-${k}-row`);
+      row.hidden = k !== 'to' && !st.ccOpen;
+      row.classList.toggle('has-chips', lists[k].length > 0);
+      row.innerHTML = recipRow(k, lists[k]);
+    });
+    subjectEl.value = st.subject;
+    renderExtra();
+    grow(subjectEl);
+    grow(bodyEl);
+  }
+
+  function renderExtra() {
+    if (st.mode === 'new') {
+      bodyEl.classList.remove('has-dots');
+      extraEl.innerHTML = '';
+      return;
+    }
+    bodyEl.classList.add('has-dots');
+    const m = st.msg;
+    let quote = '';
+    if (st.quoteOpen && st.mode === 'forward') {
+      const cc = ccOf(m);
+      quote = `<div class="cmp-quote-wrap">---------- Forwarded message ---------<br>`
+        + `From: ${esc(person(senderOf(m)))}<br>`
+        + `Date: ${esc(gmailDate(m.datetime || m.date))}<br>`
+        + `Subject: ${esc(st.mail.subject)}<br>`
+        + `To: ${esc(toOf(m).map(person).join(', '))}<br>`
+        + (cc.length ? `Cc: ${esc(cc.map(person).join(', '))}<br>` : '')
+        + `<br>${m.body || ''}</div>`;
+    } else if (st.quoteOpen) {
+      quote = `<div class="cmp-quote-wrap"><div>${esc(gmailDate(m.datetime || m.date))} ${esc(person(senderOf(m)))}:</div>`
+        + `<blockquote class="cmp-quote">${m.body || ''}</blockquote></div>`;
+    }
+    const atts = st.attachments.length
+      ? `<div class="cmp-atts">${st.attachments.map((n, i) => `<div class="cmp-att">${ICON.pdf}<span class="cmp-att-name">${esc(n)}</span><button class="cmp-att-x" data-cmp="att-x" data-i="${i}" aria-label="添付を外す">${ICON.x}</button></div>`).join('')}</div>`
+      : '';
+    extraEl.innerHTML = (st.quoteOpen ? '' : '<button class="cmp-dots" data-cmp="dots" aria-label="引用部分を表示">•••</button>') + quote + atts;
+  }
+
+  function grow(t) {
+    t.style.height = 'auto';
+    t.style.height = t.scrollHeight + 'px';
+  }
+
+  // キーボードが出たら表示領域(visualViewport)に合わせて縮め、入力中の行が隠れないようにする
+  function keepVisible(el) {
+    const r = el.getBoundingClientRect();
+    const s = scrollEl.getBoundingClientRect();
+    // 本文は入力位置が末尾のときだけ下端まで送る（途中を編集中は動かさない）
+    if (r.bottom > s.bottom - 8 && (el !== bodyEl || el.selectionEnd >= el.value.length)) {
+      scrollEl.scrollTop += r.bottom - s.bottom + 8;
+    } else if (r.top < s.top) {
+      scrollEl.scrollTop -= s.top - r.top + 8;
+    }
+  }
+  function fitViewport() {
+    const vv = window.visualViewport;
+    if (!vv || !root.classList.contains('open')) return;
+    root.style.top = vv.offsetTop + 'px';
+    root.style.height = vv.height + 'px';
+    const a = document.activeElement;
+    if (a && root.contains(a) && /^(TEXTAREA|INPUT)$/.test(a.tagName)) keepVisible(a);
+  }
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', fitViewport);
+    window.visualViewport.addEventListener('scroll', fitViewport);
+  }
+  window.addEventListener('resize', fitViewport);
+  root.addEventListener('focusin', () => setTimeout(fitViewport, 300));
+
+  function open(state) {
+    st = state;
+    closeMenu();
+    bodyEl.value = '';
+    render();
+    scrollEl.scrollTop = 0;
+    if (!root.classList.contains('open')) {
+      root.classList.add('open');
+      root.setAttribute('aria-hidden', 'false');
+      history.pushState({ cmp: true }, '');   // Android の戻る操作で閉じる
+    }
+    grow(subjectEl);
+    grow(bodyEl);
+    fitViewport();
+  }
+  function hide() {
+    root.classList.remove('open');
+    root.setAttribute('aria-hidden', 'true');
+    root.style.top = '';
+    root.style.height = '';
+    closeMenu();
+    if (document.activeElement && root.contains(document.activeElement)) document.activeElement.blur();
+    st = null;
+  }
+  window.addEventListener('popstate', () => { if (root.classList.contains('open')) hide(); });
+
+  function showSnackbar(text) {
+    snackbar.textContent = text;
+    snackbar.classList.add('show');
+    clearTimeout(snackTimer);
+    snackTimer = setTimeout(() => snackbar.classList.remove('show'), 3000);
+  }
+
+  function showMenu(anchor, modes, onPick, alignLeft) {
+    menu.innerHTML = modes.map((k) => `<button role="menuitem" data-mode="${k}">${ICON[k]}<span>${MODE_LABEL[k]}</span></button>`).join('');
+    menu.classList.add('open');
+    const r = anchor.getBoundingClientRect();
+    const vw = document.documentElement.clientWidth;
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const mw = menu.offsetWidth, mh = menu.offsetHeight;
+    let left = alignLeft ? r.left : r.right - mw;
+    left = Math.max(8, Math.min(left, vw - mw - 8));
+    let top = r.bottom + 4;
+    if (top + mh > vh - 8) top = Math.max(8, r.top - mh - 4);
+    menu.style.left = left + 'px';
+    menu.style.top = top + 'px';
+    menuOwner = anchor;
+    menu.onclick = (e) => {
+      const b = e.target.closest('[data-mode]');
+      if (!b) return;
+      closeMenu();
+      onPick(b.getAttribute('data-mode'));
+    };
+  }
+  function closeMenu() {
+    menu.classList.remove('open');
+    menuOwner = null;
+  }
+  document.addEventListener('click', (e) => {
+    if (!menu.classList.contains('open')) return;
+    if (menu.contains(e.target) || (menuOwner && menuOwner.contains(e.target))) return;
+    closeMenu();
+  }, true);
+  const modesFor = (m) => (canReplyAll(m) ? ['reply', 'replyAll', 'forward'] : ['reply', 'forward']);
+
+  root.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-cmp]');
+    if (!t) {
+      const chips = e.target.closest('.cmp-chips');
+      if (chips) chips.querySelector('.cmp-input').focus();
+      return;
+    }
+    const k = t.getAttribute('data-cmp');
+    if (k === 'mode') {
+      if (menu.classList.contains('open')) { closeMenu(); return; }
+      showMenu(root.querySelector('.cmp-mode'), modesFor(st.msg), (mode) => { build(mode); render(); }, true);
+    } else if (k === 'ccbcc') {
+      st.ccOpen = !st.ccOpen;
+      document.getElementById('cmp-cc-row').hidden = !st.ccOpen;
+      document.getElementById('cmp-bcc-row').hidden = !st.ccOpen;
+    } else if (k === 'dots') {
+      st.quoteOpen = true;
+      renderExtra();
+    } else if (k === 'att-x') {
+      st.attachments.splice(Number(t.getAttribute('data-i')), 1);
+      renderExtra();
+    }
+  });
+  subjectEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') e.preventDefault(); });
+  [subjectEl, bodyEl].forEach((t) => t.addEventListener('input', () => { grow(t); keepVisible(t); }));
+
+  // ---- 開き方 ----
+  function openFor(mode, idx) {
+    const mail = window.currentDetailMail;
+    if (!mail || !mail._messages || !mail._messages.length) return;
+    const msgs = mail._messages;
+    const msg = msgs[idx == null ? msgs.length - 1 : idx];
+    st = { mail, msg };
+    build(mode === 'replyAll' && !canReplyAll(msg) ? 'reply' : mode);
+    open(st);
+  }
+  window.cmpReply = (idx) => openFor('reply', idx);            // 各メールの ↩
+  window.cmpLatest = (mode) => openFor(mode);                  // 画面下部の「返信」「転送」＝最新のメール
+  window.cmpMsgMenu = function (ev, idx) {                     // 各メールの ⋮
+    ev.stopPropagation();
+    const mail = window.currentDetailMail;
+    if (!mail || !mail._messages) return;
+    const btn = ev.currentTarget;
+    if (menu.classList.contains('open') && menuOwner === btn) { closeMenu(); return; }
+    showMenu(btn, modesFor(mail._messages[idx]), (mode) => openFor(mode, idx), false);
+  };
+  window.cmpNew = () => open({ mode: 'new', mail: null, msg: null, to: [], cc: [], subject: '', attachments: [], ccOpen: false, quoteOpen: false });  // 受信トレイの「作成」
+  window.cmpNewTo = (name, email) => open({ mode: 'new', mail: null, msg: null, to: [{ name: name || '', email }], cc: [], subject: '', attachments: [], ccOpen: false, quoteOpen: false });
+  window.cmpClose = function () {
+    if (history.state && history.state.cmp) history.back();
+    else hide();
+  };
+  window.cmpSend = function () {
+    window.cmpClose();
+    showSnackbar('送信しました');
+  };
+
+  // 詳細ボックスのメールアドレスをタップ → 新規作成
+  document.getElementById('detail-body-area').addEventListener('click', (e) => {
+    const a = e.target.closest('.dt-addr');
+    if (!a) return;
+    e.stopPropagation();
+    window.cmpNewTo(a.getAttribute('data-name') || '', a.getAttribute('data-addr') || a.textContent.trim());
+  });
+  // iOS Safari でも :active（押した時の反応）を効かせる
+  document.addEventListener('touchstart', () => {}, { passive: true });
+})();
 </script>
 </body>
 </html>
