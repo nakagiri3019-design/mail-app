@@ -1,11 +1,14 @@
 ﻿const CACHE_PREFIX = 'sbi-app-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v74';
+const CACHE_NAME = CACHE_PREFIX + 'v75';
 const PRECACHE_URLS = [
   './',
   './index.html',
   './manifest.json',
   './sbi_icon_192.png',
   './sbi_icon_512.png',
+  './sbi_icon_maskable_192.png',
+  './sbi_icon_maskable_512.png',
+  './apple-touch-icon.png',
   './icons/icon_atm.png',
   './icons/icon_debit.png',
   './icons/icon_furikomi.png',
