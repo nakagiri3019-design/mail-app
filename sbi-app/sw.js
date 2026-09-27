@@ -1,9 +1,17 @@
 ﻿const CACHE_PREFIX = 'sbi-app-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v82';
+const CACHE_NAME = CACHE_PREFIX + 'v83';
 const PRECACHE_URLS = [
   './',
   './index.html',
   './manifest.json',
+  './manifest-nakagiri.json',
+  './manifest-avantia.json',
+  './manifest-efstyle.json',
+  './manifest-mentor.json',
+  './manifest-levanta.json',
+  './manifest-vaion.json',
+  './manifest-sys.json',
+  './manifest-eightrun.json',
   './sbi_icon_192.png',
   './sbi_icon_512.png',
   './sbi_icon_maskable_192.png',

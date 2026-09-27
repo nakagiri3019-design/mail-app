@@ -1,0 +1,17 @@
+{
+  "id": "./?user=sys",
+  "name": "法人口座8",
+  "short_name": "法人口座8",
+  "start_url": "./?user=sys",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    { "src": "sbi_icon_192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "sbi_icon_512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "sbi_icon_maskable_192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "sbi_icon_maskable_512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

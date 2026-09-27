@@ -10,6 +10,17 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="法人口座">
+<script>
+  // ?user= に応じて口座専用の manifest とホーム画面名に切り替える（口座ごとに別PWAとしてインストールするため）
+  // 対象外の id（mediafounder など）や ?user= なしは既存の manifest.json / 「法人口座」のまま
+  (function(){
+    var PWA_NO = { nakagiri: 1, avantia: 2, efstyle: 3, mentor: 4, levanta: 5, vaion: 7, sys: 8, eightrun: 9 };
+    var id = new URLSearchParams(location.search).get('user');
+    if (!id || !/^[a-z0-9]+$/.test(id) || !PWA_NO.hasOwnProperty(id)) return;
+    document.querySelector('link[rel="manifest"]').setAttribute('href', 'manifest-' + id + '.json');
+    document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', '法人口座' + PWA_NO[id]);
+  })();
+</script>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="sbi_icon_192.png">
 <style>
