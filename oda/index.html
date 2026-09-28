@@ -109,9 +109,14 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
 /* 引用（Gmail と同じ形）：閉じているときは「•••」だけ。開くと引用元の行＋左線のブロックを、スレッドの古いメールまで入れ子でさかのぼる */
 .gq-wrap { padding-left: 16px; margin-top: 12px; min-width: 0; font-size: 16px; line-height: 1.6; color: #3B2A12; overflow-wrap: anywhere; }
 .gq-dots { display: block; padding: 6px 0; margin: 0; background: none; border: none; cursor: pointer; }
-.gq-dots span { display: flex; align-items: center; justify-content: center; gap: 3px; width: 24px; height: 12px; border-radius: 6px; background: #BDC1C6; }
-.gq-dots i { width: 3px; height: 3px; border-radius: 50%; background: #F8F9FA; }
+.gq-attr + .gq-dots { margin-top: 6px; } /* 引用元の行と「•••」の間は約12px（ボタン上の余白6px込み） */
+.gq-dots span { display: flex; align-items: center; justify-content: center; gap: 3px; width: 24px; height: 12px; border-radius: 6px; background: #E8EAED; }
+.gq-dots i { width: 3px; height: 3px; border-radius: 50%; background: #5F6368; }
+.gq-dots.is-open span { background: #BDC1C6; }
+.gq-dots.is-open i { background: #F8F9FA; }
 .gq-addr { color: #1155CC; text-decoration: underline; }
+.gq-wrap .gq-addr { cursor: pointer; border-radius: 3px; } /* メール詳細の引用だけ押せる（作成画面の引用は押せない） */
+.gq-wrap .gq-addr:active { background: rgba(17,85,204,0.12); }
 .gq { margin: 0; padding-left: 8px; border-left: 1px solid #CCCCCC; min-width: 0; }
 .gq.gq-flat { padding-left: 0; border-left: none; }
 .gq-body { white-space: pre-wrap; }
@@ -1459,7 +1464,7 @@ function quoteDate(dt) {
 }
 
 function quoteAttr(msg) {
-  const addr = msg.fromEmail ? ` &lt;<span class="gq-addr">${msg.fromEmail}</span>&gt;` : '';
+  const addr = msg.fromEmail ? ` &lt;<span class="gq-addr" data-addr="${msg.fromEmail}" data-name="${String(msg.from || '').replace(/"/g, '&quot;')}">${msg.fromEmail}</span>&gt;` : '';
   return `<div class="gq-attr">${quoteDate(msg.datetime || msg.date)} ${msg.from}${addr}:</div>`;
 }
 
@@ -1471,10 +1476,12 @@ function renderQuoteNest(messages, idx, depth) {
   return `<blockquote class="gq${depth >= QUOTE_MAX_INDENT ? ' gq-flat' : ''}"><div class="gq-body">${messages[idx].body || ''}</div>${inner}</blockquote>`;
 }
 
-// 引用部分の中身（メール詳細と作成画面で共通）。閉じているときは「•••」だけ、開くと 引用元の行 → 「•••」 → 引用ブロック
-function renderQuoteInner(messages, idx, open, btnAttr) {
-  const dots = `<button class="gq-dots" ${btnAttr} aria-label="${open ? '引用部分を隠す' : '引用部分を表示'}"><span><i></i><i></i><i></i></span></button>`;
-  return open ? quoteAttr(messages[idx]) + dots + renderQuoteNest(messages, idx, 0) : dots;
+// 引用部分の中身（メール詳細と作成画面で共通）。開くと 引用元の行 → 「•••」 → 引用ブロック
+// 閉じているときは、メール詳細では 引用元の行 → 「•••」、作成画面（attrWhenClosed なし）では「•••」だけ
+function renderQuoteInner(messages, idx, open, btnAttr, attrWhenClosed) {
+  const dots = `<button class="gq-dots${open ? ' is-open' : ''}" ${btnAttr} aria-label="${open ? '引用部分を隠す' : '引用部分を表示'}"><span><i></i><i></i><i></i></span></button>`;
+  if (open) return quoteAttr(messages[idx]) + dots + renderQuoteNest(messages, idx, 0);
+  return (attrWhenClosed ? quoteAttr(messages[idx]) : '') + dots;
 }
 
 function renderThreadCard(mail, msg, idx, expanded) {
@@ -1493,7 +1500,7 @@ function renderThreadCard(mail, msg, idx, expanded) {
   }
   const messages = mail._messages;
   const quoteOpen = !!(mail._quoteOpen && mail._quoteOpen[idx]);
-  const quoteHTML = idx > 0 ? `<div class="gq-wrap">${renderQuoteInner(messages, idx - 1, quoteOpen, `data-quote-toggle="${idx}"`)}</div>` : '';
+  const quoteHTML = idx > 0 ? `<div class="gq-wrap">${renderQuoteInner(messages, idx - 1, quoteOpen, `data-quote-toggle="${idx}"`, true)}</div>` : '';
   return `
     <div class="thread-card expanded">
       <div class="detail-meta-row" data-card-toggle="${idx}">
@@ -1767,7 +1774,7 @@ if ('serviceWorker' in navigator) {
     let quote;
     if (st.mode === 'forward') {
       const cc = ccOf(m);
-      const dots = `<button class="gq-dots" data-cmp="dots" aria-label="${st.quoteOpen ? '引用部分を隠す' : '引用部分を表示'}"><span><i></i><i></i><i></i></span></button>`;
+      const dots = `<button class="gq-dots${st.quoteOpen ? ' is-open' : ''}" data-cmp="dots" aria-label="${st.quoteOpen ? '引用部分を隠す' : '引用部分を表示'}"><span><i></i><i></i><i></i></span></button>`;
       quote = `<div class="cmp-quote-wrap">${dots}` + (st.quoteOpen
         ? `---------- Forwarded message ---------<br>`
           + `From: ${esc(person(senderOf(m)))}<br>`
@@ -1946,9 +1953,9 @@ if ('serviceWorker' in navigator) {
     showSnackbar('送信しました');
   };
 
-  // 詳細ボックスのメールアドレスをタップ → 新規作成
+  // 詳細ボックスと本文下の引用元の行のメールアドレスをタップ → 新規作成（「•••」の開閉は起きない）
   document.getElementById('detail-body-area').addEventListener('click', (e) => {
-    const a = e.target.closest('.dt-addr');
+    const a = e.target.closest('.dt-addr, .gq-addr');
     if (!a) return;
     e.stopPropagation();
     window.cmpNewTo(a.getAttribute('data-name') || '', a.getAttribute('data-addr') || a.textContent.trim());
