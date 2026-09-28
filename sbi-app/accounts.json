@@ -3266,11 +3266,100 @@
     "sep": {
       "label": "2026年9月",
       "in": "771,020",
-      "out": "1,133,708",
+      "out": "1,311,088",
       "data": [
         {
           "t": "day",
+          "v": "28日"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット",
+          "blue": true,
+          "pos": false,
+          "amt": "-1,540",
+          "bal": "157,128"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット　５８９２１４",
+          "blue": true,
+          "pos": false,
+          "amt": "-2,150",
+          "bal": "158,668"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット　７６８４２１",
+          "blue": true,
+          "pos": false,
+          "amt": "-4,970",
+          "bal": "160,818"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット",
+          "blue": true,
+          "pos": false,
+          "amt": "-18,320",
+          "bal": "165,788"
+        },
+        {
+          "t": "day",
+          "v": "27日"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット　１４３８７５",
+          "blue": true,
+          "pos": false,
+          "amt": "-850",
+          "bal": "184,108"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット　９４５７８１",
+          "blue": true,
+          "pos": false,
+          "amt": "-2,680",
+          "bal": "184,958"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット",
+          "blue": true,
+          "pos": false,
+          "amt": "-12,940",
+          "bal": "187,638"
+        },
+        {
+          "t": "day",
           "v": "26日"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット　８２７４５６",
+          "blue": true,
+          "pos": false,
+          "amt": "-1,280",
+          "bal": "200,578"
+        },
+        {
+          "t": "tx",
+          "ic": "debit",
+          "name": "デビット　６６３４１２",
+          "blue": true,
+          "pos": false,
+          "amt": "-32,540",
+          "bal": "201,858"
         },
         {
           "t": "tx",
@@ -3279,11 +3368,27 @@
           "blue": true,
           "pos": false,
           "amt": "-9,643",
-          "bal": "334,508"
+          "bal": "234,398"
         },
         {
           "t": "day",
           "v": "24日"
+        },
+        {
+          "t": "tx",
+          "ic": "fee",
+          "name": "ＡＴＭ手数料",
+          "pos": false,
+          "amt": "-110",
+          "bal": "244,041"
+        },
+        {
+          "t": "tx",
+          "ic": "atm",
+          "name": "ＡＴＭ　セブン銀行",
+          "pos": false,
+          "amt": "-100,000",
+          "bal": "244,151"
         },
         {
           "t": "tx",
