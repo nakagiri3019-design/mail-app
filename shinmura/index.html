@@ -106,9 +106,16 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
 .thread-card.expanded .detail-body-text { margin-top: 12px; }
 /* 詳細ボックスは画面端から約21px（カード端7px + border 1px + padding 29px − 16px） */
 .thread-card.expanded .sender-detail-panel { margin: 12px -16px; }
-.quote-block { margin-top: 18px; padding-top: 14px; padding-left: 16px; border-top: 1px solid rgba(0,0,0,0.07); font-size: 13px; color: #6B5A45; line-height: 1.6; }
-.quote-meta { margin-bottom: 6px; }
-.quote-link { color: #1a73e8; cursor: pointer; }
+/* 引用（Gmail と同じ形）：閉じているときは「•••」だけ。開くと引用元の行＋左線のブロックを、スレッドの古いメールまで入れ子でさかのぼる */
+.gq-wrap { padding-left: 16px; margin-top: 12px; min-width: 0; font-size: 16px; line-height: 1.6; color: #3B2A12; overflow-wrap: anywhere; }
+.gq-dots { display: block; padding: 6px 0; margin: 0; background: none; border: none; cursor: pointer; }
+.gq-dots span { display: flex; align-items: center; justify-content: center; gap: 3px; width: 24px; height: 12px; border-radius: 6px; background: #BDC1C6; }
+.gq-dots i { width: 3px; height: 3px; border-radius: 50%; background: #F8F9FA; }
+.gq-addr { color: #1155CC; text-decoration: underline; }
+.gq { margin: 0; padding-left: 8px; border-left: 1px solid #CCCCCC; min-width: 0; }
+.gq.gq-flat { padding-left: 0; border-left: none; }
+.gq-body { white-space: pre-wrap; }
+.gq-body + .gq-attr { margin-top: 16px; }
 .attachment-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; margin-right: 16px; white-space: normal; }
 .attachment-card { width: 100%; background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
 .attachment-preview { background: #fff; height: 220px; display: flex; align-items: flex-start; justify-content: center; overflow: hidden; }
@@ -169,9 +176,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
 .cmp-body { padding: 16px 14px 32px; }
 .cmp-body textarea { min-height: 22px; padding: 0; }
 .cmp-body textarea.has-dots { margin-bottom: 22px; } /* 「•••」は本文欄の上端から約60px下 */
-.cmp-dots { display: block; padding: 0; background: none; border: none; font-family: inherit; font-size: 16px; line-height: 20px; letter-spacing: 1px; color: #8E8780; cursor: pointer; }
-.cmp-quote-wrap { font-size: 15px; line-height: 1.55; color: #6B5A45; overflow-wrap: anywhere; }
-.cmp-quote { margin: 8px 0 0; padding-left: 10px; border-left: 1px solid #C9BFB3; }
+.cmp-quote-wrap { min-width: 0; font-size: 16px; line-height: 1.6; color: #3B2A12; overflow-wrap: anywhere; } /* 中身は本文の引用と同じ .gq-* */
 .cmp-atts { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
 .cmp-att { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 4px 0 12px; border: 1px solid #D8CFC4; border-radius: 8px; background: #FFFFFF; }
 .cmp-att-name { flex: 1; min-width: 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -1212,13 +1217,34 @@ function previewText(body) {
   return body.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 60);
 }
 
-function renderQuoteBlock(prevMsg) {
-  return `
-    <div class="quote-block">
-      <div class="quote-meta">On ${formatDatetime(prevMsg.datetime)}, ${prevMsg.from} wrote:</div>
-      <span class="quote-link">元のメッセージを表示</span>
-    </div>
-  `;
+// 引用元の行の日時は「2026年9月25日(金) 11:34」（曜日つき・24時間表記）
+function quoteDate(dt) {
+  const m = String(dt || '').match(/(\d{4})年(\d+)月(\d+)日(?:\([^)]*\))?\s*(午前|午後)?\s*(\d+):(\d+)/);
+  if (!m) return String(dt || '');
+  let h = parseInt(m[5], 10);
+  if (m[4] === '午後' && h < 12) h += 12;
+  if (m[4] === '午前' && h === 12) h = 0;
+  const wd = '日月火水木金土'[new Date(+m[1], +m[2] - 1, +m[3]).getDay()];
+  return `${m[1]}年${+m[2]}月${+m[3]}日(${wd}) ${h}:${m[6]}`;
+}
+
+function quoteAttr(msg) {
+  const addr = msg.fromEmail ? ` &lt;<span class="gq-addr">${msg.fromEmail}</span>&gt;` : '';
+  return `<div class="gq-attr">${quoteDate(msg.datetime || msg.date)} ${msg.from}${addr}:</div>`;
+}
+
+// messages[idx] の本文を縦線のブロックにし、その1つ前のメールも同じ形で中に入れる（スレッドの最初のメールまで）
+// 入れ子が深くなっても狭い画面で横にはみ出さないよう、線と余白は QUOTE_MAX_INDENT 段までにする
+const QUOTE_MAX_INDENT = 10;
+function renderQuoteNest(messages, idx, depth) {
+  const inner = idx > 0 ? quoteAttr(messages[idx - 1]) + renderQuoteNest(messages, idx - 1, depth + 1) : '';
+  return `<blockquote class="gq${depth >= QUOTE_MAX_INDENT ? ' gq-flat' : ''}"><div class="gq-body">${messages[idx].body || ''}</div>${inner}</blockquote>`;
+}
+
+// 引用部分の中身（メール詳細と作成画面で共通）。閉じているときは「•••」だけ、開くと 引用元の行 → 「•••」 → 引用ブロック
+function renderQuoteInner(messages, idx, open, btnAttr) {
+  const dots = `<button class="gq-dots" ${btnAttr} aria-label="${open ? '引用部分を隠す' : '引用部分を表示'}"><span><i></i><i></i><i></i></span></button>`;
+  return open ? quoteAttr(messages[idx]) + dots + renderQuoteNest(messages, idx, 0) : dots;
 }
 
 function renderThreadCard(mail, msg, idx, expanded) {
@@ -1236,7 +1262,8 @@ function renderThreadCard(mail, msg, idx, expanded) {
     `;
   }
   const messages = mail._messages;
-  const quoteHTML = idx > 0 ? renderQuoteBlock(messages[idx - 1]) : '';
+  const quoteOpen = !!(mail._quoteOpen && mail._quoteOpen[idx]);
+  const quoteHTML = idx > 0 ? `<div class="gq-wrap">${renderQuoteInner(messages, idx - 1, quoteOpen, `data-quote-toggle="${idx}"`)}</div>` : '';
   return `
     <div class="thread-card expanded">
       <div class="detail-meta-row" data-card-toggle="${idx}">
@@ -1261,6 +1288,17 @@ function bindThreadCardToggles(area, mail) {
       const idx = Number(el.getAttribute('data-card-toggle'));
       const scrollPos = area.scrollTop;
       mail._expanded[idx] = !mail._expanded[idx];
+      renderDetailBody(mail);
+      area.scrollTop = scrollPos;
+    });
+  });
+  area.querySelectorAll('[data-quote-toggle]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const idx = Number(el.getAttribute('data-quote-toggle'));
+      const scrollPos = area.scrollTop;
+      mail._quoteOpen = mail._quoteOpen || {};
+      mail._quoteOpen[idx] = !mail._quoteOpen[idx];
       renderDetailBody(mail);
       area.scrollTop = scrollPos;
     });
@@ -1496,24 +1534,28 @@ if ('serviceWorker' in navigator) {
     }
     bodyEl.classList.add('has-dots');
     const m = st.msg;
-    let quote = '';
-    if (st.quoteOpen && st.mode === 'forward') {
+    let quote;
+    if (st.mode === 'forward') {
       const cc = ccOf(m);
-      quote = `<div class="cmp-quote-wrap">---------- Forwarded message ---------<br>`
-        + `From: ${esc(person(senderOf(m)))}<br>`
-        + `Date: ${esc(gmailDate(m.datetime || m.date))}<br>`
-        + `Subject: ${esc(st.mail.subject)}<br>`
-        + `To: ${esc(toOf(m).map(person).join(', '))}<br>`
-        + (cc.length ? `Cc: ${esc(cc.map(person).join(', '))}<br>` : '')
-        + `<br>${m.body || ''}</div>`;
-    } else if (st.quoteOpen) {
-      quote = `<div class="cmp-quote-wrap"><div>${esc(gmailDate(m.datetime || m.date))} ${esc(person(senderOf(m)))}:</div>`
-        + `<blockquote class="cmp-quote">${m.body || ''}</blockquote></div>`;
+      const dots = `<button class="gq-dots" data-cmp="dots" aria-label="${st.quoteOpen ? '引用部分を隠す' : '引用部分を表示'}"><span><i></i><i></i><i></i></span></button>`;
+      quote = `<div class="cmp-quote-wrap">${dots}` + (st.quoteOpen
+        ? `---------- Forwarded message ---------<br>`
+          + `From: ${esc(person(senderOf(m)))}<br>`
+          + `Date: ${esc(gmailDate(m.datetime || m.date))}<br>`
+          + `Subject: ${esc(st.mail.subject)}<br>`
+          + `To: ${esc(toOf(m).map(person).join(', '))}<br>`
+          + (cc.length ? `Cc: ${esc(cc.map(person).join(', '))}<br>` : '')
+          + `<br><div class="gq-body">${m.body || ''}</div>`
+        : '') + `</div>`;
+    } else {
+      // 返信は本文の引用と同じ作り：返信先のメールの本文＋それより前のメールを入れ子で
+      const msgs = st.mail && st.mail._messages && st.mail._messages.indexOf(m) >= 0 ? st.mail._messages : [m];
+      quote = `<div class="cmp-quote-wrap">${renderQuoteInner(msgs, msgs.indexOf(m), st.quoteOpen, 'data-cmp="dots"')}</div>`;
     }
     const atts = st.attachments.length
       ? `<div class="cmp-atts">${st.attachments.map((n, i) => `<div class="cmp-att">${ICON.pdf}<span class="cmp-att-name">${esc(n)}</span><button class="cmp-att-x" data-cmp="att-x" data-i="${i}" aria-label="添付を外す">${ICON.x}</button></div>`).join('')}</div>`
       : '';
-    extraEl.innerHTML = (st.quoteOpen ? '' : '<button class="cmp-dots" data-cmp="dots" aria-label="引用部分を表示">•••</button>') + quote + atts;
+    extraEl.innerHTML = quote + atts;
   }
 
   function grow(t) {
@@ -1633,7 +1675,7 @@ if ('serviceWorker' in navigator) {
       document.getElementById('cmp-cc-row').hidden = !st.ccOpen;
       document.getElementById('cmp-bcc-row').hidden = !st.ccOpen;
     } else if (k === 'dots') {
-      st.quoteOpen = true;
+      st.quoteOpen = !st.quoteOpen;
       renderExtra();
     } else if (k === 'att-x') {
       st.attachments.splice(Number(t.getAttribute('data-i')), 1);
