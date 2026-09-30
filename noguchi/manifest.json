@@ -2,7 +2,7 @@
   "name": "Mail",
   "short_name": "Mail",
   "description": "Mail - メールアプリ",
-  "id": "./",
+  "id": "/mail-app/noguchi/",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

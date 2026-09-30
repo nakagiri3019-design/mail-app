@@ -1,6 +1,7 @@
 {
   "name": "法人口座",
   "short_name": "法人口座",
+  "id": "/mail-app/sbi-app/",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

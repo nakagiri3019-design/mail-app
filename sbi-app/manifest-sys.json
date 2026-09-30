@@ -1,5 +1,5 @@
 {
-  "id": "./?user=sys",
+  "id": "/mail-app/sbi-app/?user=sys",
   "name": "法人口座8",
   "short_name": "法人口座8",
   "start_url": "./?user=sys",
