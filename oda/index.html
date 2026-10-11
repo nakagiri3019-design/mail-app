@@ -181,6 +181,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
 .cmp-body { padding: 16px 14px 32px; }
 .cmp-body textarea { min-height: 22px; padding: 0; }
 .cmp-body textarea.has-dots { margin-bottom: 22px; } /* 「•••」は本文欄の上端から約60px下 */
+.cmp-body textarea.has-fwd { margin-bottom: 22px; } /* 転送は「•••」なしで、同じ位置から Forwarded message を出す */
 .cmp-quote-wrap { min-width: 0; font-size: 16px; line-height: 1.6; color: #3B2A12; overflow-wrap: anywhere; } /* 中身は本文の引用と同じ .gq-* */
 .cmp-atts { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
 .cmp-att { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 4px 0 12px; border: 1px solid #D8CFC4; border-radius: 8px; background: #FFFFFF; }
@@ -850,7 +851,7 @@ const MAILS = [
     "email": "noguchi@eid-tokyo.jp",
     "avatarLetter": "野口",
     "subject": "冴島邸・小笠原邸 リフォーム工事の件",
-    "snippet": "請求書ありがとうございます。確認しました。 10月の門扉の件、改めてご相談させてください。…",
+    "snippet": "請求書ありがとうございます。確認しました。 次の塩川邸・高島邸の件、改めてご相談させてください。…",
     "date": "9月10日",
     "unread": false,
     "starred": false,
@@ -931,7 +932,7 @@ const MAILS = [
         "toEmail": "888house.oda@gmail.com",
         "date": "9月10日",
         "datetime": "2026年9月10日(木) 12:06",
-        "body": "請求書ありがとうございます。確認しました。<br>10月の門扉の件、改めてご相談させてください。"
+        "body": "請求書ありがとうございます。確認しました。<br>次の塩川邸・高島邸の件、改めてご相談させてください。"
       }
     ]
   },
@@ -1898,26 +1899,31 @@ if ('serviceWorker' in navigator) {
   }
 
   function renderExtra() {
+    bodyEl.classList.toggle('has-dots', st.mode === 'reply' || st.mode === 'replyAll');
+    bodyEl.classList.toggle('has-fwd', st.mode === 'forward');
     if (st.mode === 'new') {
-      bodyEl.classList.remove('has-dots');
       extraEl.innerHTML = '';
       return;
     }
-    bodyEl.classList.add('has-dots');
     const m = st.msg;
     let quote;
     if (st.mode === 'forward') {
+      // 転送は Gmail と同じく「•••」で畳まず全部出す。Forwarded message の本文の下に、
+      // 同じスレッドでそれより前のメールを新しい順に入れ子で引用する（作りは本文の引用と同じ）
       const cc = ccOf(m);
-      const dots = `<button class="gq-dots${st.quoteOpen ? ' is-open' : ''}" data-cmp="dots" aria-label="${st.quoteOpen ? '引用部分を隠す' : '引用部分を表示'}"><span><i></i><i></i><i></i></span></button>`;
-      quote = `<div class="cmp-quote-wrap">${dots}` + (st.quoteOpen
-        ? `---------- Forwarded message ---------<br>`
-          + `From: ${esc(person(senderOf(m)))}<br>`
-          + `Date: ${esc(gmailDate(m.datetime || m.date))}<br>`
-          + `Subject: ${esc(st.mail.subject)}<br>`
-          + `To: ${esc(toOf(m).map(person).join(', '))}<br>`
-          + (cc.length ? `Cc: ${esc(cc.map(person).join(', '))}<br>` : '')
-          + `<br><div class="gq-body">${m.body || ''}</div>`
-        : '') + `</div>`;
+      const msgs = st.mail && st.mail._messages && st.mail._messages.indexOf(m) >= 0 ? st.mail._messages : [m];
+      const i = msgs.indexOf(m);
+      const earlier = i > 0 ? quoteAttr(msgs[i - 1]) + renderQuoteNest(msgs, i - 1, 0) : '';
+      quote = `<div class="cmp-quote-wrap">`
+        + `---------- Forwarded message ---------<br>`
+        + `From: ${esc(person(senderOf(m)))}<br>`
+        + `Date: ${esc(gmailDate(m.datetime || m.date))}<br>`
+        + `Subject: ${esc(st.mail.subject)}<br>`
+        + `To: ${esc(toOf(m).map(person).join(', '))}<br>`
+        + (cc.length ? `Cc: ${esc(cc.map(person).join(', '))}<br>` : '')
+        + `<br><div class="gq-body">${m.body || ''}</div>`
+        + earlier
+        + `</div>`;
     } else {
       // 返信は本文の引用と同じ作り：返信先のメールの本文＋それより前のメールを入れ子で
       const msgs = st.mail && st.mail._messages && st.mail._messages.indexOf(m) >= 0 ? st.mail._messages : [m];
