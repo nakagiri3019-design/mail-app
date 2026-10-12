@@ -267,7 +267,8 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
 #cmp textarea::placeholder, #cmp input::placeholder { color: #ACA39A; opacity: 1; }
 .cmp-body { padding: 16px 14px 32px; }
 .cmp-body textarea { min-height: 22px; padding: 0; }
-.cmp-body textarea.has-dots { margin-bottom: 22px; } /* 「•••」は本文欄の上端から約60px下 */
+.cmp-body textarea.has-dots { margin-bottom: 22px; } /* 本文欄と引用（返信・転送）の間 */
+.cmp-quote-wrap[contenteditable] { outline: none; }
 .cmp-quote-wrap { min-width: 0; font-size: 16px; line-height: 1.6; color: #3B2A12; overflow-wrap: anywhere; } /* 中身は本文の引用と同じ .gq-* */
 .cmp-atts { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
 .cmp-att { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 4px 0 12px; border: 1px solid #D8CFC4; border-radius: 8px; background: #FFFFFF; }
@@ -453,6 +454,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
 <nav class="drw" id="drw" aria-hidden="true" aria-label="メニュー"></nav>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="mail_quote.js"></script>
 <script>
 if (typeof pdfjsLib !== 'undefined') {
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -2103,38 +2105,6 @@ function previewText(body) {
   return body.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 60);
 }
 
-// 引用元の行の日時は「2026年9月25日(金) 11:34」（曜日つき・24時間表記）
-function quoteDate(dt) {
-  const m = String(dt || '').match(/(\d{4})年(\d+)月(\d+)日(?:\([^)]*\))?\s*(午前|午後)?\s*(\d+):(\d+)/);
-  if (!m) return String(dt || '');
-  let h = parseInt(m[5], 10);
-  if (m[4] === '午後' && h < 12) h += 12;
-  if (m[4] === '午前' && h === 12) h = 0;
-  const wd = '日月火水木金土'[new Date(+m[1], +m[2] - 1, +m[3]).getDay()];
-  return `${m[1]}年${+m[2]}月${+m[3]}日(${wd}) ${h}:${m[6]}`;
-}
-
-function quoteAttr(msg) {
-  const addr = msg.fromEmail ? ` &lt;<span class="gq-addr" data-addr="${msg.fromEmail}" data-name="${String(msg.from || '').replace(/"/g, '&quot;')}">${msg.fromEmail}</span>&gt;` : '';
-  return `<div class="gq-attr">${quoteDate(msg.datetime || msg.date)} ${msg.from}${addr}:</div>`;
-}
-
-// messages[idx] の本文を縦線のブロックにし、その1つ前のメールも同じ形で中に入れる（スレッドの最初のメールまで）
-// 入れ子が深くなっても狭い画面で横にはみ出さないよう、線と余白は QUOTE_MAX_INDENT 段までにする
-const QUOTE_MAX_INDENT = 10;
-function renderQuoteNest(messages, idx, depth) {
-  const inner = idx > 0 ? quoteAttr(messages[idx - 1]) + renderQuoteNest(messages, idx - 1, depth + 1) : '';
-  return `<blockquote class="gq${depth >= QUOTE_MAX_INDENT ? ' gq-flat' : ''}"><div class="gq-body">${messages[idx].body || ''}</div>${inner}</blockquote>`;
-}
-
-// 引用部分の中身（メール詳細と作成画面で共通）。開くと 引用元の行 → 「•••」 → 引用ブロック
-// 閉じているときは、メール詳細では 引用元の行 → 「•••」、作成画面（attrWhenClosed なし）では「•••」だけ
-function renderQuoteInner(messages, idx, open, btnAttr, attrWhenClosed) {
-  const dots = `<button class="gq-dots${open ? ' is-open' : ''}" ${btnAttr} aria-label="${open ? '引用部分を隠す' : '引用部分を表示'}"><span><i></i><i></i><i></i></span></button>`;
-  if (open) return quoteAttr(messages[idx]) + dots + renderQuoteNest(messages, idx, 0);
-  return (attrWhenClosed ? quoteAttr(messages[idx]) : '') + dots;
-}
-
 function renderThreadCard(mail, msg, idx, expanded) {
   const uid = `${mail.id}-${idx}`;
   if (!expanded) {
@@ -2292,7 +2262,7 @@ if ('serviceWorker' in navigator) {
   const extraEl = document.getElementById('cmp-extra');
   const menu = document.getElementById('cmp-menu');
   const snackbar = document.getElementById('cmp-snackbar');
-  let st = null;        // { mode: 'new'|'reply'|'replyAll'|'forward', mail, msg, to, cc, subject, attachments, ccOpen, quoteOpen }
+  let st = null;        // { mode: 'new'|'reply'|'replyAll'|'forward', mail, msg, to, cc, subject, attachments, ccOpen, quoteHTML }
   let menuOwner = null;
   let snackTimer = null;
   let prevThemeColor = null;  // 作成画面を開いている間だけステータスバーを白にし、閉じたら戻す
@@ -2355,17 +2325,6 @@ if ('serviceWorker' in navigator) {
     const re = prefix === 'Re' ? /^\s*re\s*[:：]/i : /^\s*(fwd|fw)\s*[:：]/i;
     return re.test(s) ? s : `${prefix}: ${s}`;
   }
-  // 引用ヘッダーの日時は「2026年9月14日(月) 16:33」の形にそろえる
-  function gmailDate(dt) {
-    const m = String(dt || '').match(/(\d{4})年(\d+)月(\d+)日(?:\([^)]*\))?\s*(午前|午後)?\s*(\d+):(\d+)/);
-    if (!m) return String(dt || '');
-    let h = parseInt(m[5], 10);
-    if (m[4] === '午後' && h < 12) h += 12;
-    if (m[4] === '午前' && h === 12) h = 0;
-    const wd = '日月火水木金土'[new Date(+m[1], +m[2] - 1, +m[3]).getDay()];
-    return `${m[1]}年${+m[2]}月${+m[3]}日(${wd}) ${h}:${m[6]}`;
-  }
-
   // 返信・転送の中身を作り直す（本文に入力した文字は残す）
   function build(mode) {
     const m = st.msg;
@@ -2382,7 +2341,7 @@ if ('serviceWorker' in navigator) {
       st.attachments = [];
     }
     st.ccOpen = st.cc.length > 0;
-    st.quoteOpen = false;
+    st.quoteHTML = null;   // 引用は renderExtra で作り直す（返信の種類を切り替えたとき）
   }
 
   function chip(r) {
@@ -2415,30 +2374,21 @@ if ('serviceWorker' in navigator) {
   }
 
   function renderExtra() {
-    if (st.mode === 'new') {
-      bodyEl.classList.remove('has-dots');
-      extraEl.innerHTML = '';
-      return;
-    }
-    bodyEl.classList.add('has-dots');
+    bodyEl.classList.toggle('has-dots', st.mode !== 'new');
     const m = st.msg;
-    let quote;
-    if (st.mode === 'forward') {
-      const cc = ccOf(m);
-      const dots = `<button class="gq-dots${st.quoteOpen ? ' is-open' : ''}" data-cmp="dots" aria-label="${st.quoteOpen ? '引用部分を隠す' : '引用部分を表示'}"><span><i></i><i></i><i></i></span></button>`;
-      quote = `<div class="cmp-quote-wrap">${dots}` + (st.quoteOpen
-        ? `---------- Forwarded message ---------<br>`
-          + `From: ${esc(person(senderOf(m)))}<br>`
-          + `Date: ${esc(gmailDate(m.datetime || m.date))}<br>`
-          + `Subject: ${esc(st.mail.subject)}<br>`
-          + `To: ${esc(toOf(m).map(person).join(', '))}<br>`
-          + (cc.length ? `Cc: ${esc(cc.map(person).join(', '))}<br>` : '')
-          + `<br><div class="gq-body">${m.body || ''}</div>`
-        : '') + `</div>`;
-    } else {
-      // 返信は本文の引用と同じ作り：返信先のメールの本文＋それより前のメールを入れ子で
-      const msgs = st.mail && st.mail._messages && st.mail._messages.indexOf(m) >= 0 ? st.mail._messages : [m];
-      quote = `<div class="cmp-quote-wrap">${renderQuoteInner(msgs, msgs.indexOf(m), st.quoteOpen, 'data-cmp="dots"')}</div>`;
+    let quote = '';
+    if (st.mode !== 'new') {
+      // 引用は Gmail と同じく畳まずに全部出し、そのまま編集できる。作り方は3版共通の mail_quote.js（MailQuote.compose）
+      if (st.quoteHTML == null) {
+        const msgs = st.mail && st.mail._messages && st.mail._messages.indexOf(m) >= 0 ? st.mail._messages : [m];
+        st.quoteHTML = MailQuote.compose(st.mode, msgs, msgs.indexOf(m), {
+          from: person(senderOf(m)),
+          to: toOf(m).map(person).join(', '),
+          cc: ccOf(m).map(person).join(', '),
+          subject: st.mail.subject,
+        });
+      }
+      quote = `<div class="cmp-quote-wrap" contenteditable="true" aria-label="引用">${st.quoteHTML}</div>`;
     }
     const atts = st.attachments.length
       ? `<div class="cmp-atts">${st.attachments.map((n, i) => `<div class="cmp-att">${ICON.pdf}<span class="cmp-att-name">${esc(n)}</span><button class="cmp-att-x" data-cmp="att-x" data-i="${i}" aria-label="添付を外す">${ICON.x}</button></div>`).join('')}</div>`
@@ -2562,9 +2512,6 @@ if ('serviceWorker' in navigator) {
       st.ccOpen = !st.ccOpen;
       document.getElementById('cmp-cc-row').hidden = !st.ccOpen;
       document.getElementById('cmp-bcc-row').hidden = !st.ccOpen;
-    } else if (k === 'dots') {
-      st.quoteOpen = !st.quoteOpen;
-      renderExtra();
     } else if (k === 'att-x') {
       st.attachments.splice(Number(t.getAttribute('data-i')), 1);
       renderExtra();
@@ -2572,6 +2519,8 @@ if ('serviceWorker' in navigator) {
   });
   subjectEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') e.preventDefault(); });
   [subjectEl, bodyEl].forEach((t) => t.addEventListener('input', () => { grow(t); keepVisible(t); }));
+  // 引用を編集したら残しておく（添付を外したときなどに作り直して消さないため）
+  extraEl.addEventListener('input', (e) => { const q = e.target.closest('.cmp-quote-wrap'); if (q && st) st.quoteHTML = q.innerHTML; });
 
   // ---- 開き方 ----
   function openFor(mode, idx) {
@@ -2593,13 +2542,15 @@ if ('serviceWorker' in navigator) {
     if (menu.classList.contains('open') && menuOwner === btn) { closeMenu(); return; }
     showMenu(btn, modesFor(mail._messages[idx]), (mode) => openFor(mode, idx), false);
   };
-  window.cmpNew = () => open({ mode: 'new', mail: null, msg: null, to: [], cc: [], subject: '', attachments: [], ccOpen: false, quoteOpen: false });  // 受信トレイの「作成」
-  window.cmpNewTo = (name, email) => open({ mode: 'new', mail: null, msg: null, to: [{ name: name || '', email }], cc: [], subject: '', attachments: [], ccOpen: false, quoteOpen: false });
+  window.cmpNew = () => open({ mode: 'new', mail: null, msg: null, to: [], cc: [], subject: '', attachments: [], ccOpen: false, quoteHTML: null });  // 受信トレイの「作成」
+  window.cmpNewTo = (name, email) => open({ mode: 'new', mail: null, msg: null, to: [{ name: name || '', email }], cc: [], subject: '', attachments: [], ccOpen: false, quoteHTML: null });
   window.cmpClose = function () {
     if (history.state && history.state.cmp) history.back();
     else hide();
   };
   window.cmpSend = function () {
+    // 送信サーバーはまだないので実際には送らない。送るときの HTML 本文（本文＋blockquote の引用）はこれで作る
+    if (st) window.lastComposedHTML = MailQuote.toSendHTML(bodyEl.value, st.mode === 'new' ? '' : st.quoteHTML);
     window.cmpClose();
     showSnackbar('送信しました');
   };
