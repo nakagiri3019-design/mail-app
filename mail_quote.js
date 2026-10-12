@@ -4,7 +4,8 @@
 //   フォルダ内の版:  <script src="../mail_quote.js"></script>
 // メッセージは MAILS の thread と同じ形 { from, fromEmail, to, toEmail, datetime, date, body, attachments } を想定。
 
-// 引用元の行の日時は「2026年9月25日(金) 11:34」（曜日つき・24時間表記）
+// 引用元の行・転送の Date の日時は「2026年9月30日(水) 午後4:12」（曜日つき・午前/午後＋12時間表記、時は0埋めなし）
+// datetime が24時間表記でも午前/午後つきでも読める。正午は「午後12:00」、0時台は「午前0:05」（Gmail と同じ）
 function quoteDate(dt) {
   const m = String(dt || '').match(/(\d{4})年(\d+)月(\d+)日(?:\([^)]*\))?\s*(午前|午後)?\s*(\d+):(\d+)/);
   if (!m) return String(dt || '');
@@ -12,7 +13,9 @@ function quoteDate(dt) {
   if (m[4] === '午後' && h < 12) h += 12;
   if (m[4] === '午前' && h === 12) h = 0;
   const wd = '日月火水木金土'[new Date(+m[1], +m[2] - 1, +m[3]).getDay()];
-  return `${m[1]}年${+m[2]}月${+m[3]}日(${wd}) ${h}:${m[6]}`;
+  const ampm = h < 12 ? '午前' : '午後';
+  const h12 = h > 12 ? h - 12 : h;
+  return `${m[1]}年${+m[2]}月${+m[3]}日(${wd}) ${ampm}${h12}:${m[6]}`;
 }
 
 function quoteAttr(msg) {
