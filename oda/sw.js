@@ -1,10 +1,11 @@
 // 尾田版 専用キャッシュ。ルート版 / noguchi 版とは独立させること。
 const CACHE_PREFIX = 'mail-oda-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v16';
+const CACHE_NAME = CACHE_PREFIX + 'v17';
 const PRECACHE_URLS = [
   './',
   './index.html',
   '../mail_quote.js',
+  '../mail_attach.js',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',

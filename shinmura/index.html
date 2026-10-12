@@ -145,7 +145,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
 #cmp.open { display: flex; }
 .cmp-bar { position: relative; flex: 0 0 auto; height: 54px; }
 .cmp-bar-btn { position: absolute; top: 7px; width: 40px; height: 40px; padding: 0; background: none; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.cmp-bar-btn:active, .cmp-mode:active, .cmp-drop:active, .cmp-caret:active, .cmp-att-x:active { background: rgba(0,0,0,0.06); }
+.cmp-bar-btn:active, .cmp-mode:active, .cmp-drop:active, .cmp-caret:active { background: rgba(0,0,0,0.06); }
 .cmp-back { left: 4px; }    /* 中心 24px */
 .cmp-clip { right: 86px; }  /* 中心 右端から106px（360pxで254px） */
 .cmp-send { right: 44px; }  /* 中心 右端から64px（296px） */
@@ -183,10 +183,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
 .cmp-body textarea.has-dots { margin-bottom: 22px; } /* 本文欄と引用（返信・転送）の間 */
 .cmp-quote-wrap[contenteditable] { outline: none; }
 .cmp-quote-wrap { min-width: 0; font-size: 16px; line-height: 1.6; color: #3B2A12; overflow-wrap: anywhere; } /* 中身は本文の引用と同じ .gq-* */
-.cmp-atts { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
-.cmp-att { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 4px 0 12px; border: 1px solid #D8CFC4; border-radius: 8px; background: #FFFFFF; }
-.cmp-att-name { flex: 1; min-width: 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cmp-att-x { flex: 0 0 36px; width: 36px; height: 36px; padding: 0; background: none; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.cmp-atts { margin-top: 24px; }
 .cmp-menu { position: fixed; z-index: 110; display: none; min-width: 176px; padding: 6px 0; background: #FFFFFF; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
 .cmp-menu.open { display: block; }
 .cmp-menu button { display: flex; align-items: center; gap: 16px; width: 100%; height: 48px; padding: 0 20px 0 16px; background: none; border: none; font-family: inherit; font-size: 16px; color: #3B2A12; text-align: left; cursor: pointer; }
@@ -368,6 +365,7 @@ body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FB
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="../mail_quote.js"></script>
+<script src="../mail_attach.js"></script>
 <script>
 if (typeof pdfjsLib !== 'undefined') {
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -1057,62 +1055,9 @@ function bindToPanelToggles(area) {
   });
 }
 
-function renderAttachment(att) {
-  const action = att.url ? `window.open('${encodeURI(att.url)}', '_blank')` : `alert('添付ファイルを開く（デモ）')`;
-  const previewHTML = att.noPreview ? '' : (() => {
-    const preview = att.url
-      ? `<canvas class="pdf-thumb-canvas" data-pdf-url="${att.url}"></canvas>`
-      : `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D93025" stroke-width="1.5"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z" stroke-linejoin="round"/><path d="M14 3v5h5" stroke-linejoin="round"/></svg>`;
-    return `<div class="attachment-preview">${preview}</div>`;
-  })();
-  return `
-    <div class="attachment-card" onclick="${action}">
-      ${previewHTML}
-      <div class="attachment-info-bar">
-        <svg class="attachment-icon-pdf" width="26" height="26" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3" fill="#D93025"/><text x="12" y="16" font-size="8.5" font-weight="700" fill="#fff" text-anchor="middle" font-family="Arial, sans-serif">PDF</text></svg>
-        <span class="attachment-file-name">${att.name}</span>
-        <span class="attachment-actions">
-          <svg class="attachment-action-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
-          <svg class="attachment-action-icon" width="18" height="18" viewBox="0 0 24 24"><path d="M8.5 2L1 14.5h6l7.5-12.5z" fill="currentColor"/><path d="M7 15.5l-3.5 6h14l3.5-6z" fill="currentColor"/><path d="M15.5 2L23 14.5h-7L9.5 2z" fill="currentColor"/></svg>
-        </span>
-      </div>
-    </div>
-  `;
-}
-
-function renderPdfThumbnails(area) {
-  if (typeof pdfjsLib === 'undefined') return;
-  area.querySelectorAll('canvas.pdf-thumb-canvas[data-pdf-url]').forEach((canvas) => {
-    if (canvas.dataset.rendered) return;
-    canvas.dataset.rendered = '1';
-    const url = canvas.getAttribute('data-pdf-url');
-    pdfjsLib.getDocument({
-      url: url,
-      cMapUrl: './attachments/cmaps/',
-      cMapPacked: true,
-    }).promise
-      .then((pdf) => pdf.getPage(1))
-      .then((page) => {
-        const containerWidth = canvas.parentElement.clientWidth;
-        const baseViewport = page.getViewport({ scale: 1 });
-        const scale = containerWidth / baseViewport.width;
-        const viewport = page.getViewport({ scale });
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        return page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-      })
-      .catch((err) => {
-        console.error('PDF preview render failed:', err);
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#f5f5f5';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#999';
-        ctx.font = '12px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('プレビュー不可', canvas.width / 2, canvas.height / 2);
-      });
-  });
-}
+// 添付のカード（画像・PDF のプレビュー、種類アイコン、途中を省略したファイル名、ダウンロード）は3版共通の mail_attach.js
+function renderAttachment(att) { return MailAttach.card(att); }
+function renderPdfThumbnails(area) { MailAttach.renderPreviews(area); }
 
 function formatListDate(datetimeStr) {
   var ampm = datetimeStr.match(/(午前|午後)/);
@@ -1447,17 +1392,20 @@ if ('serviceWorker' in navigator) {
   // 返信・転送の中身を作り直す（本文に入力した文字は残す）
   function build(mode) {
     const m = st.msg;
+    const local = (st.attachments || []).filter((a) => a.local);   // クリップから追加したファイル
     st.mode = mode;
     if (mode === 'forward') {
       st.to = [];
       st.cc = [];
       st.subject = prefixed('Fwd', st.mail.subject);
-      st.attachments = (m.attachments || []).map((a) => a.name);
+      // 転送はスレッド内のメール（転送するメールまで）の添付を古い順に、同じファイルは1つにして引き継ぐ
+      const msgs = st.mail && st.mail._messages && st.mail._messages.indexOf(m) >= 0 ? st.mail._messages : [m];
+      st.attachments = MailAttach.collect(msgs.slice(0, msgs.indexOf(m) + 1)).concat(local);
     } else {
       st.to = replyTargets(m);
       st.cc = mode === 'replyAll' ? replyAllCc(m) : [];
       st.subject = prefixed('Re', st.mail.subject);
-      st.attachments = [];
+      st.attachments = local;
     }
     st.ccOpen = st.cc.length > 0;
     st.quoteHTML = null;   // 引用は renderExtra で作り直す（返信の種類を切り替えたとき）
@@ -1509,10 +1457,10 @@ if ('serviceWorker' in navigator) {
       }
       quote = `<div class="cmp-quote-wrap" contenteditable="true" aria-label="引用">${st.quoteHTML}</div>`;
     }
-    const atts = st.attachments.length
-      ? `<div class="cmp-atts">${st.attachments.map((n, i) => `<div class="cmp-att">${ICON.pdf}<span class="cmp-att-name">${esc(n)}</span><button class="cmp-att-x" data-cmp="att-x" data-i="${i}" aria-label="添付を外す">${ICON.x}</button></div>`).join('')}</div>`
-      : '';
+    // 添付は引用の下にカードで並べる（×で外せる）。カードは3版共通の mail_attach.js
+    const atts = st.attachments.length ? `<div class="cmp-atts attachment-grid">${MailAttach.list(st.attachments, { removable: true })}</div>` : '';
     extraEl.innerHTML = quote + atts;
+    MailAttach.renderPreviews(extraEl);
   }
 
   function grow(t) {
@@ -1573,6 +1521,7 @@ if ('serviceWorker' in navigator) {
     root.style.height = '';
     closeMenu();
     if (document.activeElement && root.contains(document.activeElement)) document.activeElement.blur();
+    if (st) MailAttach.release(st.attachments);
     st = null;
   }
   window.addEventListener('popstate', () => { if (root.classList.contains('open')) hide(); });
@@ -1632,13 +1581,19 @@ if ('serviceWorker' in navigator) {
       document.getElementById('cmp-cc-row').hidden = !st.ccOpen;
       document.getElementById('cmp-bcc-row').hidden = !st.ccOpen;
     } else if (k === 'att-x') {
-      st.attachments.splice(Number(t.getAttribute('data-i')), 1);
+      MailAttach.release(st.attachments.splice(Number(t.getAttribute('data-i')), 1));
       renderExtra();
     }
   });
   subjectEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') e.preventDefault(); });
   [subjectEl, bodyEl].forEach((t) => t.addEventListener('input', () => { grow(t); keepVisible(t); }));
   // 引用を編集したら残しておく（添付を外したときなどに作り直して消さないため）
+  // クリップのボタン：端末のファイル（PDF・画像など、複数可）を添付に追加
+  root.querySelector('.cmp-clip').addEventListener('click', () => MailAttach.pick((files) => {
+    if (!st) return;
+    st.attachments = st.attachments.concat(files);
+    renderExtra();
+  }));
   extraEl.addEventListener('input', (e) => { const q = e.target.closest('.cmp-quote-wrap'); if (q && st) st.quoteHTML = q.innerHTML; });
 
   // ---- 開き方 ----
@@ -1669,7 +1624,10 @@ if ('serviceWorker' in navigator) {
   };
   window.cmpSend = function () {
     // 送信サーバーはまだないので実際には送らない。送るときの HTML 本文（本文＋blockquote の引用）はこれで作る
-    if (st) window.lastComposedHTML = MailQuote.toSendHTML(bodyEl.value, st.mode === 'new' ? '' : st.quoteHTML);
+    if (st) {
+      window.lastComposedHTML = MailQuote.toSendHTML(bodyEl.value, st.mode === 'new' ? '' : st.quoteHTML);
+      window.lastComposedAttachments = MailAttach.forSend(st.attachments);   // 送る予定の添付（送信サーバーができたらこれを渡す）
+    }
     window.cmpClose();
     showSnackbar('送信しました');
   };
