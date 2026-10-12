@@ -25,6 +25,9 @@ const MailAttach = (() => {
     image: '<svg class="att-kind" width="22" height="22" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3" fill="#D93025"/><path d="M6 17l3.5-4.5 2.5 3 3.5-4.5L19 17z" fill="#fff"/><circle cx="8.5" cy="8.5" r="1.6" fill="#fff"/></svg>',
     file: '<svg class="att-kind" width="22" height="22" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3" fill="#5F6368"/><path d="M8 7h5l3 3v7H8z" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>',
     download: '<svg class="attachment-action-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>',
+    drive: '<svg class="attachment-action-icon" width="18" height="18" viewBox="0 0 24 24"><path d="M8.5 2L1 14.5h6l7.5-12.5z" fill="currentColor"/><path d="M7 15.5l-3.5 6h14l3.5-6z" fill="currentColor"/><path d="M15.5 2L23 14.5h-7L9.5 2z" fill="currentColor"/></svg>',
+    // 「フォトに保存」風（風車形）。画像のカードだけ
+    photos: '<svg class="attachment-action-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5a4.75 4.75 0 014.75 4.75V12H12z"/><path d="M21.5 12a4.75 4.75 0 01-4.75 4.75H12V12z"/><path d="M12 21.5a4.75 4.75 0 01-4.75-4.75V12H12z"/><path d="M2.5 12a4.75 4.75 0 014.75-4.75H12V12z"/></svg>',
     x: '<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',
     blank: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D93025" stroke-width="1.5"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z" stroke-linejoin="round"/><path d="M14 3v5h5" stroke-linejoin="round"/></svg>',
   };
@@ -39,7 +42,8 @@ const MailAttach = (() => {
   }
 
   // カード1枚：上に中身のプレビュー、下に 種類アイコン＋ファイル名＋ダウンロード。タップで別タブで開く
-  // opts.removeAttr を渡すと右上に×（作成画面用）
+  // メール詳細のカードはダウンロードの右にドライブ、画像はさらに「フォトに保存」（アイコンだけで、押すとカードと同じく開く）
+  // opts.removeAttr を渡すと右上に×（作成画面用。ドライブ・フォトは出さない）
   function card(att, opts) {
     const o = opts || {};
     const k = kind(att);
@@ -55,7 +59,7 @@ const MailAttach = (() => {
     }
     const x = o.removeAttr ? `<button class="att-x" ${o.removeAttr} aria-label="添付を外す">${ICON.x}</button>` : '';
     return `<div class="attachment-card att-card" onclick="${open}">${preview}${x}`
-      + `<div class="attachment-info-bar">${ICON[k]}${nameHTML(att.name)}<span class="attachment-actions">${ICON.download}</span></div></div>`;
+      + `<div class="attachment-info-bar">${ICON[k]}${nameHTML(att.name)}<span class="attachment-actions">${ICON.download}${o.removeAttr ? '' : ICON.drive + (k === 'image' ? ICON.photos : '')}</span></div></div>`;
   }
 
   function list(atts, opts) {
