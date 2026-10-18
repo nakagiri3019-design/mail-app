@@ -1,6 +1,6 @@
 // 尾田版 専用キャッシュ。ルート版 / noguchi 版とは独立させること。
 const CACHE_PREFIX = 'mail-oda-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v19';
+const CACHE_NAME = CACHE_PREFIX + 'v20';
 const PRECACHE_URLS = [
   './',
   './index.html',
@@ -42,6 +42,14 @@ const PRECACHE_URLS = [
   './files/zanshin_0924_report_signed.pdf',
   './files/eid_shiokawa_invoice.pdf',
   './files/zanshin_1010_invoice.pdf',
+  './files/eid_yamanaka_kumekawa_estimate.pdf',
+  './files/eid_yamanaka_kumekawa_report.pdf',
+  './files/zanshin_1009_estimate.pdf',
+  './files/zanshin_1009_report.pdf',
+  './files/fukutomi_0901_estimate.pdf',
+  './files/fukutomi_0901_report.pdf',
+  './files/fukutomi_0929_estimate.pdf',
+  './files/fukutomi_0929_report.pdf',
 ];
 
 self.addEventListener('install', (event) => {
