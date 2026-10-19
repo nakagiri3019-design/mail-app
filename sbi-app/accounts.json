@@ -11277,6 +11277,7 @@
           "t": "tx",
           "ic": "debit",
           "name": "デビット　３３７７５８",
+          "blue": true,
           "amt": "-7,700",
           "pos": false,
           "bal": "273,729"
@@ -11285,6 +11286,7 @@
           "t": "tx",
           "ic": "debit",
           "name": "デビット　３２９１３８",
+          "blue": true,
           "amt": "-7,700",
           "pos": false,
           "bal": "281,429"
@@ -13043,6 +13045,7 @@
           "t": "tx",
           "ic": "debit",
           "name": "デビット　３３７７５８",
+          "blue": true,
           "amt": "-7,700",
           "pos": false,
           "bal": "273,729"
@@ -13051,6 +13054,7 @@
           "t": "tx",
           "ic": "debit",
           "name": "デビット　３２９１３８",
+          "blue": true,
           "amt": "-7,700",
           "pos": false,
           "bal": "281,429"
