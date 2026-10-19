@@ -1,5 +1,5 @@
 ﻿const CACHE_PREFIX = 'mail-nakagiri-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v96';
+const CACHE_NAME = CACHE_PREFIX + 'v97';
 const PRECACHE_URLS = [
   './',
   './index.html',
@@ -19,6 +19,8 @@ const PRECACHE_URLS = [
   './attachments/nakagiri/請求書_日本酵素開発株式会社_20260630.pdf',
   './attachments/nakagiri/発注書_ヴェーダテクノロジーズ_20260626_NMNセフィロト15000_60個.pdf',
   './attachments/nakagiri/請求書_ヴェーダテクノロジーズ_20260630.pdf',
+  './attachments/nakagiri/po_yell_PO-20261013-16.pdf',
+  './attachments/nakagiri/invoice_yell_20261013-1.pdf',
 ];
 
 self.addEventListener('install', (event) => {

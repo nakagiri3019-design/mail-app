@@ -495,7 +495,7 @@ const MAILS = [
   {
     id: 'm12', name: '武田直弥', email: 'takeda@yelljapan.co.jp', avatarLetter: '武田',
     subject: '預り在庫報告および発注書送付の件',
-    snippet: '武田様 お世話になっております。 発注書を確認いたしました。 内容問題ございません。 ありがとうございました。 株式会社アークラボ 中桐由美子',
+    snippet: '武田様 お世話になっております。アークラボの中桐です。 10月20日締め分のご請求書をお送りいたします。 10月13日にご発注いただいた分を含め、計6件分をまとめております。 お支払期限は11月20日となります。 お手数ですが、ご確認のほどよろしくお願いいたします。 株式会社アークラボ 中桐由美子',
     date: '9月18日', unread: false, starred: false,
     thread: [
       {
@@ -773,6 +773,30 @@ const MAILS = [
         from: '中桐由美子', fromEmail: 'yumiyumi3019@gmail.com', to: '武田直弥', toEmail: 'takeda@yelljapan.co.jp',
         date: '10月6日', datetime: '2026年10月6日 午後1:27',
         body: '武田様<br><br>お世話になっております。<br>発注書を確認いたしました。<br>内容問題ございません。<br>ありがとうございました。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+      {
+        from: '武田直弥', fromEmail: 'takeda@yelljapan.co.jp', to: '中桐由美子', toEmail: 'yumiyumi3019@gmail.com',
+        date: '10月13日', datetime: '2026年10月13日 午後2:27',
+        subject: '発注書送付の件 PO-20261013-16',
+        body: '中桐様<br><br>いつもお世話になっております。<br>エールジャパンの武田です。<br><br>NMNセフィロト7500の追加分につきまして、発注書をお送りいたします。<br>ご確認のほどよろしくお願いいたします。<br><br>-----------------------------------------------<br>エールジャパン株式会社<br>武田　直弥<br>Takeda naoya<br>〒160-0022<br>東京都新宿区新宿1-34-9ヒロビルⅡ 7F<br>TEL:03-3359-2552<br>携帯:080-9360-6569<br>FAX:03-3359-2556<br>E-mail:takeda@yelljapan.co.jp<br>Wechat ID:takeda7354<br>HP: http://yelljapan.jp/<br>-----------------------------------------------',
+        attachments: [
+          { name: '発注書_PO-20261013-16.pdf', meta: '発注書 ¥104,940', url: './attachments/nakagiri/po_yell_PO-20261013-16.pdf' },
+        ],
+      },
+      {
+        from: '中桐由美子', fromEmail: 'yumiyumi3019@gmail.com', to: '武田直弥', toEmail: 'takeda@yelljapan.co.jp',
+        date: '10月13日', datetime: '2026年10月13日 午後3:06',
+        subject: 'Re: 発注書送付の件 PO-20261013-16',
+        body: '武田様<br><br>お世話になっております。<br>発注書を確認いたしました。<br>内容問題ございません。<br>ありがとうございました。<br><br>株式会社アークラボ<br>中桐由美子',
+      },
+      {
+        from: '中桐由美子', fromEmail: 'yumiyumi3019@gmail.com', to: '武田直弥', toEmail: 'takeda@yelljapan.co.jp',
+        date: '10月20日', datetime: '2026年10月20日 午前9:38',
+        subject: '10月分ご請求書送付のご案内',
+        body: '武田様<br><br>お世話になっております。アークラボの中桐です。<br><br>10月20日締め分のご請求書をお送りいたします。<br>10月13日にご発注いただいた分を含め、計6件分をまとめております。<br><br>お支払期限は11月20日となります。<br>お手数ですが、ご確認のほどよろしくお願いいたします。<br><br>株式会社アークラボ<br>中桐由美子',
+        attachments: [
+          { name: '請求書_エールジャパン_20261015.pdf', meta: '請求書 ¥888,250', url: './attachments/nakagiri/invoice_yell_20261013-1.pdf' },
+        ],
       },
     ],
   },
