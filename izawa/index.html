@@ -1,0 +1,2080 @@
+﻿<!DOCTYPE html>
+<!--
+  ============================================================
+  Mail（Gmail風）伊沢版
+  ============================================================
+  ■ ベース: mail-app/oda（尾田版）をコピー。デザイン(CSS)・画面構造(HTML)・機能は共通のまま、
+    (A)MAILS (B)MY_EMAIL/MY_NAME (C)account-avatar を差し替えた。元データは izawa_mails_source.js。
+  ■ 自分: 伊沢 一浩 <izawa20012@gmail.com>
+  ■ 添付PDFは ./files/ に置く（現在は仮の簡易PDF。後で実物に差し替える）。
+  ■ URL: https://nakagiri3019-design.github.io/mail-app/izawa/（伊沢）
+  ============================================================
+-->
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mail 伊沢</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FBE8D2">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mail 伊沢">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #FBE8D2; display: flex; justify-content: center; }
+#app { width: 100%; max-width: 100%; height: 100vh; height: 100dvh; background: #FBE8D2; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+
+/* INBOX VIEW */
+#inbox-view { display: flex; flex-direction: column; height: 100%; position: relative; }
+.inbox-header { display: flex; align-items: center; gap: 14px; padding: 14px 16px 10px; background: #FBE8D2; }
+.menu-btn, .icon-btn-plain { background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; }
+.search-pill { flex: 1; background: #fff; border-radius: 26px; padding: 10px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.search-pill span { color: #6B5A45; font-size: 15px; flex: 1; }
+.account-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; font-size: 14px; flex-shrink: 0; }
+
+.tabs-row { display: flex; gap: 10px; padding: 6px 16px 12px; }
+.current-tab-label { font-size: 14px; font-weight: 700; color: #1a73e8; }
+
+.mail-list { flex: 1; overflow-y: auto; background: #FBE8D2; padding: 8px 12px 72px; display: flex; flex-direction: column; gap: 8px; }
+.mail-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: #FFFCF5; border-radius: 16px; box-shadow: none; cursor: pointer; transition: background 0.1s; }
+.mail-row:active { background: #f5f5f5; }
+.mail-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 20px; flex-shrink: 0; }
+.mail-body { flex: 1; min-width: 0; }
+.mail-top-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.mail-sender { font-size: 14.5px; font-weight: 700; color: #3B2A12; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mail-row.unread .mail-sender { color: #3B2A12; font-weight: 700; }
+.mail-date { font-size: 12px; color: #6B5A45; flex-shrink: 0; }
+.mail-row.unread .mail-date { color: #3B2A12; font-weight: 700; }
+.mail-subject-line { font-size: 13.5px; color: #6B5A45; margin-top: 2px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.4; }
+.mail-row.unread .mail-subject-line { color: #3B2A12; }
+.mail-subject-line .subj { font-weight: 600; }
+.mail-row.unread .mail-subject-line .subj { font-weight: 700; }
+.mail-snippet { color: #6B5A45; font-weight: 400; }
+.star-btn { background: none; border: none; cursor: pointer; padding: 4px; flex-shrink: 0; align-self: center; }
+
+.compose-fab { position: absolute; right: 18px; bottom: 80px; background: #FF7A00; color: #fff; border: none; border-radius: 28px; padding: 16px 24px 16px 18px; display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(255,122,0,0.4); }
+
+.bottom-tabs { position: fixed; left: 0; right: 0; bottom: 0; height: 56px; padding: 4px 0 2px; background: #FBE8D2; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; justify-content: space-around; box-sizing: border-box; z-index: 20; }
+.tab-btn { flex: 1; height: 100%; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.tab-icon-circle { width: 64px; height: 32px; border-radius: 16px; background: #EDD5A8; display: flex; align-items: center; justify-content: center; }
+
+/* DETAIL VIEW */
+#detail-view { display: none; flex-direction: column; height: 100%; background: #FBE8D2; }
+.detail-header { display: flex; align-items: center; gap: 22px; padding: 12px 14px; background: #FBE8D2; position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
+.detail-header .spacer { flex: 1; }
+.detail-subject-block { padding: 12px 0 4px; text-align: left; }
+.detail-subject-text { font-size: 21px; font-weight: 400; color: #3B2A12; line-height: 1.6; }
+.inbox-badge { display: inline-block; vertical-align: middle; background: #EDCA7A; color: #5C3210; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 10px; white-space: nowrap; margin-left: 10px; }
+.detail-title-star { background: none; border: none; cursor: pointer; padding: 2px; display: inline-flex; vertical-align: middle; margin-left: 10px; }
+.detail-meta-row { display: flex; align-items: flex-start; gap: 12px; padding: 4px 16px 8px; }
+.detail-to-line { font-size: 12px; color: #6B5A45; margin-top: 2px; }
+.sender-card-icons { display: flex; gap: 2px; margin-left: auto; flex-shrink: 0; }
+.mini-icon-btn { background: none; border: none; cursor: pointer; font-size: 16px; line-height: 1; padding: 6px; border-radius: 8px; color: #6B5A45; }
+.mini-icon-btn:active { background: rgba(0,0,0,0.06); }
+.to-line-toggle { cursor: pointer; display: inline-flex; align-items: center; gap: 4px; user-select: none; }
+.to-arrow { font-size: 9px; }
+.sender-detail-panel { display: none; margin: 12px 8px; background: #FAE8CC; border-radius: 10px; padding: 14px 10px 14px 9px; font-size: 15px; line-height: 1.6; color: #6B5A45; }
+.sender-detail-panel.open { display: block; }
+.sender-detail-panel .panel-row { display: flex; align-items: start; gap: 0; padding: 4px 0; line-height: 1.6; }
+.sender-detail-panel .panel-row > span:last-child { flex: 1; font-size: 15px; color: #3B2A12; min-width: 0; overflow-wrap: anywhere; }
+/* アドレスは途中で切らずに丸ごと次の行へ回す（画面幅より長い場合のみ途中改行） */
+.sender-detail-panel .dt-addr { display: inline-block; max-width: 100%; overflow-wrap: anywhere; }
+.sender-detail-panel .panel-label { font-size: 14px; color: #6B5A45; flex: 0 0 49px; }
+.security-notice { display: flex; align-items: flex-start; gap: 8px; margin-top: 2px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.08); font-size: 15px; line-height: 1.6; }
+.security-link { color: #C07820; font-size: 15px; font-weight: 600; cursor: pointer; }
+.detail-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+.detail-sender-info { flex: 1; min-width: 0; }
+.detail-sender-name { font-size: 14px; font-weight: 600; color: #3B2A12; line-height: 1.3; }
+.detail-body-area { flex: 1; overflow-y: auto; padding: 60px 16px 160px; }
+.detail-body-text { font-size: 16px; line-height: 1.6; color: #3B2A12; white-space: pre-wrap; padding-left: 16px; }
+.thread-date-inline { font-weight: 400; color: #6B5A45; font-size: 12px; margin-left: 6px; }
+/* カードは画面端から約7px（Gmail 実寸）。body-area の padding 16px を負マージンで詰め、広げた 13px は padding で吸収して中身の位置は据え置く */
+.thread-card { background: #FFFCF5; border-radius: 6px; margin: 0 -9px 2px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: none; }
+.thread-card.collapsed { min-height: 92px; padding: 16px 25px; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
+.thread-card .detail-avatar { width: 40px; height: 40px; font-size: 15px; }
+.thread-card-collapsed-info { flex: 1; min-width: 0; }
+.thread-card-name { font-size: 15px; font-weight: 600; color: #3B2A12; }
+.thread-card-date { font-size: 11.5px; color: #6B5A45; margin-left: 6px; }
+.thread-card-preview { font-size: 13px; font-weight: 400; color: #7A6A55; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; white-space: normal; margin-top: 4px; line-height: 1.45; }
+.thread-card.expanded { padding: 14px 29px 18px; }
+.thread-card.expanded .detail-meta-row { padding: 12px 0 4px; cursor: pointer; }
+.thread-card.expanded .detail-body-text { margin-top: 12px; }
+/* 詳細ボックスは画面端から約21px（カード端7px + border 1px + padding 29px − 16px） */
+.thread-card.expanded .sender-detail-panel { margin: 12px -16px; }
+/* 引用（Gmail と同じ形）：閉じているときは「•••」だけ。開くと引用元の行＋左線のブロックを、スレッドの古いメールまで入れ子でさかのぼる */
+.gq-wrap { padding-left: 16px; margin-top: 12px; min-width: 0; font-size: 16px; line-height: 1.6; color: #3B2A12; overflow-wrap: anywhere; }
+.gq-dots { display: block; padding: 6px 0; margin: 0; background: none; border: none; cursor: pointer; }
+.gq-attr + .gq-dots { margin-top: 6px; } /* 引用元の行と「•••」の間は約12px（ボタン上の余白6px込み） */
+.gq-dots span { display: flex; align-items: center; justify-content: center; gap: 3px; width: 24px; height: 12px; border-radius: 6px; background: #E8EAED; }
+.gq-dots i { width: 3px; height: 3px; border-radius: 50%; background: #5F6368; }
+.gq-dots.is-open span { background: #BDC1C6; }
+.gq-dots.is-open i { background: #F8F9FA; }
+.gq-addr { color: #1155CC; text-decoration: underline; }
+.gq-wrap .gq-addr { cursor: pointer; border-radius: 3px; } /* メール詳細の引用だけ押せる（作成画面の引用は押せない） */
+.gq-wrap .gq-addr:active { background: rgba(17,85,204,0.12); }
+.gq { margin: 0; padding-left: 8px; border-left: 1px solid #CCCCCC; min-width: 0; }
+.gq.gq-flat { padding-left: 0; border-left: none; }
+.gq-body { white-space: pre-wrap; }
+.gq-body + .gq-attr { margin-top: 16px; }
+.attachment-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; margin-right: 16px; white-space: normal; }
+.attachment-card { width: 100%; background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.attachment-preview { background: #fff; height: 220px; display: flex; align-items: flex-start; justify-content: center; overflow: hidden; }
+.attachment-preview canvas { max-width: 100%; height: auto; object-fit: contain; display: block; }
+.attachment-info-bar { background: #FFE4AE; display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
+.attachment-icon-pdf { flex-shrink: 0; }
+.attachment-file-name { flex: 1; min-width: 0; font-size: 13px; color: #3B2A12; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.attachment-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.attachment-action-icon { flex-shrink: 0; color: #6B5A45; }
+.detail-actions { position: fixed; left: 0; right: 0; bottom: 56px; padding: 12px 16px; background: #FBE8D2; border-top: 1px solid rgba(0,0,0,0.07); display: flex; align-items: center; gap: 4px; z-index: 15; }
+.detail-action-btn { flex: 1; background: #475A6E; border: none; height: 44px; border-radius: 22px; margin: 0 4px; font-size: 15px; font-weight: 600; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+.detail-emoji-btn { width: 48px; height: 48px; flex-shrink: 0; background: #475A6E; border: none; border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+/* まとめ行（プロモーション / 新着）。中桐版の .mail-row をそのまま使い、
+   右端の日付の代わりに新着件数を出す。 */
+.summary-count { font-size: 12px; font-weight: 700; color: #1B7A3E; white-space: nowrap; flex-shrink: 0; align-self: center; padding-left: 6px; }
+.mail-row.summary-row { cursor: default; }
+
+/* ===== 作成画面（返信・全員に返信・転送・新規作成）=====
+   寸法は幅360pxの Gmail 実機スクショ基準。右側のアイコンは右端からの距離で置くので幅が変わっても右寄せのまま。 */
+#cmp { position: fixed; top: 0; left: 0; right: 0; height: 100%; z-index: 100; background: #FFFFFF; color: #3B2A12; display: none; flex-direction: column; }
+#cmp.open { display: flex; }
+.cmp-bar { position: relative; flex: 0 0 auto; height: 54px; }
+.cmp-bar-btn { position: absolute; top: 7px; width: 40px; height: 40px; padding: 0; background: none; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.cmp-bar-btn:active, .cmp-mode:active, .cmp-drop:active, .cmp-caret:active { background: rgba(0,0,0,0.06); }
+.cmp-back { left: 4px; }    /* 中心 24px */
+.cmp-clip { right: 86px; }  /* 中心 右端から106px（360pxで254px） */
+.cmp-send { right: 44px; }  /* 中心 右端から64px（296px） */
+.cmp-more { right: 3px; }   /* 中心 右端から23px（337px） */
+.cmp-scroll { flex: 1 1 auto; overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.cmp-row { position: relative; border-bottom: 1px solid rgba(0,0,0,0.08); }
+.cmp-row[hidden] { display: none; }
+.cmp-label { position: absolute; left: 14px; font-size: 16px; line-height: 22px; color: #9A8574; }
+.cmp-caret { position: absolute; right: 5px; width: 40px; height: 40px; padding: 0; background: none; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; } /* 中心 右端から25px（335px） */
+.cmp-from { height: 48px; }
+.cmp-from .cmp-label { top: 13px; }
+.cmp-from .cmp-caret { top: 4px; }
+.cmp-from-value { position: absolute; left: 63px; right: 50px; top: 13px; font-size: 16px; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* 宛先・Cc・Bcc 行（高さは区切り線込み）。チップ(31px)がある時は上下9pxで50px、空の時は上下7pxで46px */
+.cmp-recip { --cmp-pad: 7px; }
+.cmp-recip.has-chips { --cmp-pad: 9px; }
+.cmp-recip .cmp-label { top: calc(var(--cmp-pad) + 4.5px); }
+.cmp-recip .cmp-caret, .cmp-mode, .cmp-drop { top: calc(var(--cmp-pad) - 4.5px); }
+.cmp-mode { position: absolute; left: 4px; width: 40px; height: 40px; padding: 0; background: none; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; } /* 中心 24px */
+.cmp-drop { position: absolute; left: 36px; width: 20px; height: 40px; padding: 0; background: none; border: none; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; } /* 中心 46px */
+.cmp-chips { margin: 0 50px 0 63px; padding: var(--cmp-pad) 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
+.cmp-chip { display: inline-flex; align-items: center; gap: 8px; height: 31px; max-width: 100%; padding: 0 12px 0 0.5px; border: 1px solid #C9BFB3; border-radius: 16px; }
+.cmp-chip-av { flex: 0 0 28px; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 600; }
+.cmp-chip-name { min-width: 0; font-size: 16px; line-height: 29px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* 入力欄は長い名前のチップの後ろでも改行させない（入力中だけ幅を確保） */
+.cmp-input { flex: 1 1 0; min-width: 0; height: 31px; padding: 0; border: none; outline: none; background: transparent; font-family: inherit; font-size: 16px; color: #3B2A12; }
+.cmp-subject textarea, .cmp-body textarea { display: block; width: 100%; border: none; outline: none; background: transparent; resize: none; overflow: hidden; font-family: inherit; font-size: 16px; line-height: 22px; color: #3B2A12; }
+.cmp-subject textarea { padding: 15.5px 14px; } /* 1行で区切り線込み54px */
+.cmp-input:focus { min-width: 60px; }
+#cmp textarea, #cmp input { caret-color: #875400; }
+.cmp-recip.has-chips .cmp-input:not(:focus) { margin-left: -6px; } /* チップが列幅いっぱいでも gap 分で改行しない */
+#cmp textarea::placeholder, #cmp input::placeholder { color: #ACA39A; opacity: 1; }
+.cmp-body { padding: 16px 14px 32px; }
+.cmp-body textarea { min-height: 22px; padding: 0; }
+.cmp-body textarea.has-dots { margin-bottom: 22px; } /* 本文欄と引用（返信・転送）の間 */
+.cmp-quote-wrap[contenteditable] { outline: none; }
+.cmp-quote-wrap { min-width: 0; font-size: 16px; line-height: 1.6; color: #3B2A12; overflow-wrap: anywhere; } /* 中身は本文の引用と同じ .gq-* */
+.cmp-atts { margin-top: 24px; }
+.cmp-menu { position: fixed; z-index: 110; display: none; min-width: 176px; padding: 6px 0; background: #FFFFFF; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
+.cmp-menu.open { display: block; }
+.cmp-menu button { display: flex; align-items: center; gap: 16px; width: 100%; height: 48px; padding: 0 20px 0 16px; background: none; border: none; font-family: inherit; font-size: 16px; color: #3B2A12; text-align: left; cursor: pointer; }
+.cmp-menu button:active { background: rgba(0,0,0,0.06); }
+.cmp-snackbar { position: fixed; left: 12px; right: 12px; bottom: 16px; z-index: 120; padding: 14px 16px; background: #323232; color: #fff; font-size: 14px; border-radius: 6px; box-shadow: 0 3px 10px rgba(0,0,0,0.25); opacity: 0; transform: translateY(12px); transition: opacity .2s, transform .2s; pointer-events: none; }
+.cmp-snackbar.show { opacity: 1; transform: none; }
+/* 詳細ボックスのアドレス：押したときだけ薄く反応（レイアウトは変えない） */
+.sender-detail-panel .dt-addr { cursor: pointer; border-radius: 3px; transition: background-color .12s; }
+.sender-detail-panel .dt-addr:active { background: rgba(0,0,0,0.08); }
+
+/* ===== ドロワー（受信トレイの ≡ から開く）=====
+   寸法・色は幅360pxの Gmail 実機スクショ基準。幅は端末幅によらず 280px 固定。 */
+.drw-scrim { position: fixed; inset: 0; z-index: 199; background: rgba(0,0,0,0.6); opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility 0s linear .25s; touch-action: none; }
+.drw-scrim.open { opacity: 1; visibility: visible; transition: opacity .25s ease; }
+.drw { position: fixed; top: 0; bottom: 0; left: 0; z-index: 200; width: 280px; max-width: 100%; background: #F5EADE; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; transform: translateX(-100%); visibility: hidden; transition: transform .25s ease, visibility 0s linear .25s; touch-action: pan-y; }
+.drw.open { transform: translateX(0); visibility: visible; transition: transform .25s ease; }
+.drw.dragging { transition: none; }
+.drw-head { position: relative; height: 95px; border-bottom: 1px solid #A9ACAA; }
+.drw-logo { position: absolute; left: 21px; top: 50px; font-size: 22px; line-height: 28px; font-weight: 400; color: #D93025; letter-spacing: 0.2px; } /* 文字の中心が上から64px */
+.drw-sep { height: 0; border-top: 1px solid #A9ACAA; }
+.drw-all { height: 57px; display: flex; align-items: center; border-bottom: 1px solid #A9ACAA; }
+.drw-row { height: 43px; display: flex; align-items: center; }
+.drw-item { position: relative; display: flex; align-items: center; width: calc(100% - 14px); height: 42px; margin: 0 7px; padding: 0 14px 0 12px; border: none; border-radius: 21px; background: none; font-family: inherit; text-align: left; cursor: pointer; color: #202124; }
+.drw-item:active { background: rgba(0,0,0,0.06); }
+.drw-item.selected { background: #DAE2FF; color: #465170; }
+.drw-item.selected:active { background: #D0D9F5; }
+.drw-icon { flex: 0 0 24px; width: 24px; height: 24px; color: #3C4043; } /* 中心が左端から31px */
+.drw-item.selected .drw-icon { color: #465170; }
+.drw-icon.accent { color: #785A24; }
+.drw-label { flex: 1; min-width: 0; margin-left: 20px; font-size: 14px; font-weight: 500; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } /* 文字は左端63px */
+.drw-count { flex-shrink: 0; margin-left: 8px; font-size: 13px; line-height: 20px; color: #202124; } /* 右端が左端から259px */
+.drw-badge { flex-shrink: 0; margin-left: 8px; height: 23px; padding: 0 10px; border-radius: 11.5px; background: #1967D2; color: #fff; font-size: 12px; font-weight: 500; line-height: 23px; }
+.drw-heading { padding: 14px 21px 8px; font-size: 12px; line-height: 16px; color: #785A24; }
+.drw-sep.drw-sep-bottom { margin: 8px 0; }
+.drw-foot { height: 16px; }
+</style>
+</head>
+<body>
+<!-- 起動スプラッシュ。Android WebAPK が manifest の background_color を
+     反映しないため HTML 側で白の起動画面を出す。load 後にフェードアウトして DOM から除去する。 -->
+<div id="splash" style="position:fixed;inset:0;z-index:2147483647;background:#FFFFFF;display:flex;align-items:center;justify-content:center;transition:opacity .5s ease;">
+  <img src="./icons/icon-512.png" alt="" style="width:160px;height:160px;">
+</div>
+<script>
+(function () {
+  var splash = document.getElementById('splash');
+  var done = false;
+  function hide() {
+    if (done) return;
+    done = true;
+    splash.style.pointerEvents = 'none';
+    splash.style.opacity = '0';
+    setTimeout(function () { splash.remove(); }, 550);
+  }
+  if (document.readyState === 'complete') hide();
+  else window.addEventListener('load', hide);
+  // 画像の読み込みが止まっても起動画面に閉じ込めない保険
+  setTimeout(hide, 4000);
+})();
+</script>
+<div id="app">
+
+<!-- INBOX VIEW -->
+<div id="inbox-view">
+  <div class="inbox-header">
+    <button class="menu-btn" aria-label="メニュー" onclick="drwOpen()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6" stroke-linecap="round"/><line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round"/><line x1="3" y1="18" x2="21" y2="18" stroke-linecap="round"/></svg>
+    </button>
+    <div class="search-pill">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke-linecap="round"/></svg>
+      <span>メールを検索</span>
+    </div>
+    <div class="account-avatar" style="background:#4A7FB5;">伊</div>
+  </div>
+
+  <div class="tabs-row">
+    <span class="current-tab-label">メイン</span>
+  </div>
+
+  <div class="mail-list" id="mail-list"></div>
+
+  <button class="compose-fab" onclick="cmpNew()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3"><path d="M12 20h9" stroke-linecap="round"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>作成</span>
+  </button>
+</div>
+
+<!-- DETAIL VIEW -->
+<div id="detail-view">
+  <div class="detail-header">
+    <button class="icon-btn-plain" onclick="closeDetail()" aria-label="戻る">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2.2"><path d="M19 12H5" stroke-linecap="round"/><path d="M11 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="spacer"></div>
+    <button class="icon-btn-plain" aria-label="アーカイブ">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a2 2 0 002 2h10a2 2 0 002-2V9"/><line x1="10" y1="13" x2="14" y2="13" stroke-linecap="round"/></svg>
+    </button>
+    <button class="icon-btn-plain" aria-label="削除">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+    </button>
+    <button class="icon-btn-plain" aria-label="既読にする">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C4030" stroke-width="2"><path d="M21 8l-9 6-9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+    </button>
+    <button class="icon-btn-plain" aria-label="その他">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#5C4030"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+    </button>
+  </div>
+
+  <div class="detail-body-area" id="detail-body-area">
+    <!-- filled by JS -->
+  </div>
+
+  <div class="detail-actions">
+    <button class="detail-action-btn" onclick="cmpLatest('reply')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 00-4-4H4"/></svg>
+      返信
+    </button>
+    <button class="detail-action-btn" onclick="cmpLatest('forward')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 014-4h12"/></svg>
+      転送
+    </button>
+    <button class="detail-emoji-btn" aria-label="リアクション" onclick="alert('リアクションを送信（デモ）')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button>
+  </div>
+</div>
+
+<div class="bottom-tabs">
+  <button class="tab-btn active" aria-label="メール">
+    <span class="tab-icon-circle">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3949AB" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+    </span>
+  </button>
+  <button class="tab-btn" aria-label="Meet">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="1.5"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+</div>
+
+<!-- 作成画面（返信・全員に返信・転送・新規作成）。送信はデモで、どこにも保存しない -->
+<div id="cmp" aria-hidden="true">
+  <div class="cmp-bar">
+    <button class="cmp-bar-btn cmp-back" onclick="cmpClose()" aria-label="戻る">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#452E00" stroke-width="2.2"><path d="M19 12H5" stroke-linecap="round"/><path d="M11 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="cmp-bar-btn cmp-clip" aria-label="ファイルを添付">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#452E00"><path transform="rotate(45 12 12)" d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg>
+    </button>
+    <button class="cmp-bar-btn cmp-send" onclick="cmpSend()" aria-label="送信">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="#785A24"><path d="M4.01 6.03l7.51 3.22-7.52-1 .01-2.22m7.5 8.72L4 17.97v-2.22l7.51-1M2.01 3L2 10l15 2-15 2 .01 7L23 12 2.01 3z"/></svg>
+    </button>
+    <button class="cmp-bar-btn cmp-more" aria-label="その他">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#452E00"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+    </button>
+  </div>
+  <div class="cmp-scroll" id="cmp-scroll">
+    <div class="cmp-row cmp-from">
+      <span class="cmp-label">From</span>
+      <span class="cmp-from-value" id="cmp-from"></span>
+      <button class="cmp-caret" aria-label="差出人">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="#452E00"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>
+      </button>
+    </div>
+    <div class="cmp-row cmp-recip" id="cmp-to-row"></div>
+    <div class="cmp-row cmp-recip" id="cmp-cc-row" hidden></div>
+    <div class="cmp-row cmp-recip" id="cmp-bcc-row" hidden></div>
+    <div class="cmp-row cmp-subject"><textarea id="cmp-subject" rows="1" placeholder="件名" aria-label="件名"></textarea></div>
+    <div class="cmp-body">
+      <textarea id="cmp-body" rows="1" placeholder="メールを作成" aria-label="本文"></textarea>
+      <div id="cmp-extra"></div>
+    </div>
+  </div>
+</div>
+<div class="cmp-menu" id="cmp-menu" role="menu"></div>
+<div class="cmp-snackbar" id="cmp-snackbar" role="status"></div>
+
+<!-- ドロワー（受信トレイの ≡ から開く）。項目は JS で描画 -->
+<div class="drw-scrim" id="drw-scrim"></div>
+<nav class="drw" id="drw" aria-hidden="true" aria-label="メニュー"></nav>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="../mail_quote.js"></script>
+<script src="../mail_attach.js"></script>
+<script>
+if (typeof pdfjsLib !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+const AVATAR_COLORS = ['#6B8E9F','#A05C5C','#5C7A5C','#7A6E9F','#9F7A4D','#4D7A7A','#9F5C7A','#5C6B9F'];
+const MY_EMAIL = 'izawa20012@gmail.com';
+const MY_NAME = '伊沢 一浩';
+
+const COLOR_OVERRIDES = {
+  "伊沢 一浩": "#4A7FB5",
+  "森田 健吾": "#C0632B",
+  "株式会社GOOD 森田": "#C0632B",
+  "小島 隆": "#5C6B9F",
+  "春名建設 小島": "#5C6B9F",
+  "石井 真一": "#4F9F7C",
+  "東和エナジーシステム 石井": "#4F9F7C",
+  "東京電力パワーグリッド 系統連系受付": "#9F7A4D",
+  "平野 智也": "#8D6E63",
+  "グリーンキャピタル・アセット 平野": "#8D6E63",
+  "佐々木 亮": "#A05C5C",
+  "城北リアルティ 佐々木": "#A05C5C",
+  "川村 洋平": "#7A6E9F",
+  "内装工房アトリエK 川村": "#7A6E9F",
+  "青木 誠司": "#4D7A7A",
+  "青樹設計事務所 青木": "#4D7A7A",
+  "高橋 誠": "#9F7A4D",
+  "中原 由紀子": "#9F5C7A",
+  "山中 浩之": "#5C7A5C",
+  "山中税理士事務所 山中": "#5C7A5C",
+  "吉岡 達也": "#C0632B",
+  "東都中央銀行 日本橋支店 吉岡": "#C0632B",
+  "東京都 産業廃棄物対策課": "#5C7A5C",
+  "東京都建築士事務所協会": "#7A6E9F",
+  "グリーンサイト": "#3C8C5A",
+  "モノタロウ": "#D9534F",
+  "Amazon.co.jp": "#E8912D",
+  "ETC利用照会サービス": "#4D7A7A",
+  "お名前.com": "#E0913C",
+  "Indeed": "#5C6B9F",
+  "村上 恵": "#5C6B9F",
+  "日本橋保険サービス 村上": "#5C6B9F"
+};
+
+function colorFor(name) {
+  if (COLOR_OVERRIDES[name]) return COLOR_OVERRIDES[name];
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+
+const MAILS = [
+  {
+    "id": "m-good-inc",
+    "name": "株式会社GOOD 森田",
+    "email": "morita@good-inc.co.jp",
+    "avatarLetter": "森田",
+    "subject": "東岡場複合開発 工程表改訂版のご送付",
+    "snippet": "伊沢様 承知いたしました。 11月ご請求の前提で社内稟議を進めてまいります。 お支払い条件は契約書のとおりとさせていただ…",
+    "date": "10月9日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "森田 健吾",
+        "toEmail": "morita@good-inc.co.jp",
+        "date": "10月6日",
+        "datetime": "2026年10月6日(火) 10:12",
+        "body": "株式会社GOOD<br>開発事業部 森田様<br><br>いつもお世話になっております。YKS建設の伊沢です。<br><br>東岡場複合開発の工程表改訂版をお送りいたします。<br>前回お打ち合わせの内容を反映し、造成工事の着手を11月第2週としております。<br><br>ご確認のほど、よろしくお願いいたします。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――",
+        "attachments": [
+          {
+            "name": "higashiokaba_schedule_r3.pdf",
+            "url": "./files/higashiokaba_schedule_r3.pdf"
+          }
+        ]
+      },
+      {
+        "from": "森田 健吾",
+        "fromEmail": "morita@good-inc.co.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月7日",
+        "datetime": "2026年10月7日(水) 15:40",
+        "body": "伊沢様<br><br>いつも大変お世話になっております。GOODの森田でございます。<br><br>工程表改訂版、確かに拝受いたしました。<br>社内でも確認を進めております。<br><br>一点確認させていただきたいのですが、着手金のご請求時期は<br>当初の10月から変更になるという理解でよろしいでしょうか。<br>稟議のスケジュールに関わりますため、お手数ですがご教示ください。<br><br>引き続きよろしくお願いいたします。<br><br>株式会社GOOD 開発事業部<br>森田 健吾"
+      },
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "森田 健吾",
+        "toEmail": "morita@good-inc.co.jp",
+        "date": "10月8日",
+        "datetime": "2026年10月8日(木) 9:05",
+        "body": "森田様<br><br>お世話になっております。伊沢です。<br><br>ご確認ありがとうございます。<br>着手金（1億7,000万円）につきましては、造成着手に合わせて<br>11月にご請求させていただきたく存じます。<br>請求書は11月上旬に発行いたします。<br><br>何卒よろしくお願いいたします。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――"
+      },
+      {
+        "from": "森田 健吾",
+        "fromEmail": "morita@good-inc.co.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月9日",
+        "datetime": "2026年10月9日(金) 11:28",
+        "body": "伊沢様<br><br>承知いたしました。<br>11月ご請求の前提で社内稟議を進めてまいります。<br>お支払い条件は契約書のとおりとさせていただきます。<br><br>引き続きよろしくお願い申し上げます。<br><br>株式会社GOOD 開発事業部<br>森田 健吾"
+      }
+    ]
+  },
+  {
+    "id": "m-harunakensetsu",
+    "name": "春名建設 小島",
+    "email": "kojima@harunakensetsu.co.jp",
+    "avatarLetter": "小島",
+    "subject": "東岡場 工程表修正の件",
+    "snippet": "了解です。伺います。",
+    "date": "10月14日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "小島 隆",
+        "fromEmail": "kojima@harunakensetsu.co.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月2日",
+        "datetime": "2026年10月2日(金) 8:31",
+        "body": "伊沢社長<br><br>春名建設の小島です。<br>工程表、造成と仮設の期間が一部重なっています（3〜4週目）。<br>こちらで直しましょうか。<br><br>小島"
+      },
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "小島 隆",
+        "toEmail": "kojima@harunakensetsu.co.jp",
+        "date": "10月2日",
+        "datetime": "2026年10月2日(金) 9:47",
+        "body": "小島さん<br><br>ありがとうございます。修正お願いします。<br>GOOD様への提出に使うので、今週中にいただけると助かります。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――"
+      },
+      {
+        "from": "小島 隆",
+        "fromEmail": "kojima@harunakensetsu.co.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月5日",
+        "datetime": "2026年10月5日(月) 17:02",
+        "body": "修正版送ります。仮設を1週前倒ししました。<br><br>小島",
+        "attachments": [
+          {
+            "name": "higashiokaba_schedule_fix.pdf",
+            "url": "./files/higashiokaba_schedule_fix.pdf"
+          }
+        ]
+      },
+      {
+        "from": "小島 隆",
+        "fromEmail": "kojima@harunakensetsu.co.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月14日",
+        "datetime": "2026年10月14日(水) 18:20",
+        "body": "週次工程会議、木曜10時から現場事務所でお願いします。<br><br>小島"
+      },
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "小島 隆",
+        "toEmail": "kojima@harunakensetsu.co.jp",
+        "date": "10月14日",
+        "datetime": "2026年10月14日(水) 19:03",
+        "body": "了解です。伺います。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――"
+      }
+    ]
+  },
+  {
+    "id": "m-towa-energy",
+    "name": "東和エナジーシステム 石井",
+    "email": "ishii@towa-energy.co.jp",
+    "avatarLetter": "石井",
+    "subject": "江戸川区大杉 系統用蓄電所 機器お見積りのお願い",
+    "snippet": "1月ご発注であれば10月据付の見込みです。 石井",
+    "date": "10月3日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "石井 真一",
+        "toEmail": "ishii@towa-energy.co.jp",
+        "date": "9月24日",
+        "datetime": "2026年9月24日(木) 14:10",
+        "body": "東和エナジーシステム株式会社<br>営業部 石井様<br><br>お世話になっております。YKS建設の伊沢です。<br><br>江戸川区大杉で計画している系統用蓄電所につきまして、<br>蓄電池システム一式（PCS含む）のお見積りをお願いできますでしょうか。<br>規模は2MW／8MWh程度を想定しております。<br><br>よろしくお願いいたします。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――"
+      },
+      {
+        "from": "石井 真一",
+        "fromEmail": "ishii@towa-energy.co.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月1日",
+        "datetime": "2026年10月1日(木) 16:45",
+        "body": "伊沢様<br><br>お世話になっております。東和エナジーシステムの石井です。<br><br>お見積書を添付いたします。<br>蓄電池システム一式（PCS・EMS含む）で4億2,800万円（税別）です。<br>納期は発注後およそ9か月を見込んでおります。<br><br>ご不明点がございましたらお知らせください。<br><br>石井",
+        "attachments": [
+          {
+            "name": "oosugi_bess_quote.pdf",
+            "url": "./files/oosugi_bess_quote.pdf"
+          }
+        ]
+      },
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "石井 真一",
+        "toEmail": "ishii@towa-energy.co.jp",
+        "date": "10月2日",
+        "datetime": "2026年10月2日(金) 10:22",
+        "body": "石井様<br><br>ありがとうございます。<br>来年1月の発注を考えておりますが、その場合の据付時期を教えていただけますか。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――"
+      },
+      {
+        "from": "石井 真一",
+        "fromEmail": "ishii@towa-energy.co.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月3日",
+        "datetime": "2026年10月3日(土) 9:15",
+        "body": "1月ご発注であれば10月据付の見込みです。<br><br>石井"
+      }
+    ]
+  },
+  {
+    "id": "m-tepco-pg",
+    "name": "東京電力パワーグリッド 系統連系受付",
+    "email": "renkei-uketsuke@tepco-pg.example.jp",
+    "avatarLetter": "東電",
+    "subject": "【接続検討】回答書のご送付について",
+    "snippet": "YKS建設株式会社 伊沢 一浩 様 お申込みいただいた接続検討（江戸川区大杉）につきまして、 回答書を添付のとおりお送り…",
+    "date": "10月10日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "東京電力パワーグリッド 系統連系受付",
+        "fromEmail": "renkei-uketsuke@tepco-pg.example.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月10日",
+        "datetime": "2026年10月10日(土) 13:00",
+        "body": "YKS建設株式会社<br>伊沢 一浩 様<br><br>お申込みいただいた接続検討（江戸川区大杉）につきまして、<br>回答書を添付のとおりお送りいたします。<br><br>内容についてのお問い合わせは、回答書に記載の担当窓口までお願いいたします。<br><br>東京電力パワーグリッド株式会社<br>系統連系受付センター",
+        "attachments": [
+          {
+            "name": "oosugi_connection_reply.pdf",
+            "url": "./files/oosugi_connection_reply.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "m-greencap-am",
+    "name": "グリーンキャピタル・アセット 平野",
+    "email": "hirano@greencap-am.co.jp",
+    "avatarLetter": "平野",
+    "subject": "大杉 系統用蓄電所 完成売りのご案内",
+    "snippet": "平野様 10/29（木）14時でいかがでしょうか。現地でお待ちしております。",
+    "date": "10月20日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "平野 智也",
+        "toEmail": "hirano@greencap-am.co.jp",
+        "date": "10月12日",
+        "datetime": "2026年10月12日(月) 11:00",
+        "body": "グリーンキャピタル・アセット株式会社<br>平野様<br><br>お世話になっております。YKS建設の伊沢です。<br><br>先日お話しした江戸川区大杉の系統用蓄電所につきまして、<br>完成後の売却を前提とした概要資料をお送りいたします。<br><br>ご検討いただけますと幸いです。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――",
+        "attachments": [
+          {
+            "name": "oosugi_bess_overview.pdf",
+            "url": "./files/oosugi_bess_overview.pdf"
+          }
+        ]
+      },
+      {
+        "from": "平野 智也",
+        "fromEmail": "hirano@greencap-am.co.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月15日",
+        "datetime": "2026年10月15日(木) 18:42",
+        "body": "伊沢様<br><br>資料ありがとうございます。平野です。<br>社内検討にあたり、何点か教えてください。<br><br>1. 系統連系の予定時期<br>2. 想定収益の前提（市場の想定単価など）<br>3. 完成後のO&amp;M体制（御社で受けていただけるか）<br><br>よろしくお願いいたします。"
+      },
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "平野 智也",
+        "toEmail": "hirano@greencap-am.co.jp",
+        "date": "10月16日",
+        "datetime": "2026年10月16日(金) 10:30",
+        "body": "平野様<br><br>ご質問ありがとうございます。<br><br>1. 連系は2027年秋を予定しております（接続検討の回答受領済みです）。<br>2. 収益前提は別途シートにまとめ、来週中にお送りいたします。<br>3. O&amp;Mは提携先と組んで当社で窓口をお受けする想定です。<br><br>よろしくお願いいたします。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――"
+      },
+      {
+        "from": "平野 智也",
+        "fromEmail": "hirano@greencap-am.co.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月19日",
+        "datetime": "2026年10月19日(月) 9:12",
+        "body": "伊沢様<br><br>ありがとうございます。一度現地を拝見したく、<br>10/29（木）か11/5（木）の午後はいかがでしょうか。<br><br>平野"
+      },
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "平野 智也",
+        "toEmail": "hirano@greencap-am.co.jp",
+        "date": "10月20日",
+        "datetime": "2026年10月20日(火) 8:55",
+        "body": "平野様<br><br>10/29（木）14時でいかがでしょうか。現地でお待ちしております。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――"
+      }
+    ]
+  },
+  {
+    "id": "m-johoku-realty",
+    "name": "城北リアルティ 佐々木",
+    "email": "sasaki@johoku-realty.co.jp",
+    "avatarLetter": "佐々木",
+    "subject": "【物件資料】市谷仲之町・西葛西・信濃町",
+    "snippet": "来週中であればいつでも大丈夫です。候補をいただければ合わせます。",
+    "date": "10月6日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "佐々木 亮",
+        "fromEmail": "sasaki@johoku-realty.co.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "9月18日",
+        "datetime": "2026年9月18日(金) 12:30",
+        "body": "伊沢社長<br><br>いつもありがとうございます。城北リアルティの佐々木です。<br>ご依頼の条件で出ている中古マンション3件、資料お送りします。<br>どれも売主さん早めに決めたい様子です。<br><br>佐々木",
+        "attachments": [
+          {
+            "name": "mysoku_ichigaya.pdf",
+            "url": "./files/mysoku_ichigaya.pdf"
+          },
+          {
+            "name": "mysoku_nishikasai.pdf",
+            "url": "./files/mysoku_nishikasai.pdf"
+          },
+          {
+            "name": "mysoku_shinanomachi.pdf",
+            "url": "./files/mysoku_shinanomachi.pdf"
+          }
+        ]
+      },
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "佐々木 亮",
+        "toEmail": "sasaki@johoku-realty.co.jp",
+        "date": "9月30日",
+        "datetime": "2026年9月30日(水) 16:05",
+        "body": "佐々木さん<br><br>ありがとうございます。<br>まず西葛西で買付を入れます。証明書を添付しますので、売主様にお願いします。<br>残り2件も引き続き検討中です。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――",
+        "attachments": [
+          {
+            "name": "kaitsuke_nishikasai.pdf",
+            "url": "./files/kaitsuke_nishikasai.pdf"
+          }
+        ]
+      },
+      {
+        "from": "佐々木 亮",
+        "fromEmail": "sasaki@johoku-realty.co.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月6日",
+        "datetime": "2026年10月6日(火) 11:48",
+        "body": "伊沢社長<br><br>売主さん、ご提示の条件で了承とのことです！<br>契約日の候補をいただけますか。<br><br>佐々木"
+      },
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "佐々木 亮",
+        "toEmail": "sasaki@johoku-realty.co.jp",
+        "date": "10月6日",
+        "datetime": "2026年10月6日(火) 13:20",
+        "body": "来週中であればいつでも大丈夫です。候補をいただければ合わせます。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――"
+      }
+    ]
+  },
+  {
+    "id": "m-atelier-k",
+    "name": "内装工房アトリエK 川村",
+    "email": "kawamura@atelier-k.jp",
+    "avatarLetter": "川村",
+    "subject": "西葛西 リフォームお見積りの件",
+    "snippet": "建具・一部床を既存活用にして792万円で組み直しました。 これでどうでしょう。 川村",
+    "date": "10月21日",
+    "unread": true,
+    "starred": false,
+    "thread": [
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "川村 洋平",
+        "toEmail": "kawamura@atelier-k.jp",
+        "date": "10月8日",
+        "datetime": "2026年10月8日(木) 10:40",
+        "body": "川村さん<br><br>お世話になっております。YKS建設の伊沢です。<br>西葛西のマンション（再販予定）のリフォーム見積をお願いしたく、<br>現地調査の日程をいただけますか。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――"
+      },
+      {
+        "from": "川村 洋平",
+        "fromEmail": "kawamura@atelier-k.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月9日",
+        "datetime": "2026年10月9日(金) 7:58",
+        "body": "伊沢さん<br><br>ありがとうございます。10/11（土）午前はいかがでしょう。<br><br>川村"
+      },
+      {
+        "from": "川村 洋平",
+        "fromEmail": "kawamura@atelier-k.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月17日",
+        "datetime": "2026年10月17日(土) 20:15",
+        "body": "伊沢さん<br><br>先日はありがとうございました。<br>お見積り、847万円（税別）になりました。<br>全面改装で組んでいます。<br><br>川村",
+        "attachments": [
+          {
+            "name": "nishikasai_reform_quote.pdf",
+            "url": "./files/nishikasai_reform_quote.pdf"
+          }
+        ]
+      },
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "川村 洋平",
+        "toEmail": "kawamura@atelier-k.jp",
+        "date": "10月18日",
+        "datetime": "2026年10月18日(日) 9:30",
+        "body": "川村さん<br><br>ありがとうございます。<br>再販用なので、水回りと内装中心で800万以内に抑えられますか。<br>建具は既存を活かす形で構いません。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――"
+      },
+      {
+        "from": "川村 洋平",
+        "fromEmail": "kawamura@atelier-k.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月21日",
+        "datetime": "2026年10月21日(水) 18:05",
+        "body": "建具・一部床を既存活用にして792万円で組み直しました。<br>これでどうでしょう。<br><br>川村",
+        "attachments": [
+          {
+            "name": "nishikasai_reform_quote_r2.pdf",
+            "url": "./files/nishikasai_reform_quote_r2.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "m-aoki-sekkei",
+    "name": "青樹設計事務所 青木",
+    "email": "aoki@aoki-sekkei.jp",
+    "avatarLetter": "青木",
+    "subject": "八丈島ヴィラ計画 配置計画案",
+    "snippet": "伊沢様 修正案を添付します。 海側は各棟を15度ほど振り、駐車場は管理棟裏に集約しました。 青木",
+    "date": "10月16日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "青木 誠司",
+        "fromEmail": "aoki@aoki-sekkei.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月5日",
+        "datetime": "2026年10月5日(月) 17:30",
+        "body": "伊沢様<br><br>青樹設計の青木です。<br>八丈島の計画地（約2,200坪）に、ヴィラ15棟の配置初案をまとめました。<br>管理棟を入口側に置き、各棟の間隔を広めにとっています。<br><br>ご意見いただければ修正いたします。<br><br>青木",
+        "attachments": [
+          {
+            "name": "hachijo_villa_plan_v1.pdf",
+            "url": "./files/hachijo_villa_plan_v1.pdf"
+          }
+        ]
+      },
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "青木 誠司",
+        "toEmail": "aoki@aoki-sekkei.jp",
+        "date": "10月7日",
+        "datetime": "2026年10月7日(水) 11:10",
+        "body": "青木さん<br><br>ありがとうございます。良いと思います。<br>2点お願いします。<br>・海側の棟は全棟から海が見えるように向きを振ってください<br>・駐車場は管理棟の裏にまとめたいです<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――"
+      },
+      {
+        "from": "青木 誠司",
+        "fromEmail": "aoki@aoki-sekkei.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月16日",
+        "datetime": "2026年10月16日(金) 16:45",
+        "body": "伊沢様<br><br>修正案を添付します。<br>海側は各棟を15度ほど振り、駐車場は管理棟裏に集約しました。<br><br>青木",
+        "attachments": [
+          {
+            "name": "hachijo_villa_plan_v2.pdf",
+            "url": "./files/hachijo_villa_plan_v2.pdf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "m-takahashi",
+    "name": "高橋 誠",
+    "email": "m.takahashi.0814@gmail.com",
+    "avatarLetter": "高橋",
+    "subject": "八丈島リゾート事業について",
+    "snippet": "高橋様 ご質問ありがとうございます。 配当や契約条件につきましては、出資額によって変わる部分もございますので、 一度お会…",
+    "date": "10月16日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "高橋 誠",
+        "fromEmail": "m.takahashi.0814@gmail.com",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月13日",
+        "datetime": "2026年10月13日(火) 21:02",
+        "body": "伊沢様<br><br>先日の会合でお話を伺った高橋です。<br>八丈島のヴィラ事業に興味があり、資料をいただけますでしょうか。<br><br>高橋"
+      },
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "高橋 誠",
+        "toEmail": "m.takahashi.0814@gmail.com",
+        "date": "10月14日",
+        "datetime": "2026年10月14日(水) 9:15",
+        "body": "高橋様<br><br>先日はありがとうございました。YKS建設の伊沢です。<br>事業概要の資料を添付いたします。ぜひご覧ください。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――",
+        "attachments": [
+          {
+            "name": "hachijo_resort_overview.pdf",
+            "url": "./files/hachijo_resort_overview.pdf"
+          }
+        ]
+      },
+      {
+        "from": "高橋 誠",
+        "fromEmail": "m.takahashi.0814@gmail.com",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月15日",
+        "datetime": "2026年10月15日(木) 22:40",
+        "body": "伊沢様<br><br>資料ありがとうございました。いくつか質問させてください。<br><br>・配当の目安はどのくらいでしょうか<br>・ヴィラの運営は御社がされるのですか、それとも運営会社に委託ですか<br>・途中で解約や持分の譲渡はできますか<br>・台風の多い地域かと思いますが、保険はどうなっていますか<br><br>お手数ですがよろしくお願いします。<br><br>高橋"
+      },
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "高橋 誠",
+        "toEmail": "m.takahashi.0814@gmail.com",
+        "date": "10月16日",
+        "datetime": "2026年10月16日(金) 12:00",
+        "body": "高橋様<br><br>ご質問ありがとうございます。<br>配当や契約条件につきましては、出資額によって変わる部分もございますので、<br>一度お会いしてご説明させていただけますでしょうか。<br>来週でご都合のよい日時をお知らせください。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――"
+      }
+    ]
+  },
+  {
+    "id": "m-yukiko",
+    "name": "中原 由紀子",
+    "email": "yukiko.nakahara@icloud.com",
+    "avatarLetter": "中原",
+    "subject": "ご紹介いただいた件（八丈島の事業）",
+    "snippet": "ありがとうございます。一度直接お話を伺いたいです。 平日の夕方でしたら調整できます。 中原",
+    "date": "10月21日",
+    "unread": true,
+    "starred": false,
+    "thread": [
+      {
+        "from": "中原 由紀子",
+        "fromEmail": "yukiko.nakahara@icloud.com",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月19日",
+        "datetime": "2026年10月19日(月) 14:25",
+        "body": "伊沢様<br><br>はじめまして。山中先生からご紹介いただきました中原と申します。<br>八丈島の事業について資料を拝見できればと思いご連絡しました。<br><br>中原"
+      },
+      {
+        "from": "伊沢 一浩",
+        "fromEmail": "izawa20012@gmail.com",
+        "to": "中原 由紀子",
+        "toEmail": "yukiko.nakahara@icloud.com",
+        "date": "10月20日",
+        "datetime": "2026年10月20日(火) 10:05",
+        "body": "中原様<br><br>ご連絡ありがとうございます。YKS建設の伊沢です。<br>事業概要の資料をお送りいたします。<br><br>――――――――――――――――<br>YKS建設株式会社<br>代表取締役 伊沢 一浩<br>〒103-0015 東京都中央区日本橋箱崎町16-1 東益ビル6F<br>TEL 03-5614-0997 / FAX 03-5614-0998<br>Mobile 070-5083-4775<br>E-mail izawa20012@gmail.com<br>――――――――――――――――",
+        "attachments": [
+          {
+            "name": "hachijo_resort_overview.pdf",
+            "url": "./files/hachijo_resort_overview.pdf"
+          }
+        ]
+      },
+      {
+        "from": "中原 由紀子",
+        "fromEmail": "yukiko.nakahara@icloud.com",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月21日",
+        "datetime": "2026年10月21日(水) 19:50",
+        "body": "ありがとうございます。一度直接お話を伺いたいです。<br>平日の夕方でしたら調整できます。<br><br>中原"
+      }
+    ]
+  },
+  {
+    "id": "m-yamanaka-tax",
+    "name": "山中税理士事務所 山中",
+    "email": "yamanaka@yamanaka-tax.jp",
+    "avatarLetter": "山中",
+    "subject": "事業計画書の数字について",
+    "snippet": "伊沢社長 山中です。事業計画書の損益計画を拝見しました。 販管費の前期実績を反映したいので、試算表（9月まで）をお送りい…",
+    "date": "10月20日",
+    "unread": true,
+    "starred": false,
+    "thread": [
+      {
+        "from": "山中 浩之",
+        "fromEmail": "yamanaka@yamanaka-tax.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月20日",
+        "datetime": "2026年10月20日(火) 16:30",
+        "body": "伊沢社長<br><br>山中です。事業計画書の損益計画を拝見しました。<br>販管費の前期実績を反映したいので、試算表（9月まで）をお送りいただけますか。<br><br>山中"
+      }
+    ]
+  },
+  {
+    "id": "m-toto-chuo-bank",
+    "name": "東都中央銀行 日本橋支店 吉岡",
+    "email": "t.yoshioka@toto-chuo-bank.example.jp",
+    "avatarLetter": "吉岡",
+    "subject": "ご面談日程のご相談",
+    "snippet": "YKS建設株式会社 伊沢社長 いつもお世話になっております。東都中央銀行の吉岡です。 先日お伺いしたご融資のご相談につき…",
+    "date": "10月16日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "吉岡 達也",
+        "fromEmail": "t.yoshioka@toto-chuo-bank.example.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月16日",
+        "datetime": "2026年10月16日(金) 10:45",
+        "body": "YKS建設株式会社<br>伊沢社長<br><br>いつもお世話になっております。東都中央銀行の吉岡です。<br>先日お伺いしたご融資のご相談につきまして、<br>10/27（火）または10/28（水）の午後にお時間をいただけますでしょうか。<br><br>吉岡"
+      }
+    ]
+  },
+  {
+    "id": "m-sanpai-tokyo",
+    "name": "東京都 産業廃棄物対策課",
+    "email": "no-reply@sanpai-tokyo.example.jp",
+    "avatarLetter": "東京",
+    "subject": "産業廃棄物収集運搬業許可 更新申請のご案内",
+    "snippet": "許可番号 第13-00-235861号の許可期限が近づいております。 更新申請は期限の2か月前から受け付けております。 …",
+    "date": "10月1日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "東京都 産業廃棄物対策課",
+        "fromEmail": "no-reply@sanpai-tokyo.example.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月1日",
+        "datetime": "2026年10月1日(木) 9:00",
+        "body": "許可番号 第13-00-235861号の許可期限が近づいております。<br>更新申請は期限の2か月前から受け付けております。<br>必要書類は東京都のホームページをご確認ください。"
+      }
+    ]
+  },
+  {
+    "id": "m-kenchikushi-tokyo",
+    "name": "東京都建築士事務所協会",
+    "email": "info@kenchikushi-tokyo.example.jp",
+    "avatarLetter": "建築",
+    "subject": "【会報】東京都建築士事務所協会 11月号",
+    "snippet": "会員の皆様へ 会報11月号を発行しました。 今号の特集：改正建築基準法の運用状況について",
+    "date": "10月10日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "東京都建築士事務所協会",
+        "fromEmail": "info@kenchikushi-tokyo.example.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月10日",
+        "datetime": "2026年10月10日(土) 12:00",
+        "body": "会員の皆様へ<br>会報11月号を発行しました。<br>今号の特集：改正建築基準法の運用状況について"
+      }
+    ]
+  },
+  {
+    "id": "m-greensite",
+    "name": "グリーンサイト",
+    "email": "noreply@greensite.example.jp",
+    "avatarLetter": "GS",
+    "subject": "【グリーンサイト】作業員名簿が提出されました",
+    "snippet": "協力会社より安全書類（作業員名簿）が提出されました。 現場名：東岡場複合開発 内容を確認し、承認をお願いします。",
+    "date": "10月13日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "グリーンサイト",
+        "fromEmail": "noreply@greensite.example.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月13日",
+        "datetime": "2026年10月13日(火) 8:10",
+        "body": "協力会社より安全書類（作業員名簿）が提出されました。<br>現場名：東岡場複合開発<br>内容を確認し、承認をお願いします。"
+      }
+    ]
+  },
+  {
+    "id": "m-monotaro",
+    "name": "モノタロウ",
+    "email": "info@monotaro.example.jp",
+    "avatarLetter": "モ",
+    "subject": "ご注文商品の出荷のお知らせ",
+    "snippet": "ご注文いただいた商品を出荷しました。 ・安全帯フルハーネス × 2 ・カラーコーン（赤）× 10 お届け予定日：10月2…",
+    "date": "10月19日",
+    "unread": true,
+    "starred": false,
+    "thread": [
+      {
+        "from": "モノタロウ",
+        "fromEmail": "info@monotaro.example.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月19日",
+        "datetime": "2026年10月19日(月) 15:20",
+        "body": "ご注文いただいた商品を出荷しました。<br>・安全帯フルハーネス × 2<br>・カラーコーン（赤）× 10<br>お届け予定日：10月21日"
+      }
+    ]
+  },
+  {
+    "id": "m-amazon",
+    "name": "Amazon.co.jp",
+    "email": "auto-confirm@amazon.example.jp",
+    "avatarLetter": "a",
+    "subject": "Amazon.co.jp ご注文の確認",
+    "snippet": "ご注文ありがとうございます。 レーザー距離計 × 1 お届け予定：10月20日",
+    "date": "10月18日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "Amazon.co.jp",
+        "fromEmail": "auto-confirm@amazon.example.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月18日",
+        "datetime": "2026年10月18日(日) 21:33",
+        "body": "ご注文ありがとうございます。<br>レーザー距離計 × 1<br>お届け予定：10月20日"
+      }
+    ]
+  },
+  {
+    "id": "m-meisai",
+    "name": "ETC利用照会サービス",
+    "email": "etc-meisai@example.jp",
+    "avatarLetter": "ETC",
+    "subject": "ETC利用明細のお知らせ（9月分）",
+    "snippet": "9月分のETC利用明細が確定しました。 ログインしてご確認ください。",
+    "date": "10月5日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "ETC利用照会サービス",
+        "fromEmail": "etc-meisai@example.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月5日",
+        "datetime": "2026年10月5日(月) 6:00",
+        "body": "9月分のETC利用明細が確定しました。<br>ログインしてご確認ください。"
+      }
+    ]
+  },
+  {
+    "id": "m-onamae",
+    "name": "お名前.com",
+    "email": "info@onamae.example.jp",
+    "avatarLetter": "お",
+    "subject": "【重要】ドメイン更新期限のお知らせ",
+    "snippet": "yks-kensetsu.co.jp の更新期限が近づいています。 期限：2026年11月30日",
+    "date": "10月9日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "お名前.com",
+        "fromEmail": "info@onamae.example.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月9日",
+        "datetime": "2026年10月9日(金) 10:00",
+        "body": "yks-kensetsu.co.jp の更新期限が近づいています。<br>期限：2026年11月30日"
+      }
+    ]
+  },
+  {
+    "id": "m-indeed",
+    "name": "Indeed",
+    "email": "no-reply@indeed.example.jp",
+    "avatarLetter": "in",
+    "subject": "新しい応募がありました：施工管理（建築）",
+    "snippet": "求人「施工管理（建築）／中央区日本橋」に新しい応募がありました。 応募者：K.S.さん（経験8年・1級建築施工管理技士）",
+    "date": "10月21日",
+    "unread": true,
+    "starred": false,
+    "thread": [
+      {
+        "from": "Indeed",
+        "fromEmail": "no-reply@indeed.example.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月21日",
+        "datetime": "2026年10月21日(水) 11:15",
+        "body": "求人「施工管理（建築）／中央区日本橋」に新しい応募がありました。<br>応募者：K.S.さん（経験8年・1級建築施工管理技士）"
+      }
+    ]
+  },
+  {
+    "id": "m-nihonbashi-hoken",
+    "name": "日本橋保険サービス 村上",
+    "email": "murakami@nihonbashi-hoken.jp",
+    "avatarLetter": "村上",
+    "subject": "工事保険の更新について",
+    "snippet": "伊沢社長 いつもありがとうございます。日本橋保険サービスの村上です。 工事保険（年間包括）が12月で満期となります。 更…",
+    "date": "10月15日",
+    "unread": false,
+    "starred": false,
+    "thread": [
+      {
+        "from": "村上 恵",
+        "fromEmail": "murakami@nihonbashi-hoken.jp",
+        "to": "伊沢 一浩",
+        "toEmail": "izawa20012@gmail.com",
+        "date": "10月15日",
+        "datetime": "2026年10月15日(木) 14:00",
+        "body": "伊沢社長<br><br>いつもありがとうございます。日本橋保険サービスの村上です。<br>工事保険（年間包括）が12月で満期となります。<br>更新のお見積りをお送りしますので、ご確認をお願いいたします。<br><br>村上",
+        "attachments": [
+          {
+            "name": "construction_insurance_renewal.pdf",
+            "url": "./files/construction_insurance_renewal.pdf"
+          }
+        ]
+      }
+    ]
+  }
+];
+
+function initial(name) {
+  return name.trim().charAt(0);
+}
+
+const AVATAR_LABEL_OVERRIDES = {
+  "伊沢 一浩": "伊",
+  "森田 健吾": "森田",
+  "株式会社GOOD 森田": "森田",
+  "小島 隆": "小島",
+  "春名建設 小島": "小島",
+  "石井 真一": "石井",
+  "東和エナジーシステム 石井": "石井",
+  "東京電力パワーグリッド 系統連系受付": "東電",
+  "平野 智也": "平野",
+  "グリーンキャピタル・アセット 平野": "平野",
+  "佐々木 亮": "佐々木",
+  "城北リアルティ 佐々木": "佐々木",
+  "川村 洋平": "川村",
+  "内装工房アトリエK 川村": "川村",
+  "青木 誠司": "青木",
+  "青樹設計事務所 青木": "青木",
+  "高橋 誠": "高橋",
+  "中原 由紀子": "中原",
+  "山中 浩之": "山中",
+  "山中税理士事務所 山中": "山中",
+  "吉岡 達也": "吉岡",
+  "東都中央銀行 日本橋支店 吉岡": "吉岡",
+  "東京都 産業廃棄物対策課": "東京",
+  "東京都建築士事務所協会": "建築",
+  "グリーンサイト": "GS",
+  "モノタロウ": "モ",
+  "Amazon.co.jp": "a",
+  "ETC利用照会サービス": "ETC",
+  "お名前.com": "お",
+  "Indeed": "in",
+  "村上 恵": "村上",
+  "日本橋保険サービス 村上": "村上"
+};
+
+function avatarLabel(name) {
+  return AVATAR_LABEL_OVERRIDES[name] || initial(name);
+}
+
+function formatDatetime(dt) {
+  if (!dt || dt.includes('午前') || dt.includes('午後')) return dt;
+  const m = dt.match(/(\d{4}年\d+月\d+日)[^0-9]*(\d+):(\d+)/);
+  if (!m) return dt;
+  const h = parseInt(m[2], 10);
+  const min = m[3];
+  const ampm = h < 12 ? '午前' : '午後';
+  const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${m[1]} ${ampm}${h12}:${min}`;
+}
+
+function renderDetailAvatar(name) {
+  const label = avatarLabel(name);
+  const fontSize = label.length > 1 ? 'font-size:11px;' : '';
+  return `<div class="detail-avatar" style="background:${colorFor(name)};${fontSize}">${label}</div>`;
+}
+
+function starSVG(filled) {
+  return filled
+    ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="#F4B400" stroke="#F4B400" stroke-width="1.5"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`
+    : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B6D55" stroke-width="1.8"><polygon points="12 2 15 9 22 9.3 16.7 14 18.5 21 12 17 5.5 21 7.3 14 2 9.3 9 9"/></svg>`;
+}
+
+function renderToLine(uid) {
+  return `
+    <div class="detail-to-line to-line-toggle" data-to-toggle="${uid}">
+      <span>To: 自分</span><span class="to-arrow">▼</span>
+    </div>
+  `;
+}
+
+// 詳細ボックスの「名前・アドレス」。名前がない（またはアドレスと同じ）ときはアドレスだけ出す
+function renderPanelAddress(name, email) {
+  const addr = email ? `<span class="dt-addr" data-addr="${email}" data-name="${String(name || '').replace(/"/g, '&quot;')}">${email}</span>` : '';
+  if (!name || name === email) return addr;
+  if (!addr) return `<span class="dt-name">${name}</span>`;
+  return `<span class="dt-name">${name}</span>・${addr}`;
+}
+
+function renderToPanel(uid, from, fromEmail, toName, toEmail, datetime) {
+  return `
+    <div class="sender-detail-panel" data-to-panel="${uid}">
+      <div class="panel-row"><span class="panel-label">From:</span><span>${renderPanelAddress(from, fromEmail)}</span></div>
+      <div class="panel-row"><span class="panel-label">宛先:</span><span>${renderPanelAddress(toName, toEmail)}</span></div>
+      <div class="panel-row"><span class="panel-label">日付:</span><span>${formatDatetime(datetime)}</span></div>
+      <div class="security-notice">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#8B6D55" style="flex-shrink:0;margin-top:3px"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        <span>標準的な暗号化（TLS）が適用されています。<br><span class="security-link">セキュリティの詳細を表示</span></span>
+      </div>
+    </div>
+  `;
+}
+
+function renderSenderCardIcons(idx) {
+  return `
+    <div class="sender-card-icons">
+      <button class="mini-icon-btn" aria-label="リアクション" onclick="alert('リアクションを送信（デモ）')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B5A45" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button>
+      <button class="mini-icon-btn" aria-label="返信" onclick="cmpReply(${idx})">↩</button>
+      <button class="mini-icon-btn" aria-label="その他" onclick="cmpMsgMenu(event, ${idx})">⋮</button>
+    </div>
+  `;
+}
+
+function bindToPanelToggles(area) {
+  area.querySelectorAll('[data-to-toggle]').forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+      const id = toggle.getAttribute('data-to-toggle');
+      const panel = area.querySelector(`[data-to-panel="${id}"]`);
+      const arrow = toggle.querySelector('.to-arrow');
+      const isOpen = panel.classList.toggle('open');
+      arrow.textContent = isOpen ? '▲' : '▼';
+    });
+  });
+}
+
+// 添付のカード（画像・PDF のプレビュー、種類アイコン、途中を省略したファイル名、ダウンロード）は3版共通の mail_attach.js
+function renderAttachment(att) { return MailAttach.card(att); }
+function renderPdfThumbnails(area) { MailAttach.renderPreviews(area); }
+
+function formatListDate(datetimeStr) {
+  var ampm = datetimeStr.match(/(午前|午後)/);
+  var m = datetimeStr.match(/(\d+)年(\d+)月(\d+)日[^0-9]*(\d+):(\d+)/);
+  if (!m) return datetimeStr;
+  var y = parseInt(m[1],10), mo = parseInt(m[2],10), d = parseInt(m[3],10);
+  var hour = parseInt(m[4], 10), mm = m[5];
+  if (ampm && ampm[1] === '午後' && hour < 12) hour += 12;
+  if (ampm && ampm[1] === '午前' && hour === 12) hour = 0;
+  var now = new Date();
+  var ty = now.getFullYear(), tmo = now.getMonth()+1, td = now.getDate();
+  if (y === ty && mo === tmo && d === td) {
+    return hour + ':' + mm;
+  } else if (y === ty) {
+    return mo + '月' + d + '日';
+  } else {
+    return y + '/' + mo + '/' + d;
+  }
+}
+
+function getLatestTimestamp(m) {
+  var lastMsg = (m.thread && m.thread.length > 0) ? m.thread[m.thread.length - 1] : m;
+  var str = lastMsg.datetime || lastMsg.date || m.date || '';
+  var ampm = str.match(/(午前|午後)/);
+  var r = str.match(/(\d+)年(\d+)月(\d+)日(?:\([^)]+\))?\s*(?:午前|午後)?\s*(\d+):(\d+)/);
+  if (!r) return -1;
+  var hour = parseInt(r[4], 10);
+  if (ampm && ampm[1] === '午後' && hour < 12) hour += 12;
+  if (ampm && ampm[1] === '午前' && hour === 12) hour = 0;
+  return parseInt(r[1])*100000000 + parseInt(r[2])*1000000 + parseInt(r[3])*10000
+       + hour*100 + parseInt(r[5]);
+}
+
+function summaryIcon(kind) {
+  if (kind === 'bell') {
+    return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>`;
+  }
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 12 22l-9-9V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.2" fill="#fff" stroke="none"/></svg>`;
+}
+
+// まとめ行。開くスレッドは持たないので、タップしてもデモの通知だけ出す。
+function renderSummaryRow(m) {
+  return `
+    <div class="mail-row summary-row" data-summary="${m.id}">
+      <div class="mail-avatar" style="background:${m.color};">${summaryIcon(m.icon)}</div>
+      <div class="mail-body">
+        <div class="mail-top-row">
+          <span class="mail-sender">${m.name}</span>
+        </div>
+        <div class="mail-subject-line"><span class="mail-snippet">${m.senders}</span></div>
+      </div>
+      <span class="summary-count">新着 ${m.newCount} 件</span>
+    </div>
+  `;
+}
+
+function renderList() {
+  const list = document.getElementById('mail-list');
+  var sorted = MAILS.slice().sort(function(a, b) {
+    var pa = (a.pinOrder === undefined) ? Infinity : a.pinOrder;
+    var pb = (b.pinOrder === undefined) ? Infinity : b.pinOrder;
+    if (pa !== pb) return pa - pb;
+    return getLatestTimestamp(b) - getLatestTimestamp(a);
+  });
+  list.innerHTML = sorted.map((m) => {
+    if (m.summary) return renderSummaryRow(m);
+    var lastMsg = (m.thread && m.thread.length > 0) ? m.thread[m.thread.length - 1] : m;
+    var dispDate = formatListDate((lastMsg.datetime || lastMsg.date || m.date));
+    return `
+    <div class="mail-row ${m.unread ? 'unread' : ''}" data-id="${m.id}">
+      <div class="mail-avatar" style="background:${colorFor(m.name)};${(m.avatarLetter || initial(m.name)).length > 1 ? 'font-size:14px;' : ''}">${m.avatarLetter || initial(m.name)}</div>
+      <div class="mail-body">
+        <div class="mail-top-row">
+          <span class="mail-sender">${m.name}</span>
+          <span class="mail-date">${dispDate}</span>
+        </div>
+        <div class="mail-subject-line"><span class="subj">${m.listSubject || m.subject}</span> <span class="mail-snippet">- ${m.snippet}</span></div>
+      </div>
+      <button class="star-btn" data-star="${m.id}">${starSVG(m.starred)}</button>
+    </div>
+  `;
+  }).join('');
+
+  list.querySelectorAll('.mail-row').forEach((row) => {
+    row.addEventListener('click', (e) => {
+      if (e.target.closest('.star-btn')) return;
+      const sid = row.getAttribute('data-summary');
+      if (sid) {
+        const s = MAILS.find((x) => x.id === sid);
+        alert(s.name + ' を開く（デモ・新着 ' + s.newCount + ' 件）');
+        return;
+      }
+      openDetail(row.getAttribute('data-id'));
+    });
+  });
+  list.querySelectorAll('.star-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute('data-star');
+      const mail = MAILS.find((x) => x.id === id);
+      if (!mail) return;
+      mail.starred = !mail.starred;
+      btn.innerHTML = starSVG(mail.starred);
+    });
+  });
+}
+
+function previewText(body) {
+  return body.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 60);
+}
+
+function renderThreadCard(mail, msg, idx, expanded) {
+  const uid = `${mail.id}-${idx}`;
+  if (!expanded) {
+    return `
+      <div class="thread-card collapsed" data-card-toggle="${idx}">
+        ${renderDetailAvatar(msg.from)}
+        <div class="thread-card-collapsed-info">
+          <span class="thread-card-name">${msg.from}</span>
+          <span class="thread-card-date">${msg.date}</span>
+          <div class="thread-card-preview">${previewText(msg.body)}</div>
+        </div>
+      </div>
+    `;
+  }
+  const messages = mail._messages;
+  const quoteOpen = !!(mail._quoteOpen && mail._quoteOpen[idx]);
+  const quoteHTML = idx > 0 ? `<div class="gq-wrap">${renderQuoteInner(messages, idx - 1, quoteOpen, `data-quote-toggle="${idx}"`, true)}</div>` : '';
+  return `
+    <div class="thread-card expanded">
+      <div class="detail-meta-row" data-card-toggle="${idx}">
+        ${renderDetailAvatar(msg.from)}
+        <div class="detail-sender-info">
+          <div class="detail-sender-name">${msg.from} <span class="thread-date-inline">${msg.date}</span></div>
+          ${renderToLine(uid)}
+        </div>
+        ${renderSenderCardIcons(idx)}
+      </div>
+      ${renderToPanel(uid, msg.from, msg.fromEmail, msg.to, msg.toEmail, msg.datetime)}
+      <div class="detail-body-text">${msg.body}${(msg.attachments && msg.attachments.length) ? `<div class="attachment-grid">${msg.attachments.map(renderAttachment).join('')}</div>` : ''}</div>
+      ${quoteHTML}
+    </div>
+  `;
+}
+
+function bindThreadCardToggles(area, mail) {
+  area.querySelectorAll('[data-card-toggle]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('[data-to-toggle]') || e.target.closest('.sender-card-icons') || e.target.closest('.detail-title-star')) return;
+      const idx = Number(el.getAttribute('data-card-toggle'));
+      const scrollPos = area.scrollTop;
+      mail._expanded[idx] = !mail._expanded[idx];
+      renderDetailBody(mail);
+      area.scrollTop = scrollPos;
+    });
+  });
+  area.querySelectorAll('[data-quote-toggle]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const idx = Number(el.getAttribute('data-quote-toggle'));
+      const scrollPos = area.scrollTop;
+      mail._quoteOpen = mail._quoteOpen || {};
+      mail._quoteOpen[idx] = !mail._quoteOpen[idx];
+      renderDetailBody(mail);
+      area.scrollTop = scrollPos;
+    });
+  });
+}
+
+function renderDetailBody(mail) {
+  const area = document.getElementById('detail-body-area');
+  const messages = mail._messages;
+
+  const subjectRowHTML = `
+    <div class="detail-subject-block">
+      <span class="detail-subject-text">${mail.subject}</span>
+      <span class="inbox-badge">受信トレイ</span>
+      <button class="detail-title-star" data-star="${mail.id}">${starSVG(mail.starred)}</button>
+    </div>
+  `;
+
+  const cardsHTML = messages.map((msg, i) => renderThreadCard(mail, msg, i, mail._expanded[i])).join('');
+
+  area.innerHTML = `${subjectRowHTML}${cardsHTML}`;
+
+  bindToPanelToggles(area);
+  bindThreadCardToggles(area, mail);
+  renderPdfThumbnails(area);
+
+  const titleStarBtn = area.querySelector('.detail-title-star');
+  if (titleStarBtn) {
+    titleStarBtn.addEventListener('click', () => {
+      mail.starred = !mail.starred;
+      titleStarBtn.innerHTML = starSVG(mail.starred);
+    });
+  }
+}
+
+function openDetail(id) {
+  const mail = MAILS.find((x) => x.id === id);
+  if (!mail) return;
+  window.currentDetailMail = mail;  // 作成画面（返信・転送）の対象
+  mail.unread = false;
+
+  if (!mail._messages) {
+    mail._messages = mail.thread || [{
+      from: mail.name, fromEmail: mail.email, to: MY_NAME, toEmail: MY_EMAIL,
+      date: mail.date, datetime: mail.datetime || mail.date, body: mail.body,
+    }];
+  }
+  if (!mail._expanded) {
+    mail._expanded = mail._messages.map((_, i) => i === mail._messages.length - 1);
+  }
+
+  renderDetailBody(mail);
+  document.getElementById('detail-body-area').scrollTop = 0;
+
+  document.getElementById('inbox-view').style.display = 'none';
+  document.getElementById('detail-view').style.display = 'flex';
+  renderList();
+}
+
+function closeDetail() {
+  document.getElementById('detail-view').style.display = 'none';
+  document.getElementById('inbox-view').style.display = 'flex';
+  renderList();
+}
+
+renderList();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', { scope: './' }).then((reg) => {
+      reg.update();
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'activated') {
+            window.location.reload();
+          }
+        });
+      });
+    }).catch((err) => {
+      console.error('Service worker registration failed:', err);
+    });
+
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
+  });
+}
+</script>
+<script>
+// ===== 作成画面（返信・全員に返信・転送・新規作成）=====
+// 送信はデモ。画面を閉じて「送信しました」を出すだけで、どこにも保存しない。
+// MAILS 等のデータは読むだけで書き換えない。対象メールは openDetail が window.currentDetailMail に残す。
+(function () {
+  const root = document.getElementById('cmp');
+  const scrollEl = document.getElementById('cmp-scroll');
+  const subjectEl = document.getElementById('cmp-subject');
+  const bodyEl = document.getElementById('cmp-body');
+  const extraEl = document.getElementById('cmp-extra');
+  const menu = document.getElementById('cmp-menu');
+  const snackbar = document.getElementById('cmp-snackbar');
+  let st = null;        // { mode: 'new'|'reply'|'replyAll'|'forward', mail, msg, to, cc, subject, attachments, ccOpen, quoteHTML }
+  let menuOwner = null;
+  let snackTimer = null;
+  let prevThemeColor = null;  // 作成画面を開いている間だけステータスバーを白にし、閉じたら戻す
+
+  const ICON = {
+    reply: '<svg width="22" height="22" viewBox="0 0 24 24" fill="#452E00"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>',
+    replyAll: '<svg width="22" height="22" viewBox="0 0 24 24" fill="#452E00"><path d="M7 8V5l-7 7 7 7v-3l-4-4 4-4zm6 1V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>',
+    forward: '<svg width="22" height="22" viewBox="0 0 24 24" fill="#452E00"><path transform="translate(24 0) scale(-1 1)" d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>',
+    drop: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#452E00"><path d="M7 10l5 5 5-5z"/></svg>',
+    caret: '<svg width="24" height="24" viewBox="0 0 24 24" fill="#452E00"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>',
+    x: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#452E00"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',
+    pdf: '<svg width="22" height="22" viewBox="0 0 24 24" style="flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="3" fill="#D93025"/><text x="12" y="16" font-size="8.5" font-weight="700" fill="#fff" text-anchor="middle" font-family="Arial, sans-serif">PDF</text></svg>',
+  };
+  const MODE_LABEL = { reply: '返信', replyAll: '全員に返信', forward: '転送' };
+
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const same = (a, b) => String(a || '').trim().toLowerCase() === String(b || '').trim().toLowerCase();
+  const isMe = (r) => same(r.email, MY_EMAIL);
+  const person = (r) => (r.name ? `${r.name} <${r.email}>` : r.email);
+
+  // 宛先は「名前 + アドレス」1件が基本。カンマ区切りの複数や {name,email} 配列、cc / replyTo 項目にも対応しておく
+  function parseList(names, emails) {
+    if (Array.isArray(names)) {
+      return names.map((x) => (typeof x === 'string' ? { name: '', email: x } : { name: x.name || '', email: x.email || '' })).filter((r) => r.email);
+    }
+    if (emails == null && /@/.test(names || '')) { emails = names; names = ''; }
+    const es = String(emails || '').split(/[,;]/).map((s) => s.trim()).filter(Boolean);
+    const ns = es.length > 1 ? String(names || '').split(/[,、]/).map((s) => s.trim()) : [String(names || '').trim()];
+    return es.map((email, i) => ({ name: ns[i] || '', email }));
+  }
+  function uniq(list) {
+    const seen = new Set();
+    return list.filter((r) => {
+      const k = String(r.email || '').toLowerCase();
+      if (!k || seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  }
+  const senderOf = (m) => ({ name: m.from || '', email: m.fromEmail || '' });
+  const toOf = (m) => parseList(m.toList || m.to, m.toEmail);
+  const ccOf = (m) => (m.cc || m.ccEmail ? parseList(m.cc, m.ccEmail) : []);
+
+  // 返信先：返信先(replyTo)があればそこ、自分が送ったメールなら元の宛先、それ以外は差出人
+  function replyTargets(m) {
+    if (m.replyTo || m.replyToEmail) return parseList(m.replyTo, m.replyToEmail);
+    if (isMe(senderOf(m))) return toOf(m).filter((r) => !isMe(r));
+    return [senderOf(m)];
+  }
+  // 全員に返信の CC：差出人・宛先・CC から自分と返信先を除いた人
+  function replyAllCc(m) {
+    const t = replyTargets(m);
+    return uniq([senderOf(m), ...toOf(m), ...ccOf(m)]).filter((r) => !isMe(r) && !t.some((x) => same(x.email, r.email)));
+  }
+  // 自分以外の相手が2人以上いるメールだけ「全員に返信」を出す
+  const canReplyAll = (m) => uniq([...replyTargets(m), ...replyAllCc(m)]).length > 1;
+
+  function prefixed(prefix, subject) {
+    const s = String(subject || '');
+    const re = prefix === 'Re' ? /^\s*re\s*[:：]/i : /^\s*(fwd|fw)\s*[:：]/i;
+    return re.test(s) ? s : `${prefix}: ${s}`;
+  }
+  // 返信・転送の中身を作り直す（本文に入力した文字は残す）
+  function build(mode) {
+    const m = st.msg;
+    const local = (st.attachments || []).filter((a) => a.local);   // クリップから追加したファイル
+    st.mode = mode;
+    if (mode === 'forward') {
+      st.to = [];
+      st.cc = [];
+      st.subject = prefixed('Fwd', st.mail.subject);
+      // 転送はスレッド内のメール（転送するメールまで）の添付を古い順に、同じファイルは1つにして引き継ぐ
+      const msgs = st.mail && st.mail._messages && st.mail._messages.indexOf(m) >= 0 ? st.mail._messages : [m];
+      st.attachments = MailAttach.collect(msgs.slice(0, msgs.indexOf(m) + 1)).concat(local);
+    } else {
+      st.to = replyTargets(m);
+      st.cc = mode === 'replyAll' ? replyAllCc(m) : [];
+      st.subject = prefixed('Re', st.mail.subject);
+      st.attachments = local;
+    }
+    st.ccOpen = st.cc.length > 0;
+    st.quoteHTML = null;   // 引用は renderExtra で作り直す（返信の種類を切り替えたとき）
+  }
+
+  function chip(r) {
+    const label = r.name || String(r.email).split('@')[0];
+    return `<span class="cmp-chip" title="${esc(r.email)}"><span class="cmp-chip-av" style="background:${colorFor(label)}">${esc(label.trim().charAt(0))}</span><span class="cmp-chip-name">${esc(label)}</span></span>`;
+  }
+  function recipRow(kind, list) {
+    let lead;
+    if (kind !== 'to') lead = `<span class="cmp-label">${kind === 'cc' ? 'Cc' : 'Bcc'}</span>`;
+    else if (st.mode === 'new') lead = '<span class="cmp-label">宛先</span>';
+    else lead = `<button class="cmp-mode" data-cmp="mode" aria-label="${MODE_LABEL[st.mode]}">${ICON[st.mode]}</button><button class="cmp-drop" data-cmp="mode" aria-label="返信の種類を切り替え">${ICON.drop}</button>`;
+    const caret = kind === 'to' ? `<button class="cmp-caret" data-cmp="ccbcc" aria-label="Cc / Bcc">${ICON.caret}</button>` : '';
+    const aria = kind === 'to' ? '宛先' : kind === 'cc' ? 'Cc' : 'Bcc';
+    return `${lead}<div class="cmp-chips">${list.map(chip).join('')}<input class="cmp-input" type="email" inputmode="email" autocomplete="off" aria-label="${aria}"></div>${caret}`;
+  }
+
+  function render() {
+    document.getElementById('cmp-from').textContent = MY_EMAIL;
+    const lists = { to: st.to, cc: st.cc, bcc: [] };
+    ['to', 'cc', 'bcc'].forEach((k) => {
+      const row = document.getElementById(`cmp-${k}-row`);
+      row.hidden = k !== 'to' && !st.ccOpen;
+      row.classList.toggle('has-chips', lists[k].length > 0);
+      row.innerHTML = recipRow(k, lists[k]);
+    });
+    subjectEl.value = st.subject;
+    renderExtra();
+    grow(subjectEl);
+    grow(bodyEl);
+  }
+
+  function renderExtra() {
+    bodyEl.classList.toggle('has-dots', st.mode !== 'new');
+    const m = st.msg;
+    let quote = '';
+    if (st.mode !== 'new') {
+      // 引用は Gmail と同じく畳まずに全部出し、そのまま編集できる。作り方は3版共通の mail_quote.js（MailQuote.compose）
+      if (st.quoteHTML == null) {
+        const msgs = st.mail && st.mail._messages && st.mail._messages.indexOf(m) >= 0 ? st.mail._messages : [m];
+        st.quoteHTML = MailQuote.compose(st.mode, msgs, msgs.indexOf(m), {
+          from: person(senderOf(m)),
+          to: toOf(m).map(person).join(', '),
+          cc: ccOf(m).map(person).join(', '),
+          subject: st.mail.subject,
+        });
+      }
+      quote = `<div class="cmp-quote-wrap" contenteditable="true" aria-label="引用">${st.quoteHTML}</div>`;
+    }
+    // 添付は引用の下にカードで並べる（×で外せる）。カードは3版共通の mail_attach.js
+    const atts = st.attachments.length ? `<div class="cmp-atts attachment-grid">${MailAttach.list(st.attachments, { removable: true })}</div>` : '';
+    extraEl.innerHTML = quote + atts;
+    MailAttach.renderPreviews(extraEl);
+  }
+
+  function grow(t) {
+    t.style.height = 'auto';
+    t.style.height = t.scrollHeight + 'px';
+  }
+
+  // キーボードが出たら表示領域(visualViewport)に合わせて縮め、入力中の行が隠れないようにする
+  function keepVisible(el) {
+    const r = el.getBoundingClientRect();
+    const s = scrollEl.getBoundingClientRect();
+    // 本文は入力位置が末尾のときだけ下端まで送る（途中を編集中は動かさない）
+    if (r.bottom > s.bottom - 8 && (el !== bodyEl || el.selectionEnd >= el.value.length)) {
+      scrollEl.scrollTop += r.bottom - s.bottom + 8;
+    } else if (r.top < s.top) {
+      scrollEl.scrollTop -= s.top - r.top + 8;
+    }
+  }
+  function fitViewport() {
+    const vv = window.visualViewport;
+    if (!vv || !root.classList.contains('open')) return;
+    root.style.top = vv.offsetTop + 'px';
+    root.style.height = vv.height + 'px';
+    const a = document.activeElement;
+    if (a && root.contains(a) && /^(TEXTAREA|INPUT)$/.test(a.tagName)) keepVisible(a);
+  }
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', fitViewport);
+    window.visualViewport.addEventListener('scroll', fitViewport);
+  }
+  window.addEventListener('resize', fitViewport);
+  root.addEventListener('focusin', () => setTimeout(fitViewport, 300));
+
+  function open(state) {
+    st = state;
+    closeMenu();
+    bodyEl.value = '';
+    render();
+    scrollEl.scrollTop = 0;
+    if (!root.classList.contains('open')) {
+      root.classList.add('open');
+      root.setAttribute('aria-hidden', 'false');
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) { prevThemeColor = meta.getAttribute('content'); meta.setAttribute('content', '#FFFFFF'); }
+      history.pushState({ cmp: true }, '');   // Android の戻る操作で閉じる
+    }
+    grow(subjectEl);
+    grow(bodyEl);
+    fitViewport();
+  }
+  function hide() {
+    root.classList.remove('open');
+    root.setAttribute('aria-hidden', 'true');
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta && prevThemeColor !== null) meta.setAttribute('content', prevThemeColor);
+    prevThemeColor = null;
+    root.style.top = '';
+    root.style.height = '';
+    closeMenu();
+    if (document.activeElement && root.contains(document.activeElement)) document.activeElement.blur();
+    if (st) MailAttach.release(st.attachments);
+    st = null;
+  }
+  window.addEventListener('popstate', () => { if (root.classList.contains('open')) hide(); });
+
+  function showSnackbar(text) {
+    snackbar.textContent = text;
+    snackbar.classList.add('show');
+    clearTimeout(snackTimer);
+    snackTimer = setTimeout(() => snackbar.classList.remove('show'), 3000);
+  }
+
+  function showMenu(anchor, modes, onPick, alignLeft) {
+    menu.innerHTML = modes.map((k) => `<button role="menuitem" data-mode="${k}">${ICON[k]}<span>${MODE_LABEL[k]}</span></button>`).join('');
+    menu.classList.add('open');
+    const r = anchor.getBoundingClientRect();
+    const vw = document.documentElement.clientWidth;
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const mw = menu.offsetWidth, mh = menu.offsetHeight;
+    let left = alignLeft ? r.left : r.right - mw;
+    left = Math.max(8, Math.min(left, vw - mw - 8));
+    let top = r.bottom + 4;
+    if (top + mh > vh - 8) top = Math.max(8, r.top - mh - 4);
+    menu.style.left = left + 'px';
+    menu.style.top = top + 'px';
+    menuOwner = anchor;
+    menu.onclick = (e) => {
+      const b = e.target.closest('[data-mode]');
+      if (!b) return;
+      closeMenu();
+      onPick(b.getAttribute('data-mode'));
+    };
+  }
+  function closeMenu() {
+    menu.classList.remove('open');
+    menuOwner = null;
+  }
+  document.addEventListener('click', (e) => {
+    if (!menu.classList.contains('open')) return;
+    if (menu.contains(e.target) || (menuOwner && menuOwner.contains(e.target))) return;
+    closeMenu();
+  }, true);
+  const modesFor = (m) => (canReplyAll(m) ? ['reply', 'replyAll', 'forward'] : ['reply', 'forward']);
+
+  root.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-cmp]');
+    if (!t) {
+      const chips = e.target.closest('.cmp-chips');
+      if (chips) chips.querySelector('.cmp-input').focus();
+      return;
+    }
+    const k = t.getAttribute('data-cmp');
+    if (k === 'mode') {
+      if (menu.classList.contains('open')) { closeMenu(); return; }
+      showMenu(root.querySelector('.cmp-mode'), modesFor(st.msg), (mode) => { build(mode); render(); }, true);
+    } else if (k === 'ccbcc') {
+      st.ccOpen = !st.ccOpen;
+      document.getElementById('cmp-cc-row').hidden = !st.ccOpen;
+      document.getElementById('cmp-bcc-row').hidden = !st.ccOpen;
+    } else if (k === 'att-x') {
+      MailAttach.release(st.attachments.splice(Number(t.getAttribute('data-i')), 1));
+      renderExtra();
+    }
+  });
+  subjectEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') e.preventDefault(); });
+  [subjectEl, bodyEl].forEach((t) => t.addEventListener('input', () => { grow(t); keepVisible(t); }));
+  // 引用を編集したら残しておく（添付を外したときなどに作り直して消さないため）
+  // クリップのボタン：端末のファイル（PDF・画像など、複数可）を添付に追加
+  root.querySelector('.cmp-clip').addEventListener('click', () => MailAttach.pick((files) => {
+    if (!st) return;
+    st.attachments = st.attachments.concat(files);
+    renderExtra();
+  }));
+  extraEl.addEventListener('input', (e) => { const q = e.target.closest('.cmp-quote-wrap'); if (q && st) st.quoteHTML = q.innerHTML; });
+
+  // ---- 開き方 ----
+  function openFor(mode, idx) {
+    const mail = window.currentDetailMail;
+    if (!mail || !mail._messages || !mail._messages.length) return;
+    const msgs = mail._messages;
+    const msg = msgs[idx == null ? msgs.length - 1 : idx];
+    st = { mail, msg };
+    build(mode === 'replyAll' && !canReplyAll(msg) ? 'reply' : mode);
+    open(st);
+  }
+  window.cmpReply = (idx) => openFor('reply', idx);            // 各メールの ↩
+  window.cmpLatest = (mode) => openFor(mode);                  // 画面下部の「返信」「転送」＝最新のメール
+  window.cmpMsgMenu = function (ev, idx) {                     // 各メールの ⋮
+    ev.stopPropagation();
+    const mail = window.currentDetailMail;
+    if (!mail || !mail._messages) return;
+    const btn = ev.currentTarget;
+    if (menu.classList.contains('open') && menuOwner === btn) { closeMenu(); return; }
+    showMenu(btn, modesFor(mail._messages[idx]), (mode) => openFor(mode, idx), false);
+  };
+  window.cmpNew = () => open({ mode: 'new', mail: null, msg: null, to: [], cc: [], subject: '', attachments: [], ccOpen: false, quoteHTML: null });  // 受信トレイの「作成」
+  window.cmpNewTo = (name, email) => open({ mode: 'new', mail: null, msg: null, to: [{ name: name || '', email }], cc: [], subject: '', attachments: [], ccOpen: false, quoteHTML: null });
+  window.cmpClose = function () {
+    if (history.state && history.state.cmp) history.back();
+    else hide();
+  };
+  window.cmpSend = function () {
+    // 送信サーバーはまだないので実際には送らない。送るときの HTML 本文（本文＋blockquote の引用）はこれで作る
+    if (st) {
+      window.lastComposedHTML = MailQuote.toSendHTML(bodyEl.value, st.mode === 'new' ? '' : st.quoteHTML);
+      window.lastComposedAttachments = MailAttach.forSend(st.attachments);   // 送る予定の添付（送信サーバーができたらこれを渡す）
+    }
+    window.cmpClose();
+    showSnackbar('送信しました');
+  };
+
+  // 詳細ボックスと本文下の引用元の行のメールアドレスをタップ → 新規作成（「•••」の開閉は起きない）
+  document.getElementById('detail-body-area').addEventListener('click', (e) => {
+    const a = e.target.closest('.dt-addr, .gq-addr');
+    if (!a) return;
+    e.stopPropagation();
+    window.cmpNewTo(a.getAttribute('data-name') || '', a.getAttribute('data-addr') || a.textContent.trim());
+  });
+  // iOS Safari でも :active（押した時の反応）を効かせる
+  document.addEventListener('touchstart', () => {}, { passive: true });
+})();
+</script>
+<script>
+// ===== ドロワー（受信トレイの ≡ から開く）=====
+// 「メイン」以外の項目はデモなので閉じるだけ。件数は「すべてのメール」だけ出す。
+(function () {
+  const drw = document.getElementById('drw');
+  const scrim = document.getElementById('drw-scrim');
+  let prevThemeColor = null;
+
+  // Material Symbols（outline）相当の形を線で描く。色は currentColor
+  const P = {
+    allInbox: '<path d="M3.5 4h17v7h-5.5a3 3 0 0 1-6 0H3.5z"/><path d="M3.5 14h5.2a3.3 3.3 0 0 0 6.6 0h5.2v6h-17z"/>',
+    inbox: '<rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M3.5 14h5.2a3.3 3.3 0 0 0 6.6 0h5.2"/>',
+    tag: '<path d="M3.5 12.2V4h8.2l8.8 8.8-8.2 8.2z"/><circle cx="7.8" cy="8.3" r="1.3"/>',
+    group: '<circle cx="9" cy="8.5" r="3.2"/><path d="M3 19.5c0-3.2 2.7-5 6-5s6 1.8 6 5z"/><path d="M15.5 5.4a3.1 3.1 0 0 1 0 6.2M17.6 14.7c2.1.5 3.4 2.2 3.4 4.8"/>',
+    info: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.6v.4"/>',
+    star: '<path d="M12 3.8l2.5 5.2 5.7.7-4.2 3.9 1.1 5.6L12 16.4l-5.1 2.8L8 13.6 3.8 9.7l5.7-.7z"/>',
+    snooze: '<circle cx="12" cy="12.5" r="8"/><path d="M12 8.5v4.3l3 1.8M4.5 4.5l2.5-2M19.5 4.5l-2.5-2"/>',
+    important: '<path d="M4 6h11.3l4.7 6-4.7 6H4l4.2-6z"/>',
+    bag: '<path d="M5.5 8h13l-1 12.5h-11z"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/>',
+    send: '<path d="M3.5 19.5L21 12 3.5 4.5l2 7.5z"/><path d="M5.5 12H12"/>',
+    scheduleSend: '<path d="M11 16.7l-7.5 3.3 2-8-2-8L18.5 10"/><path d="M5.5 12h5"/><circle cx="17" cy="16" r="4.5"/><path d="M17 13.8v2.3l1.5 1"/>',
+    outbox: '<rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M3.5 14h5.2a3.3 3.3 0 0 0 6.6 0h5.2M12 11V6.5M9.5 9L12 6.5 14.5 9"/>',
+    draft: '<path d="M6 3.5h8l4 4v13H6z"/><path d="M14 3.5v4h4"/>',
+    allMail: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/>',
+    spam: '<path d="M8.4 3.5h7.2l5 5v7.1l-5 5H8.4l-5-5V8.5z"/><path d="M12 7.5v5.5M12 16v.5"/>',
+    trash: '<path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/>',
+    subscriptions: '<path d="M20.5 11V6.5a1.5 1.5 0 0 0-1.5-1.5H5a1.5 1.5 0 0 0-1.5 1.5v11A1.5 1.5 0 0 0 5 19h8"/><path d="M3.5 6.5l8.5 6 8.5-6"/><circle cx="18" cy="17" r="3.5"/><path d="M16.4 17h3.2"/>',
+    add: '<path d="M12 5v14M5 12h14"/>',
+    calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+    contacts: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="10" r="3"/><path d="M6.6 18.2c1.3-1.9 3.1-2.8 5.4-2.8s4.1.9 5.4 2.8"/>',
+    settings: '<circle cx="12" cy="12" r="3"/><path d="M10.4 3.5h3.2l.5 2.4 1.7 1 2.3-.8 1.6 2.8-1.8 1.6v2l1.8 1.6-1.6 2.8-2.3-.8-1.7 1-.5 2.4h-3.2l-.5-2.4-1.7-1-2.3.8-1.6-2.8L6.1 13v-2L4.3 9.4l1.6-2.8 2.3.8 1.7-1z"/>',
+    help: '<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.4 2.4 0 1 1 3.5 2.1c-.7.4-1.1.9-1.1 1.7v.4M12 16.6v.4"/>',
+  };
+  const icon = (k, accent) => `<svg class="drw-icon${accent ? ' accent' : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[k]}</svg>`;
+  const item = (k, label, opts = {}) => `<div class="drw-row"><button class="drw-item${opts.selected ? ' selected' : ''}" data-drw="${opts.action || 'close'}">${icon(k, opts.accent)}<span class="drw-label">${label}</span>${opts.count != null ? `<span class="drw-count">${opts.count}</span>` : ''}${opts.badge ? `<span class="drw-badge">${opts.badge}</span>` : ''}</button></div>`;
+  const mailCount = MAILS.filter((m) => !m.summary).length;  // まとめ行（プロモーション等）はメールではないので数えない
+
+  drw.innerHTML = [
+    '<div class="drw-head"><span class="drw-logo">Gmail</span></div>',
+    `<div class="drw-all"><button class="drw-item" data-drw="close">${icon('allInbox')}<span class="drw-label">すべての受信トレイ</span></button></div>`,
+    '<div style="height:8px"></div>',
+    item('inbox', 'メイン', { selected: true, action: 'main' }),
+    item('tag', 'プロモーション'),
+    item('group', 'ソーシャル'),
+    item('info', '新着'),
+    '<div class="drw-heading">すべてのラベル</div>',
+    item('star', 'スター付き'),
+    item('snooze', 'スヌーズ中'),
+    item('important', '重要'),
+    item('bag', '購入'),
+    item('send', '送信済み'),
+    item('scheduleSend', '送信予定'),
+    item('outbox', '送信トレイ'),
+    item('draft', '下書き'),
+    item('allMail', 'すべてのメール', { count: mailCount }),
+    item('spam', '迷惑メール'),
+    item('trash', 'ゴミ箱'),
+    item('subscriptions', '配信登録を管理', { badge: '新機能' }),
+    item('add', 'ラベルを作成'),
+    '<div class="drw-heading">Google アプリ</div>',
+    item('calendar', 'カレンダー'),
+    item('contacts', 'コンタクト'),
+    '<div class="drw-sep drw-sep-bottom"></div>',
+    item('settings', '設定', { accent: true }),
+    item('help', 'ヘルプとフィードバック', { accent: true }),
+    '<div class="drw-foot"></div>',
+  ].join('');
+
+  // ステータスバーは暗幕がかかった色（元の色に60%の黒を重ねた色）にする
+  function dimmed(hex) {
+    const m = String(hex || '').trim().match(/^#?([0-9a-f]{6})$/i);
+    if (!m) return '#000000';
+    const n = parseInt(m[1], 16);
+    return '#' + [16, 8, 0].map((s) => Math.round(((n >> s) & 255) * 0.4).toString(16).padStart(2, '0')).join('').toUpperCase();
+  }
+
+  const isOpen = () => drw.classList.contains('open');
+  function show() {
+    if (isOpen()) return;
+    drw.scrollTop = 0;
+    drw.classList.add('open');
+    scrim.classList.add('open');
+    drw.setAttribute('aria-hidden', 'false');
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) { prevThemeColor = meta.getAttribute('content'); meta.setAttribute('content', dimmed(prevThemeColor)); }
+    history.pushState({ drw: true }, '');   // Android の戻る操作で閉じる
+  }
+  function hide() {
+    drw.classList.remove('open', 'dragging');
+    drw.style.transform = '';
+    scrim.classList.remove('open');
+    scrim.style.opacity = '';
+    drw.setAttribute('aria-hidden', 'true');
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta && prevThemeColor !== null) meta.setAttribute('content', prevThemeColor);
+    prevThemeColor = null;
+  }
+  function requestClose() {
+    if (history.state && history.state.drw) history.back();
+    else hide();
+  }
+  window.addEventListener('popstate', () => { if (isOpen()) hide(); });
+  window.drwOpen = show;
+
+  scrim.addEventListener('click', requestClose);
+  scrim.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });  // 後ろの一覧を動かさない
+  drw.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-drw]');
+    if (!b) return;
+    if (b.getAttribute('data-drw') === 'main' && document.getElementById('detail-view').style.display === 'flex') closeDetail();
+    requestClose();
+  });
+
+  // 左へのスワイプで閉じる（指に合わせて動かし、1/4以上 or 速く払ったら閉じる）
+  let sx = 0, sy = 0, dx = 0, st = 0, dragging = false, decided = false;
+  drw.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    sx = t.clientX; sy = t.clientY; dx = 0; st = Date.now(); dragging = false; decided = false;
+  }, { passive: true });
+  drw.addEventListener('touchmove', (e) => {
+    const t = e.touches[0];
+    const mx = t.clientX - sx, my = t.clientY - sy;
+    if (!decided) {
+      if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+      decided = true;
+      dragging = Math.abs(mx) > Math.abs(my) && mx < 0;
+      if (dragging) drw.classList.add('dragging');
+    }
+    if (!dragging) return;
+    e.preventDefault();
+    dx = Math.min(0, mx);
+    drw.style.transform = `translateX(${dx}px)`;
+    scrim.style.opacity = String(1 + dx / drw.offsetWidth);
+  }, { passive: false });
+  drw.addEventListener('touchend', () => {
+    if (!dragging) return;
+    dragging = false;
+    drw.classList.remove('dragging');
+    const fast = dx < -30 && Date.now() - st < 250;
+    drw.style.transform = '';
+    scrim.style.opacity = '';
+    if (dx < -drw.offsetWidth / 4 || fast) requestClose();
+  });
+})();
+</script>
+</body>
+</html>
