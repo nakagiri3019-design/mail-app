@@ -1,6 +1,6 @@
 // 伊沢版 専用キャッシュ。ルート版 / 他の版とは独立させること。
 const CACHE_PREFIX = 'mail-izawa-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v7';
+const CACHE_NAME = CACHE_PREFIX + 'v8';
 const PRECACHE_URLS = [
   './',
   './index.html',
