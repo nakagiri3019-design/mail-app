@@ -1,6 +1,6 @@
 // 伊沢版 専用キャッシュ。ルート版 / 他の版とは独立させること。
 const CACHE_PREFIX = 'mail-izawa-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v2';
+const CACHE_NAME = CACHE_PREFIX + 'v3';
 const PRECACHE_URLS = [
   './',
   './index.html',
@@ -14,6 +14,7 @@ const PRECACHE_URLS = [
   './files/hachijo_resort_overview.pdf',
   './files/hachijo_villa_plan_v1.pdf',
   './files/hachijo_villa_plan_v2.pdf',
+  './files/imas_invoice_20261020.pdf',
   './files/higashiokaba_schedule_fix.pdf',
   './files/higashiokaba_schedule_r3.pdf',
   './files/kaitsuke_nishikasai.pdf',
