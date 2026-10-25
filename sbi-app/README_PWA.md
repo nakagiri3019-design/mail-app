@@ -13,6 +13,7 @@
 | 7  | vaion    | 法人口座7 | https://nakagiri3019-design.github.io/mail-app/sbi-app/?user=vaion |
 | 8  | sys      | 法人口座8 | https://nakagiri3019-design.github.io/mail-app/sbi-app/?user=sys |
 | 9  | eightrun | 法人口座9 | https://nakagiri3019-design.github.io/mail-app/sbi-app/?user=eightrun |
+| 10 | yks      | 法人口座10 | https://nakagiri3019-design.github.io/mail-app/sbi-app/?user=yks |
 
 - 6（mediafounder）は欠番。`?user=mediafounder` や `?user=` なしは従来の `manifest.json`（「法人口座」、起動すると中桐）のまま。
 - iOS は `apple-mobile-web-app-title` も同じ名前に書き換わる。Safari の共有メニュー →「ホーム画面に追加」で入れる。
@@ -21,11 +22,11 @@
 
 1. 既存の「法人口座」PWA があれば、先にアンインストールする（アイコン長押し → アンインストール）。
 2. Chrome で上の表の URL を開き、メニュー →「アプリをインストール」。
-3. 口座の数だけ 2 を繰り返す。ホーム画面に「法人口座1〜9」（6を除く）が並ぶ。
+3. 口座の数だけ 2 を繰り返す。ホーム画面に「法人口座1〜10」（6を除く）が並ぶ。
 
 ## うまくいかないとき
 
-8つのPWAはすべて同じ scope（`/mail-app/sbi-app/`）なので、Android の Chrome が
+9つのPWAはすべて同じ scope（`/mail-app/sbi-app/`）なので、Android の Chrome が
 「インストール済みアプリの範囲内」と判断して、メニューに「インストール」ではなく
 「アプリで開く」を出すことがある。
 
