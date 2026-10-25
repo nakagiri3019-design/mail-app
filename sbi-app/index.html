@@ -1527,6 +1527,8 @@
         if (a.aug) _mo.aug = a.aug;
         if (a.sep) _mo.sep = a.sep;
         if (a.oct) _mo.oct = a.oct;
+        // 1〜5月は全口座共通の _MONTHS_BASE（中桐）だが、口座側に月ブロックがあればそちらを使う
+        ['jan','feb','mar','apr','may'].forEach(function(k){ if (a[k]) _mo[k] = a[k]; });
         ACCOUNTS[a.id] = { info: a.info, months: _mo };
       });
       initPage();
