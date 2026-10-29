@@ -846,7 +846,7 @@
         {
           "t": "tx",
           "ic": "debit",
-          "name": "デビット　３１７５８８",
+          "name": "デビット　３１８１０２",
           "blue": true,
           "amt": "-12,000",
           "pos": false,
@@ -899,7 +899,7 @@
         {
           "t": "tx",
           "ic": "debit",
-          "name": "デビット　３１７０２０",
+          "name": "デビット　３１８６４０",
           "blue": true,
           "amt": "-9,800",
           "pos": false,
