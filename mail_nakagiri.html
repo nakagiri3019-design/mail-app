@@ -2072,25 +2072,29 @@ function initial(name) {
   return name.trim().charAt(0);
 }
 
-// 差出人アイコン（丸いアバター）の文字と色。受信トレイ一覧とメール詳細の両方がこれを使う。
-// 中桐由美子は「中桐」、ほかの相手はメールアドレスの @ より前の1文字目を大文字にしたもの。
-// アドレスがない・1文字目が英字でない相手だけ、名前の1文字目のまま。
+// 差出人アイコン（丸いアバター）。受信トレイ一覧とメール詳細の両方がこの renderAvatar を使う。
+// 中桐由美子は「中桐」、サービス系の差出人は名前の1文字目（英字なら大文字）、
+// ほかの相手（個人）はメールアドレスの @ より前の1文字目を大文字にしたもの。
+// アドレスがない・1文字目が英字でない相手だけ、名前の1文字目のまま。色は名前から決める。
 const MY_ADDRESSES = [MY_EMAIL, 'nakagiri@arklabo.jp'];
 
-function avatarInfo(name, email) {
+// サービス系（会社・サービスからの自動送信メール）の差出人アドレス。追加・削除はここだけでよい
+const SERVICE_SENDERS = [
+  'no-reply@mercari.com',      // メルカリ
+  'digest-noreply@quora.com',  // Quoraダイジェスト
+  'order-update@amazon.co.jp', // Amazon.co.jp
+];
+
+// 2文字（「中桐」）のときは smallFontSize にする（丸の大きさ・色、1文字のときのサイズはそのまま）
+function renderAvatar(cls, name, email, smallFontSize) {
   const addr = (email || '').trim().toLowerCase();
   let label;
   if (MY_ADDRESSES.includes(addr)) label = '中桐';
+  else if (SERVICE_SENDERS.includes(addr)) label = initial(name).toUpperCase();
   else if (/^[a-z]/.test(addr)) label = addr.charAt(0).toUpperCase();
   else label = initial(name);
-  return { label, color: colorFor(name) };
-}
-
-// 2文字（「中桐」）のときは丸からはみ出さないよう文字を小さくする（丸の大きさ・色はそのまま）
-function renderAvatar(cls, name, email, smallFontSize) {
-  const a = avatarInfo(name, email);
-  const fontSize = a.label.length > 1 ? `font-size:${smallFontSize};` : '';
-  return `<div class="${cls}" style="background:${a.color};${fontSize}">${a.label}</div>`;
+  const fontSize = label.length > 1 ? `font-size:${smallFontSize};` : '';
+  return `<div class="${cls}" style="background:${colorFor(name)};${fontSize}">${label}</div>`;
 }
 
 function formatDatetime(dt) {
@@ -2105,7 +2109,7 @@ function formatDatetime(dt) {
 }
 
 function renderDetailAvatar(name, email) {
-  return renderAvatar('detail-avatar', name, email, '11px');
+  return renderAvatar('detail-avatar', name, email, '14px');
 }
 
 function starSVG(filled) {
