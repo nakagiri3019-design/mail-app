@@ -1,5 +1,5 @@
 ﻿const CACHE_PREFIX = 'sbi-app-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v155';
+const CACHE_NAME = CACHE_PREFIX + 'v156';
 const PRECACHE_URLS = [
   './',
   './index.html',
