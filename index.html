@@ -2187,13 +2187,25 @@ function renderAvatar(cls, name, email, smallFontSize) {
 
 function formatDatetime(dt) {
   if (!dt || dt.includes('午前') || dt.includes('午後')) return dt;
-  const m = dt.match(/(\d{4}年\d+月\d+日)[^0-9]*(\d+):(\d+)/);
+  const m = dt.match(/((\d{4})年(\d+)月(\d+)日)[^0-9]*(\d+):(\d+)/);
   if (!m) return dt;
-  const h = parseInt(m[2], 10);
-  const min = m[3];
+  const h = parseInt(m[5], 10);
+  const min = m[6];
   const ampm = h < 12 ? '午前' : '午後';
   const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
-  return `${m[1]} ${ampm}${h12}:${min}`;
+  // 曜日はデータの表記に頼らずカレンダーから出す
+  const wd = '日月火水木金土'[new Date(parseInt(m[2], 10), parseInt(m[3], 10) - 1, parseInt(m[4], 10)).getDay()];
+  return `${m[1]}(${wd}) ${ampm}${h12}:${min}`;
+}
+
+// 詳細ヘッダーの日付。date が時刻だけ（例 '11:20'）のときは datetime から「6月13日」を作る
+function headerDate(msg) {
+  const d = msg.date || '';
+  if (/^\d{1,2}:\d{2}$/.test(d)) {
+    const m = String(msg.datetime || '').match(/\d{4}年(\d+)月(\d+)日/);
+    if (m) return parseInt(m[1], 10) + '月' + parseInt(m[2], 10) + '日';
+  }
+  return d;
 }
 
 function renderDetailAvatar(name, email) {
@@ -2273,7 +2285,7 @@ function formatListDate(datetimeStr) {
   var now = new Date();
   var ty = now.getFullYear(), tmo = now.getMonth()+1, td = now.getDate();
   if (y === ty && mo === tmo && d === td) {
-    return hour + ':' + mm;
+    return (hour < 12 ? '午前' : '午後') + (hour > 12 ? hour - 12 : hour) + ':' + mm;
   } else if (y === ty) {
     return mo + '月' + d + '日';
   } else {
@@ -2346,7 +2358,7 @@ function renderThreadCard(mail, msg, idx, expanded) {
         ${renderDetailAvatar(msg.from, msg.fromEmail)}
         <div class="thread-card-collapsed-info">
           <span class="thread-card-name">${msg.from}</span>
-          <span class="thread-card-date">${msg.date}</span>
+          <span class="thread-card-date">${headerDate(msg)}</span>
           <div class="thread-card-preview">${previewText(msg.body)}</div>
         </div>
       </div>
@@ -2360,7 +2372,7 @@ function renderThreadCard(mail, msg, idx, expanded) {
       <div class="detail-meta-row" data-card-toggle="${idx}">
         ${renderDetailAvatar(msg.from, msg.fromEmail)}
         <div class="detail-sender-info">
-          <div class="detail-sender-name">${msg.from} <span class="thread-date-inline">${msg.date}</span></div>
+          <div class="detail-sender-name">${msg.from} <span class="thread-date-inline">${headerDate(msg)}</span></div>
           ${renderToLine(uid)}
         </div>
         ${renderSenderCardIcons(idx)}
